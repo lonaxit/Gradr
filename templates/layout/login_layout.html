@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!-- ===============================================-->
+    <!--    Document Title-->
+    <!-- ===============================================-->
+    <title>Gradr {% block title %} {% endblock %}</title>
+
+
+    <!-- ===============================================-->
+    <!--    Favicons-->
+    <!-- ===============================================-->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicons/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicons/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicons/favicon-16x16.png' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicons/favicon.ico' %}">
+    <link rel="manifest" href="{% static 'img/favicons/manifest.json' %}">
+    <meta name="msapplication-TileImage" content="{% static 'img/favicons/mstile-150x150.png' %}">
+    <meta name="theme-color" content="#ffffff">
+
+
+    <!-- ===============================================-->
+    <!--    Stylesheets-->
+    <!-- ===============================================-->
+    <script src="{% static 'js/config.navbar-vertical.js' %}"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="{% static 'lib/perfect-scrollbar/perfect-scrollbar.css' %}" rel="stylesheet">
+    <link href="{% static 'css/theme.css' %}" rel="stylesheet">
+
+  </head>
+
+
+  <body>
+
+    {% block content %}
+
+
+    {% endblock %}
+
+
+
+
+        <!-- ===============================================-->
+        <!--    JavaScripts-->
+        <!-- ===============================================-->
+        <script src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/popper.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'lib/@fortawesome/all.min.js' %}"></script>
+        <script src="{% static 'lib/stickyfilljs/stickyfill.min.js' %}"></script>
+        <script src="{% static 'lib/sticky-kit/sticky-kit.min.js' %}"></script>
+        <script src="{% static 'lib/is_js/is.min.js' %}"></script>
+        <script src="{% static 'lib/lodash/lodash.min.js' %}"></script>
+        <script src="{% static 'lib/perfect-scrollbar/perfect-scrollbar.js' %}"></script>
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:100,200,300,400,500,600,700,800,900&amp;display=swap" rel="stylesheet">
+        <script src="{% static 'assets/js/theme.js' %}"></script>
+
+      </body>
+
+</html>
