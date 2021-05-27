@@ -15,6 +15,7 @@ class Client(models.Model):
     profile_image = models.ImageField(null=True,blank=True)
     address = models.CharField(max_length=200)
     email = models.CharField(max_length=200)
+    date_created = models.DateTimeField(auto_now_add=True,null=True)
     def __str__(self):
         return self.school_name
 
