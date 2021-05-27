@@ -23,8 +23,6 @@ from .decorators import unauthenticated_user, allowed_users,admin_only
 @unauthenticated_user
 def register(request):
     # redirect authenticated user to the dashboard
-
-
     form = ClientRegisterForm()
     if request.method == 'POST':
         form  = ClientRegisterForm(request.POST)
@@ -35,12 +33,12 @@ def register(request):
             # associate user with admin
             group = Group.objects.get(name='admin')
             user.groups.add(group)
-            
+
             # attach a profile to a client
             Client.objects.create(
                 user = user,
             )
-            
+
             messages.success(request, 'Account creation successful for ' + username)
             return redirect('login')
 
@@ -51,7 +49,7 @@ def register(request):
 # register user with out group
 @unauthenticated_user
 def registerPage(request):
-    # redirect authenticated user to the dashboard
+    #redirect authenticated user to the dashboard
     form = ClientRegisterForm()
     if request.method == 'POST':
         form  = ClientRegisterForm(request.POST)
@@ -100,15 +98,12 @@ def studentList(request):
     return render(request,'accounts/student_list.html')
 
 
-
-
 @login_required(login_url='login')
-# @admin_only
+#@admin_only
 def admin(request):
-    return render(request,'Dashboard/Admin/admin.html')
+    return render(request,'accounts/admin.html')
 
 @login_required(login_url='login')
-
 @allowed_users(['teacher'])
 def users(request):
     return render(request,'Dashboard/Users/users.html')
