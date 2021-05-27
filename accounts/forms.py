@@ -9,11 +9,35 @@ from django import forms
 
 
 class TeacherForm(ModelForm):
-    class Teacher:
+    class Meta:
         model = Teacher
         fields = '__all__'
         exclude = ['user']
 # exclude teacher from editing user
+
+
+class ClientForm(ModelForm):
+    school_name = forms.CharField(label='school name',
+        max_length=200,
+        widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Institution name','id':'username'}))
+    email = forms.EmailField(label='E-Mail',
+                            max_length=100,
+                            widget=forms.EmailInput(attrs={'class': 'form-control','placeholder':'Enter your email','id':'email'}))
+    phone = forms.CharField(label='Phone',
+                            max_length=100,
+                            widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter phone number','id':'phone'}))
+    address = forms.CharField(label='Address',
+                            max_length=100,
+                            widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter Address','id':'address'}))
+    # profile_image = forms.ImageField(label='Upload Your logo',
+    #                         max_length=100,
+    #                         widget=forms.FileInput(attrs={'class': 'form-control'}))
+    class Meta:
+        model = Client
+        fields = '__all__'
+        exclude = ['user']
+
+
 
 class ClientRegisterForm(UserCreationForm):
     username = forms.CharField(label='Username',
