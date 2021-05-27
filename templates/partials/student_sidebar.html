@@ -1,0 +1,94 @@
+{% load static %}
+
+<nav class="navbar navbar-vertical navbar-expand-xl navbar-light">
+  <div class="d-flex align-items-center">
+    <div class="toggle-icon-wrapper">
+
+      <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle" data-toggle="tooltip" data-placement="left" title="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
+
+    </div><a class="navbar-brand" href="../index.html">
+      <div class="d-flex align-items-center py-3"><img class="mr-2" src="../assets/img/illustrations/falcon.png" alt="" width="40" /><span class="text-sans-serif">Gradr</span>
+      </div>
+    </a>
+  </div>
+  <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
+    <div class="navbar-vertical-content perfect-scrollbar scrollbar">
+      <ul class="navbar-nav flex-column">
+        <li class="nav-item">
+          <a class="nav-link dropdown-indicator" href="#user" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="user">
+            <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="far fa-user"></span></span><span class="nav-link-text">Student</span>
+            </div>
+          </a>
+          <ul class="nav collapse" id="user" data-parent="#navbarVerticalCollapse">
+
+            <li class="nav-item"><a class="nav-link" href="../home/landing.html">Landing</a>
+            </li>
+
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#student" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="student">Students/Pupils</a>
+              <ul class="nav collapse" id="student" data-parent="#user">
+                <li class="nav-item"><a class="nav-link" href="../pages/errors/404.html">404</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="../pages/errors/500.html">500</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#staff" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="staff">Staff</a>
+              <ul class="nav collapse" id="staff" data-parent="#user">
+                <li class="nav-item"><a class="nav-link" href="../pages/errors/404.html">404</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="../pages/errors/500.html">500</a>
+                </li>
+              </ul>
+            </li>
+
+          </ul>
+        </li>
+
+        <li class="nav-item"><a class="nav-link dropdown-indicator" href="#pages" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="pages">
+            <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-copy"></span></span><span class="nav-link-text">Pages</span>
+            </div>
+          </a>
+          <ul class="nav collapse" id="pages" data-parent="#navbarVerticalCollapse">
+            <li class="nav-item"><a class="nav-link" href="../pages/activity.html">Activity</a>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="../pages/associations.html">Associations</a>
+            </li>
+
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#pages-errors" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="pages-errors">Errors</a>
+              <ul class="nav collapse" id="pages-errors" data-parent="#pages">
+                <li class="nav-item"><a class="nav-link" href="../pages/errors/404.html">404</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="../pages/errors/500.html">500</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item"><a class="nav-link" href="../chat.html">
+            <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-comments"></span></span><span class="nav-link-text"> Chat</span>
+            </div>
+          </a>
+        </li
+      </ul>
+
+      <div class="navbar-vertical-divider">
+        <hr class="navbar-vertical-hr my-2" />
+      </div>
+
+      <ul class="navbar-nav flex-column">
+        <li class="nav-item"><a class="nav-link" href="../widgets.html">
+            <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-poll"></span></span><span class="nav-link-text"> Widgets</span>
+            </div>
+          </a>
+        </li>
+
+      </ul>
+      <div class="navbar-vertical-divider">
+        <hr class="navbar-vertical-hr my-2" />
+      </div>
+
+    </div>
+  </div>
+</nav>
