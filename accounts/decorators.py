@@ -37,8 +37,8 @@ def admin_only(view_func):
 
             group = request.user.groups.all()[0].name
 
-        if group == 'customer':
-            return HttpResponse('Iam a customer')
+        if group == 'teacher':
+            return redirect('teacher')
         if group == 'student':
             return redirect('student')
         if group == 'admin':
