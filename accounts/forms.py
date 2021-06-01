@@ -5,9 +5,6 @@ from .models import *
 from django import forms
 
 
-
-
-
 class TeacherForm(ModelForm):
     class Meta:
         model = Teacher
@@ -106,6 +103,7 @@ class contactForm(forms.Form):
     # And this is how to add a placeholder to a Django form field.
     # end placeholder in a model form here
 
+# favourite_provider = forms.ModelChoiceField(queryset=Provider.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
     username = forms.CharField(label='Username',
                            max_length=100,
                            widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter your username','id':'username'}))
