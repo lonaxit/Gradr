@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 # class User(AbstractUser):
 #     is_teacher = models.BooleanField(default=False)
 #     is_student = models.BooleanField(default=False)
@@ -27,22 +28,26 @@ class Teacher(models.Model):
     last_name = models.CharField(max_length=20,blank=True)
     sex = models.CharField(max_length=20)
     phone = models.CharField(max_length=20)
+    profile_image = models.ImageField(null=True,blank=True)
     address = models.CharField(max_length=200)
     academic_qualification = models.CharField(max_length=100)
-    email = models.CharField(max_length=200)
+    email = models.CharField(max_length=200,blank=True,null=True)
+    client = models.ForeignKey(Client,on_delete=models.DO_NOTHING,null=True)
 
     def __str__(self):
         return self.first_name
 
 class Student(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE,primary_key=True)
-    first_name = models.CharField(max_length=20,blank=True)
-    middle_name = models.CharField(max_length=20,blank=True)
-    last_name = models.CharField(max_length=20,blank=True)
-    sex = models.CharField(max_length=20)
-    phone = models.CharField(max_length=20,blank=True)
-    address = models.CharField(max_length=200)
-    email = models.CharField(max_length=100,blank=True)
+    first_name = models.CharField(max_length=20,blank=True,null=True)
+    middle_name = models.CharField(max_length=20,blank=True,null=True)
+    last_name = models.CharField(max_length=20,blank=True,null=True)
+    sex = models.CharField(max_length=20,blank=True,null=True)
+    phone = models.CharField(max_length=20,blank=True,null=True)
+    profile_image = models.ImageField(null=True,blank=True)
+    address = models.CharField(max_length=200,blank=True,null=True)
+    email = models.CharField(max_length=100,blank=True,null=True)
+    client = models.ForeignKey(Client,on_delete=models.DO_NOTHING,null=True)
 
     def __str__(self):
         return self.first_name
