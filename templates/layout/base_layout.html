@@ -61,6 +61,19 @@
     <!-- ===============================================-->
 {% include 'partials/footer-links.html' %}
 
+<script>
+  $(function () {
+    $("#term_begins").datepicker({
+      format:'yyyy-mm-dd',
+    });
+  });
+  $(function () {
+    $("#term_ends").datepicker({
+      format:'yyyy-mm-dd',
+    });
+  });
+</script>
+
   </body>
 
 </html>
