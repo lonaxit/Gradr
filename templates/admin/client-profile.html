@@ -1,10 +1,19 @@
 {% extends 'layout/base_layout.html' %}
 
+{% load humanize %}
+
 {% load static %}
 {% block title %} | Create Profile {% endblock %}
 
 {% block content %}
 <div class="card mb-3">
+  {% if messages %}
+  <small class="alert alert-success">
+    {% for message in messages %}
+    {{message}}
+    {% endfor %}
+  </small>
+  {% endif %}
             <div class="card-header position-relative min-vh-25 mb-7">
               <div class="bg-holder rounded-soft rounded-bottom-0" style="background-image:url({% static 'img/generic/4.jpg' %});">
               </div>
@@ -19,7 +28,7 @@
                   </h4>
                   <h5 class="fs-0 font-weight-normal">{{ request.user.client.school_type }}</h5>
                   <p class="text-500">{{ request.user.client.address }}</p>
-                  <a href="" class="btn btn-falcon-primary btn-sm px-3" >Edit</a>  <a href="{% url 'admin-setting' %}" class="btn btn-falcon-primary btn-sm px-3 ml-4" > Settings</a>
+                  <a href="{% url 'update-profile' request.user.id %}" class="btn btn-falcon-primary btn-sm px-3" >Edit</a>  <a href="{% url 'admin-setting' %}" class="btn btn-falcon-primary btn-sm px-3 ml-4" > Settings</a>
                   <!-- <button class="btn btn-falcon-default btn-sm px-3 ml-2" type="button">Message</button> -->
                   <hr class="border-dashed my-4 d-lg-none" />
                 </div>
@@ -106,7 +115,7 @@
           </div>
           <div class="notification-body">
             <p class="mb-1"><strong>{{ term.term}}</strong></p>
-            <span class="notification-time"><a href="#">Edit</a></span>
+            <span class="notification-time"><a href="{% url 'update-term' term.id %}">Edit</a></span>
           </div>
         </span>
         {% endfor %}
@@ -116,7 +125,7 @@
 
     <div class="card mb-3">
       <div class="card-header bg-light d-flex justify-content-between">
-        <h5 class="mb-0"> <a class="text-sans-serif" href="../pages/activity.html">Subjects </a> </h5><a class="text-sans-serif" href="{% url 'add-subject' %}"> Add Subject </a>
+        <h5 class="mb-0"> <a class="text-sans-serif" href="{% url 'all-subjects' %}">Subjects </a> </h5><a class="text-sans-serif" href="{% url 'add-subject' %}"> Add Subject </a>
       </div>
       <div class="card-body fs--1 p-0">
         {% for subject in subjects %}
@@ -128,7 +137,7 @@
           </div>
           <div class="notification-body">
             <p class="mb-1"><strong>{{subject.subject}}</strong></p>
-            <span class="notification-time"><a href="#">Edit</a></span>
+            <span class="notification-time"><a href="{% url 'update-subject' subject.id %}">Edit</a></span>
 
           </div>
         </span>
@@ -140,7 +149,7 @@
 
     <div class="card mb-3">
       <div class="card-header bg-light d-flex justify-content-between">
-        <h5 class="mb-0">  <a class="text-sans-serif" href="../pages/activity.html">Academic Sessions </a></h5><a class="text-sans-serif" href="{% url 'add-session' %}"> Add Session </a>
+        <h5 class="mb-0">  <a class="text-sans-serif" href="{% url 'all-sessions' %}">Academic Sessions </a></h5><a class="text-sans-serif" href="{% url 'add-session' %}"> Add Session </a>
       </div>
       <div class="card-body fs--1 p-0">
         {% for session in sessions %}
@@ -152,7 +161,7 @@
           </div>
           <div class="notification-body">
             <p class="mb-1"><strong>{{session.session}}</strong></p>
-            <span class="notification-time"><a href="#">Edit</a></span>
+            <span class="notification-time"><a href="{% url 'update-session' session.id %}">Edit</a></span>
           </div>
         </span>
         {% endfor %}
@@ -163,7 +172,7 @@
 
     <div class="card mb-3">
       <div class="card-header bg-light d-flex justify-content-between">
-        <h5 class="mb-0"> <a class="text-sans-serif" href="../pages/activity.html">Class </a> </h5><a class="text-sans-serif" href="{% url 'add-class' %}">Add Class </a>
+        <h5 class="mb-0"> <a class="text-sans-serif" href="{% url 'all-classes' %}">Class </a> </h5><a class="text-sans-serif" href="{% url 'add-class' %}">Add Class </a>
       </div>
       <div class="card-body fs--1 p-0">
         {% for class in classlist %}
@@ -175,7 +184,7 @@
           </div>
           <div class="notification-body">
             <p class="mb-1"><strong>{{ class.class_name}}</strong></p>
-            <span class="notification-time"><a href="#">Edit</a></span>
+            <span class="notification-time"><a href="{% url 'update-class' class.id %}">Edit</a></span>
 
           </div>
         </span>
@@ -183,6 +192,36 @@
 
       </div>
     </div>
+
+    <div class="card mb-3">
+      <div class="card-header bg-light d-flex justify-content-between">
+        <h5 class="mb-0"> <a class="text-sans-serif" href="{% url 'resumption-dates' %}">Resumption Date </a> </h5><a class="text-sans-serif" href="{% url 'resumption-setting' %}">Add</a>
+      </div>
+      <div class="card-body fs--1 p-0">
+          <table class="table table-hover">
+        <thead>
+          <tr>
+            <!-- <th scope="col">#</th> -->
+            <th scope="col">Term Begins</th>
+            <th scope="col">Term Ends</th>
+            <th class="white-space-nowrap" scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in resumption %}
+          <tr>
+            <!-- <th scope="row">1</th> -->
+            <td>{{i.term_begins}}</td>
+            <td>{{i.term_ends}}</td>
+            <td class="white-space-nowrap"><span class="notification-time"><a href="{% url 'update-resumption' i.id %}">Edit</a></span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      </div>
+    </div>
+
 
     <div class="card mb-3 mb-xl-0">
       <div class="card-header bg-light">
@@ -204,44 +243,62 @@
       </div>
     </div>
   </div>
+
   <div class="col-lg-4 pl-lg-2">
     <div class="sticky-top sticky-sidebar">
+
       <div class="card mb-3">
         <div class="card-header bg-light">
-          <h5 class="mb-0">Experience</h5>
+          <h5 class="mb-0">Current Settings</h5>
         </div>
         <div class="card-body fs--1">
-          <div class="media"><a href="#!"> <img class="img-fluid" src="../assets/img/logos/g.png" alt="" width="56" /></a>
+          <div class="media"><a href="#!"> <img class="img-fluid" src="{% static 'img/logos/g.png' %}" alt="" width="56" /></a>
             <div class="media-body position-relative pl-3">
-              <h6 class="fs-0 mb-0">Big Data Engineer<small class="fas fa-check-circle text-primary ml-1" data-toggle="tooltip" data-placement="top" title="Verified" data-fa-transform="shrink-4 down-2"></small>
+              <h6 class="fs-0 mb-0"> Active Term <small class="fas fa-check-circle text-primary ml-1" data-toggle="tooltip" data-placement="top" title="Verified" data-fa-transform="shrink-4 down-2"></small>
               </h6>
-              <p class="mb-1"> <a href="#!">Google</a></p>
-              <p class="text-1000 mb-0">Apr 2012 - Present &bull; 6 yrs 9 mos</p>
-              <p class="text-1000 mb-0">California, USA</p>
+
+              <p class="text-1000 mb-0">{{activeTerm.term}}</p>
+              <!-- <p class="text-1000 mb-0">{{attendance.days_open}}</p>
+              <p class="mb-1"> <a href="{% url 'attendance-setting' %}">Add</a> | <a href="#">Edit</a></p -->
               <hr class="border-dashed border-bottom-0" />
             </div>
           </div>
-          <div class="media"><a href="#!"> <img class="img-fluid" src="../assets/img/logos/apple.png" alt="" width="56" /></a>
+
+        </div>
+
+        <div class="card-body fs--1">
+          <div class="media"><a href="#!"> <img class="img-fluid" src="{% static 'img/logos/g.png' %}" alt="" width="56" /></a>
             <div class="media-body position-relative pl-3">
-              <h6 class="fs-0 mb-0">Software Engineer<small class="fas fa-check-circle text-primary ml-1" data-toggle="tooltip" data-placement="top" title="Verified" data-fa-transform="shrink-4 down-2"></small>
+              <h6 class="fs-0 mb-0"> Active Session <small class="fas fa-check-circle text-primary ml-1" data-toggle="tooltip" data-placement="top" title="Verified" data-fa-transform="shrink-4 down-2"></small>
               </h6>
-              <p class="mb-1"> <a href="#!">Apple</a></p>
-              <p class="text-1000 mb-0">Jan 2012 - Apr 2012 &bull; 4 mos</p>
-              <p class="text-1000 mb-0">California, USA</p>
+
+              <p class="text-1000 mb-0">{{activeSession.session}}</p>
+              <p class="mb-1"> <a href="{% url 'update-session' activeSession.id %}">Edit</a></p>
               <hr class="border-dashed border-bottom-0" />
             </div>
           </div>
-          <div class="media"><a href="#!"> <img class="img-fluid" src="../assets/img/logos/nike.png" alt="" width="56" /></a>
+
+        </div>
+
+        <div class="card-body fs--1">
+          <div class="media"><a href="#!"> <img class="img-fluid" src="{% static 'img/logos/g.png' %}" alt="" width="56" /></a>
             <div class="media-body position-relative pl-3">
-              <h6 class="fs-0 mb-0">Mobile App Developer<small class="fas fa-check-circle text-primary ml-1" data-toggle="tooltip" data-placement="top" title="Verified" data-fa-transform="shrink-4 down-2"></small>
+              <h6 class="fs-0 mb-0"> Attendance <small class="fas fa-check-circle text-primary ml-1" data-toggle="tooltip" data-placement="top" title="Verified" data-fa-transform="shrink-4 down-2"></small>
               </h6>
-              <p class="mb-1"> <a href="#!">Nike</a></p>
-              <p class="text-1000 mb-0">Jan 2011 - Apr 2012 &bull; 1 yr 4 mos</p>
-              <p class="text-1000 mb-0">Beaverton, USA</p>
+
+              <p class="text-1000 mb-0">Days Open</p>
+              <p class="text-1000 mb-0">9000</p>
+                <p class="text-1000 mb-0">Days Closed</p>
+                <p class="text-1000 mb-0">8989</p>
+              <p class="mb-1"> <a href="{% url 'attendance-setting' %}">Add</a> | <a href="#">Edit</a></p>
+              <hr class="border-dashed border-bottom-0" />
             </div>
           </div>
+
         </div>
       </div>
+
+
       <div class="card mb-3">
         <div class="card-header bg-light">
           <h5 class="mb-0">Education</h5>
