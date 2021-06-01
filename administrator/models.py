@@ -49,3 +49,24 @@ class Subject(models.Model):
     # list_date = models.DateTimeField(default=datetime.now,blank=True)
     def __str__(self):
         return self.subject
+
+class AttendanceSetting(models.Model):
+    client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
+    session = models.ForeignKey(Session,on_delete=models.DO_NOTHING)
+    term = models.ForeignKey(Term,on_delete=models.DO_NOTHING)
+    days_open = models.DecimalField(max_digits=5,decimal_places=2, null=True, blank=True)
+    days_closed = models.DecimalField(max_digits=5,decimal_places=2,null=True,blank=True)
+    date_created = models.DateTimeField(auto_now_add=True,null=True)
+    def __str__(self):
+        return self.days_open
+
+
+class ResumptionSetting(models.Model):
+    client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
+    session = models.ForeignKey(Session,on_delete=models.DO_NOTHING)
+    term = models.ForeignKey(Term,on_delete=models.DO_NOTHING)
+    term_begins = models.DateField(blank=True,null=True)
+    term_ends = models.DateField(null=True,blank=True)
+    date_created = models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    def __str__(self):
+        return self.term_begins
