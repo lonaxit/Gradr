@@ -2,7 +2,8 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 # import for user registration form
 from  django.contrib.auth.forms import UserCreationForm
-from .forms import ClientRegisterForm,contactForm
+# from .forms import ClientRegisterForm,contactForm
+from .forms import *
 from django.contrib import messages
 # login imports
 from django.contrib.auth import authenticate, login, logout
@@ -19,7 +20,7 @@ from .models import Client
 #custom decorator
 from .decorators import unauthenticated_user, allowed_users,admin_only
 
-# register user with group
+# register a client with group
 @unauthenticated_user
 def register(request):
     # redirect authenticated user to the dashboard
@@ -45,6 +46,7 @@ def register(request):
     context={'form': form}
 
     return render (request,'accounts/register.html',{'form':form})
+
 
 # register user with out group
 @unauthenticated_user
@@ -99,9 +101,11 @@ def studentList(request):
 
 
 @login_required(login_url='login')
-#@admin_only
+@admin_only
 def admin(request):
-    return render(request,'accounts/admin.html')
+    students = Student.objects.all()
+    context = {'students':students}
+    return render(request,'accounts/admin.html',context)
 
 @login_required(login_url='login')
 @allowed_users(['teacher'])

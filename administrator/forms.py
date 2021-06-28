@@ -92,6 +92,26 @@ class SubjectForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['client']
 
+# subject per class form
+class SubjectPerClassForm(forms.ModelForm):
+
+    no_subject = forms.CharField(label='Number of Subjects',
+             max_length=10,
+             widget=forms.NumberInput(attrs={'class': 'form-control','placeholder':'Enter number of subjects','id':'no_subject'}))
+
+    sch_class= forms.ModelChoiceField(
+              queryset=StudentClass.objects.all(),
+              empty_label=None,
+              required=True,
+              to_field_name='id',
+              label='Select Class',
+              widget=forms.Select(attrs={'class': 'form-control','id':'sch_class'}))
+
+#
+    class Meta:
+        model = SubjectPerClass
+        fields = '__all__'
+        exclude = ['client']
 
 
 class AttendanceSettingForm(forms.ModelForm):
@@ -166,3 +186,281 @@ class ResumptionSettingForm(forms.ModelForm):
         model = ResumptionSetting
         fields = '__all__'
         exclude = ['client']
+
+
+# student profile form
+class StudentProfileForm(forms.ModelForm):
+    GENDER = (
+            ('M','Male'),
+            ('F','Female'),
+    )
+
+    BLOODGROUP = (
+                ('A+','A+'),
+                ('A-','A-'),
+                ('AB','AB'),
+                ('B+','B+'),
+                ('O+','O+'),
+                ('O-','O-'),
+                )
+    RELIGION =(
+    ('CHRISTIANITY', 'CHRISTIANITY'),
+    ('ISLAM','ISLAM'),
+    ('OTHERS','OTHERS')
+    )
+    address = forms.CharField(label='Address',
+             max_length=100,required=True,
+             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter address','id':'address'}))
+    sur_name = forms.CharField(label='Surname',
+             max_length=100,required=True,
+             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter surname','id':'sur_name'}))
+
+    first_name = forms.CharField(label='Firstname',
+             max_length=100, required=True,
+             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter firstname','id':'first_name'}))
+    other_name = forms.CharField(label='Othername',
+             max_length=100,required=False,
+             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter other_name','id':'other_name'}))
+    email = forms.CharField(label='E-Mail',
+                required=False,
+                 max_length=100,
+                 widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter optional email','id':'email'}))
+    phone = forms.CharField(label='Phone Number',
+                 required=False,
+                 max_length=100,
+                 widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter optional phone number','id':'phone'}))
+    dob = forms.DateField(
+        widget=forms.DateInput(
+        # format='%Y-%m-%d',
+        attrs={
+        'class': 'form-control',
+        'id':'term_begins','placeholder':'Choose date of birth'}),
+        # input_formats=('%Y-%m-%d', )
+        )
+    class_admitted = forms.ModelChoiceField(
+                  queryset=StudentClass.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Class Admitted',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'stud-class'}))
+    term_admitted = forms.ModelChoiceField(
+                  queryset=Term.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Term Admitted',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'term'}))
+    session_admitted = forms.ModelChoiceField(
+              queryset=Session.objects.all(),
+              empty_label=None,
+              required=True,
+              to_field_name='id',
+              label='Session Admitted',
+              widget=forms.Select(attrs={'class': 'form-control','id':'session'}))
+
+    country = forms.ModelChoiceField(
+              queryset=Country.objects.all(),
+              empty_label=None,
+              required=True,
+              to_field_name='id',
+              label='Country',
+              widget=forms.Select(attrs={'class': 'form-control','id':'country'}))
+    state = forms.ModelChoiceField(
+              queryset=State.objects.all(),
+              label='State',
+              to_field_name='id',
+              widget=forms.Select(attrs={'class': 'form-control','id':'state'}))
+
+    lga = forms.CharField(
+              # queryset=Lga.objects.all(),
+              label='Lga',
+              widget=forms.TextInput(attrs={'class': 'form-control','id':'lga'}))
+    city = forms.CharField(
+              label='City',
+              widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter city','id':'city'}))
+    sex = forms.ChoiceField(
+              label='Choose Sex',
+              choices=GENDER,
+              widget=forms.Select(attrs={'class': 'form-control','id':'city'}))
+    blood_group = forms.ChoiceField(
+              label='Blood Group',
+              choices=BLOODGROUP,
+              widget=forms.Select(attrs={'class': 'form-control','id':'city'}))
+    religion = forms.ChoiceField(
+              label='Religion',
+              choices=RELIGION,
+              widget=forms.Select(attrs={'class': 'form-control','id':'religion'}))
+
+    class Meta:
+        model = Student
+        fields = '__all__'
+        exclude = ['client','user']
+
+
+# teacher profile form
+class TeacherProfileForm(forms.ModelForm):
+    CERTIFICATE = (
+                ('SSCE','SSCE'),
+                ('NCE','NCE'),
+                ('OND','OND'),
+                ('HND','HND'),
+                ('BSC','BSC'),
+                ('B.ED','B.ED'),
+                ('MA','MA'),
+                ('MSC','MSC'),
+                ('PHD','PHD'),
+                )
+    GENDER = (
+            ('M','Male'),
+            ('F','Female'),
+    )
+
+    address = forms.CharField(label='Address',
+             max_length=100,required=True,
+             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter address','id':'address'}))
+    surname = forms.CharField(label='Surname',
+             max_length=100,required=True,
+             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter surname','id':'sur_name'}))
+
+    firstname = forms.CharField(label='Firstname',
+             max_length=100, required=True,
+             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter firstname','id':'first_name'}))
+    othername = forms.CharField(label='Othername',
+             max_length=100,required=False,
+             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter other_name','id':'other_name'}))
+    email = forms.CharField(label='E-Mail',
+                required=False,
+                 max_length=100,
+                 widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter optional email','id':'email'}))
+    phone = forms.CharField(label='Phone Number',
+                 required=False,
+                 max_length=100,
+                 widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter optional phone number','id':'phone'}))
+    dob = forms.DateField(
+        widget=forms.DateInput(
+        # format='%Y-%m-%d',
+        attrs={
+        'class': 'form-control',
+        'id':'term_begins','placeholder':'Choose date of birth'}),
+        # input_formats=('%Y-%m-%d', )
+        )
+
+    country = forms.ModelChoiceField(
+              queryset=Country.objects.all(),
+              empty_label=None,
+              required=True,
+              to_field_name='id',
+              label='Country',
+              widget=forms.Select(attrs={'class': 'form-control','id':'country'}))
+    state = forms.ModelChoiceField(
+              queryset=State.objects.all(),
+              label='State',
+              to_field_name='id',
+              widget=forms.Select(attrs={'class': 'form-control','id':'state'}))
+
+    lga = forms.CharField(
+              # queryset=Lga.objects.all(),
+              label='Lga',
+              widget=forms.TextInput(attrs={'class': 'form-control','id':'lga'}))
+    city = forms.CharField(
+              label='City',
+              widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter city','id':'city'}))
+    sex = forms.ChoiceField(
+              label='Choose Sex',
+              choices=GENDER,
+              widget=forms.Select(attrs={'class': 'form-control','id':'city'}))
+    certificate = forms.ChoiceField(
+              label='Choose Certificate',
+              choices=CERTIFICATE,
+              widget=forms.Select(attrs={'class': 'form-control','id':'certificate'}))
+    discipline = forms.CharField(
+              label='Discipline',
+              widget=forms.TextInput(attrs={'class': 'form-control','id':'discipline'}))
+
+
+    class Meta:
+        model = Teacher
+        fields = '__all__'
+        exclude = ['client','user']
+
+# assign subject
+class AssignSubjectForm(forms.ModelForm):
+
+    classroom = forms.ModelChoiceField(
+              queryset=StudentClass.objects.all(),
+              empty_label=None,
+              required=True,
+              to_field_name='id',
+              label='Select Class',
+              widget=forms.Select(attrs={'class': 'form-control','id':'classroom'}))
+    subject = forms.ModelChoiceField(
+              queryset=Subject.objects.all(),
+              label='Subject',
+              to_field_name='id',
+              widget=forms.Select(attrs={'class': 'form-control','id':'subject'}))
+    teacher = forms.ModelChoiceField(
+                  queryset=Teacher.objects.all(),
+                  label='Select Teacher',
+                  to_field_name='id',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'teacher'}))
+
+
+    class Meta:
+        model = SubjectTeacher
+        fields = '__all__'
+        exclude = ['client']
+
+# class teacher form
+class AssignClassTeacherForm(forms.ModelForm):
+
+    classroom = forms.ModelChoiceField(
+              queryset=StudentClass.objects.all(),
+              empty_label=None,
+              required=True,
+              to_field_name='id',
+              label='Select Class',
+              widget=forms.Select(attrs={'class': 'form-control','id':'classroom'}))
+    term = forms.ModelChoiceField(
+              queryset=Term.objects.all(),
+              empty_label=None,
+              required=True,
+              to_field_name='id',
+              label='Select Term',
+              widget=forms.Select(attrs={'class': 'form-control','id':'term'}))
+    session = forms.ModelChoiceField(
+              queryset=Session.objects.all(),
+              empty_label=None,
+              required=True,
+              to_field_name='id',
+              label='Select Session',
+              widget=forms.Select(attrs={'class': 'form-control','id':'session'}))
+
+    teacher = forms.ModelChoiceField(
+                  queryset=Teacher.objects.all(),
+                  label='Select Teacher',
+                  to_field_name='id',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'teacher'}))
+
+
+    class Meta:
+        model = ClassTeacher
+        fields = '__all__'
+        exclude = ['client']
+
+class AdmissionListForm(forms.Form):
+
+    term = forms.ModelChoiceField(
+                  queryset=Term.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Select Term',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'term'}))
+    session = forms.ModelChoiceField(
+                  queryset=Session.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Select Session',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'session'}))
