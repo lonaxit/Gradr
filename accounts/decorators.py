@@ -23,6 +23,12 @@ def allowed_users(allowed_roles=[]):
                 group = request.user.groups.all()[0].name
 
             if group in allowed_roles:
+                # if group == 'teacher':
+                #     return redirect('teacher')
+                # if group == 'student':
+                #     return redirect('student')
+                # if group == 'admin':
+
                 return view_func(request, *args, **kwargs)
             else:
                 return HttpResponse('access denied')
