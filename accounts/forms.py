@@ -54,6 +54,48 @@ class ClientRegisterForm(UserCreationForm):
         model = User
         fields =['username','email','password1','password2']
 
+# student signup form
+class StudentRegisterForm(UserCreationForm):
+    username = forms.CharField(label='Username',
+                           max_length=100,
+                           widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter your username','id':'username'}))
+    email = forms.EmailField(label='E-Mail',
+                                max_length=100,
+                                widget=forms.EmailInput(attrs={'class': 'form-control','placeholder':'Enter your email','id':'email'}))
+
+    password1 = forms.CharField(label='Password',
+                            max_length=100,
+                            widget=forms.PasswordInput(attrs={'class': 'form-control','placeholder':'Enter your password','id':'password1'}))
+    password2 = forms.CharField(label='Confirm Password',
+                            max_length=100,
+                            widget=forms.PasswordInput(attrs={'class': 'form-control','placeholder':'Confirm your Password','id':'password2'}))
+
+    class Meta:
+        model = User
+        fields =['username','email','password1','password2']
+
+
+# staff signup form
+class StaffRegisterForm(UserCreationForm):
+    username = forms.CharField(label='Username',
+                           max_length=100,
+                           widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter your username','id':'username'}))
+    email = forms.EmailField(label='E-Mail',
+                                max_length=100,
+                                widget=forms.EmailInput(attrs={'class': 'form-control','placeholder':'Enter your email','id':'email'}))
+
+    password1 = forms.CharField(label='Password',
+                            max_length=100,
+                            widget=forms.PasswordInput(attrs={'class': 'form-control','placeholder':'Enter your password','id':'password1'}))
+    password2 = forms.CharField(label='Confirm Password',
+                            max_length=100,
+                            widget=forms.PasswordInput(attrs={'class': 'form-control','placeholder':'Confirm your Password','id':'password2'}))
+
+    class Meta:
+        model = User
+        fields =['username','email','password1','password2']
+
+
 
 class contactForm(forms.Form):
     # username= forms.CharField(max_length=20)
