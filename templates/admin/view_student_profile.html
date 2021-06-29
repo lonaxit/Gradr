@@ -1,0 +1,289 @@
+{% extends 'layout/base_layout.html' %}
+
+{% load humanize %}
+
+{% load static %}
+{% block title %} | Student Profile {% endblock %}
+
+{% block content %}
+<div class="card mb-3">
+  {% if messages %}
+  <small class="alert alert-success">
+    {% for message in messages %}
+    {{message}}
+    {% endfor %}
+  </small>
+  {% endif %}
+            <div class="card-header position-relative min-vh-25 mb-7">
+              <div class="bg-holder rounded-soft rounded-bottom-0" style="background-image:url({% static 'img/generic/4.jpg' %});">
+              </div>
+              <!--/.bg-holder-->
+
+              <div class="avatar avatar-5xl avatar-profile"><img class="rounded-circle img-thumbnail shadow-sm" src="{{ student.profile_image.url }}" width="200" alt="" /></div>
+            </div>
+            <div class="card-body">
+              <!-- <div class="row">
+                <div class="col-lg-8">
+                  <h4 class="mb-1"> {{ request.user.client.school_name }}<small class="fas fa-check-circle text-primary ml-1" data-toggle="tooltip" data-placement="right" title="Verified" data-fa-transform="shrink-4 down-2"></small>
+                  </h4>
+                  <h5 class="fs-0 font-weight-normal">{{ request.user.client.school_type }}</h5>
+                  <p class="text-500">{{ request.user.client.address }}</p>
+                  <a href="{% url 'update-profile' request.user.id %}" class="btn btn-falcon-primary btn-sm px-3" >Edit</a>  <a href="{% url 'admin-setting' %}" class="btn btn-falcon-primary btn-sm px-3 ml-4" > Settings</a>
+                  <button class="btn btn-falcon-default btn-sm px-3 ml-2" type="button">Message</button>
+                  <hr class="border-dashed my-4 d-lg-none" />
+                </div>
+
+              </div> -->
+            </div>
+          </div>
+
+
+
+          <!-- start here  -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <div class="row">
+            <div class="col">
+              <h5 class="mb-2">{{student.sur_name}}, {{student.first_name}} {{student.other_name}}</h5>
+              <!-- <a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-plus fs--2 mr-1"></span>Add note</a> -->
+              <button class="btn btn-falcon-default btn-sm dropdown-toggle ml-2 dropdown-caret-none" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-ellipsis-h"></span></button>
+              <div class="dropdown-menu"><a class="dropdown-item" href="{% url 'update-student' student.user_id %}">Edit</a>
+                <!-- <a class="dropdown-item" href="#">Report</a><a class="dropdown-item" href="#">Archive</a> -->
+                <!-- <div class="dropdown-divider"></div><a class="dropdown-item text-danger" href="#">Delete user</a> -->
+              </div>
+            </div>
+            <div class="col-auto d-none d-sm-block">
+              <h6 class="text-uppercase text-600">Student<span class="fas fa-user ml-2"></span></h6>
+            </div>
+          </div>
+        </div>
+        <div class="card-body border-top">
+          <div class="media"><span class="fas fa-user text-success mr-2" data-fa-transform="down-5"></span>
+            <div class="media-body">
+              <p class="mb-0">Student was created</p>
+              <p class="fs--1 mb-0 text-600">{{student.date_created}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- details -->
+      <div class="card mb-3">
+          <div class="card-header">
+            <div class="row align-items-center">
+              <div class="col">
+                <h5 class="mb-0">Admission Details</h5>
+              </div>
+              <!-- <div class="col-auto"><a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-pencil-alt fs--2 mr-1"></span>Update details</a></div> -->
+            </div>
+          </div>
+          <div class="card-body bg-light border-top">
+            <div class="row">
+              <div class="col-lg col-xxl-5">
+                <!-- <h6 class="font-weight-semi-bold ls mb-3 text-uppercase">Account Information</h6> -->
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-1">Username</p>
+                  </div>
+                  <div class="col">{{student.user.username}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-1">Email</p>
+                  </div>
+                  <div class="col">{{student.email}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-1">Created</p>
+                  </div>
+                  <div class="col">{{student.date_created}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-1">Class</p>
+                  </div>
+                  <div class="col">{{student.class_admitted}}</div>
+                </div>
+
+
+              </div>
+              <div class="col-lg col-xxl-5 mt-4 mt-lg-0 offset-xxl-1">
+                <!-- <h6 class="font-weight-semi-bold ls mb-3 text-uppercase">Billing Information</h6> -->
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-0">Session</p>
+                  </div>
+                  <div class="col">
+                    {{student.session_admitted}}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-0">Term</p>
+                  </div>
+                  <div class="col">
+                    {{student.term_admitted}}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+
+
+      <div class="card mb-3">
+          <div class="card-header">
+            <div class="row align-items-center">
+              <div class="col">
+                <h5 class="mb-0">Other Details</h5>
+              </div>
+              <!-- <div class="col-auto"><a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-pencil-alt fs--2 mr-1"></span>Update details</a></div> -->
+            </div>
+          </div>
+          <div class="card-body bg-light border-top">
+            <div class="row">
+              <div class="col-lg col-xxl-5">
+                <!-- <h6 class="font-weight-semi-bold ls mb-3 text-uppercase">Account Information</h6> -->
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-1">Sex</p>
+                  </div>
+                  <div class="col">{{student.sex}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-1">DOB</p>
+                  </div>
+                  <div class="col">{{student.dob}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-1">Blood Group</p>
+                  </div>
+                  <div class="col">{{student.blood_group}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-1">Religion</p>
+                  </div>
+                  <div class="col">{{student.religion}}</div>
+                </div>
+
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-1">Country</p>
+                  </div>
+                  <div class="col">{{student.country}}</div>
+                </div>
+
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-1">State</p>
+                  </div>
+                  <div class="col">{{student.state}}</div>
+                </div>
+              </div>
+
+              <div class="col-lg col-xxl-5 mt-4 mt-lg-0 offset-xxl-1">
+                <!-- <h6 class="font-weight-semi-bold ls mb-3 text-uppercase">Billing Information</h6> -->
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-1">Lga</p>
+                  </div>
+                  <div class="col">{{student.lga}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-1">City</p>
+                  </div>
+                  <div class="col">{{student.city}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-1">Address</p>
+                  </div>
+                  <div class="col">
+                    <p class="mb-1">{{student.address}}</p>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-5 col-sm-4">
+                    <p class="font-weight-semi-bold mb-1">Phone</p>
+                  </div>
+                  <div class="col">{{student.phone}}</div>
+                </div>
+
+              </div>
+            </div>
+
+
+          </div>
+          <div class="card-footer border-top text-right"><a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-dollar-sign fs--2 mr-1"></span>Refund</a><a class="btn btn-falcon-default btn-sm ml-2" href="#!"><span class="fas fa-check fs--2 mr-1"></span>Save changes</a></div>
+        </div>
+
+        <!-- logs -->
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">Logs</h5>
+          </div>
+          <div class="card-body border-top p-0">
+            <div class="row no-gutters align-items-center border-bottom py-2 px-3">
+              <div class="col-md-auto pr-3"><span class="badge badge-soft-success badge-pill">200</span></div>
+              <div class="col-md mt-1 mt-md-0"><code>POST /v1/invoiceitems</code></div>
+              <div class="col-md-auto">
+                <p class="mb-0">2019/02/23 15:29:45</p>
+              </div>
+            </div>
+            <div class="row no-gutters align-items-center border-bottom py-2 px-3">
+              <div class="col-md-auto pr-3"><span class="badge badge-soft-warning badge-pill">400</span></div>
+              <div class="col-md mt-1 mt-md-0"><code>POST /v1/invoiceitems</code></div>
+              <div class="col-md-auto">
+                <p class="mb-0">2019/02/19 21:32:12</p>
+              </div>
+            </div>
+            <div class="row no-gutters align-items-center border-bottom py-2 px-3">
+              <div class="col-md-auto pr-3"><span class="badge badge-soft-success badge-pill">200</span></div>
+              <div class="col-md mt-1 mt-md-0"><code>POST /v1/invoices/in_1Dnkhadfk</code></div>
+              <div class="col-md-auto">
+                <p class="mb-0">2019/02/26 12:23:43</p>
+              </div>
+            </div>
+            <div class="row no-gutters align-items-center border-bottom py-2 px-3">
+              <div class="col-md-auto pr-3"><span class="badge badge-soft-success badge-pill">200</span></div>
+              <div class="col-md mt-1 mt-md-0"><code>POST /v1/invoices/in_1Dnkhadfk</code></div>
+              <div class="col-md-auto">
+                <p class="mb-0">2019/02/12 23:32:12</p>
+              </div>
+            </div>
+            <div class="row no-gutters align-items-center border-bottom py-2 px-3">
+              <div class="col-md-auto pr-3"><span class="badge badge-soft-danger badge-pill">404</span></div>
+              <div class="col-md mt-1 mt-md-0"><code>POST /v1/invoices/in_1Dnkhadfk</code></div>
+              <div class="col-md-auto">
+                <p class="mb-0">2019/02/08 02:20:23</p>
+              </div>
+            </div>
+            <div class="row no-gutters align-items-center border-bottom py-2 px-3">
+              <div class="col-md-auto pr-3"><span class="badge badge-soft-success badge-pill">200</span></div>
+              <div class="col-md mt-1 mt-md-0"><code>POST /v1/invoices/in_1Dnkhadfk</code></div>
+              <div class="col-md-auto">
+                <p class="mb-0">2019/02/01 12:29:34</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer bg-light p-0"><a class="btn btn-link btn-block" href="#!">View more logs<span class="fas fa-chevron-right fs--2 ml-1"></span></a></div>
+        </div>
+
+
+
+
+
+
+
+
+
+          {% endblock %}
