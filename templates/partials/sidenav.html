@@ -6,7 +6,7 @@
 
       <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle" data-toggle="tooltip" data-placement="left" title="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
 
-    </div><a class="navbar-brand" href="../index.html">
+    </div><a class="navbar-brand" href="{% url 'admin' %}">
       <div class="d-flex align-items-center py-3"><img class="mr-2" src="../assets/img/illustrations/falcon.png" alt="" width="40" /><span class="text-sans-serif">Gradr</span>
       </div>
     </a>
@@ -26,42 +26,115 @@
 
             <li class="nav-item"><a class="nav-link dropdown-indicator" href="#student" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="student">Students/Pupils</a>
               <ul class="nav collapse" id="student" data-parent="#user">
-                <li class="nav-item"><a class="nav-link" href="">New</a>
+                <li class="nav-item"><a class="nav-link" href="{% url 'new-student' %}">New</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="">List</a>
+                <li class="nav-item"><a class="nav-link" href="{% url 'list-students' %}">List</a>
                 </li>
-              </ul>
-            </li>
-
-            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#student" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="student">Students/Pupils</a>
-              <ul class="nav collapse" id="student" data-parent="#user">
-                <li class="nav-item"><a class="nav-link" href="../pages/errors/404.html">404</a>
-                </li>
-                <li class="nav-item"><a class="nav-link" href="../pages/errors/500.html">500</a>
+                <li class="nav-item"><a class="nav-link" href="{% url 'admission-list' %}">Admission List</a>
                 </li>
               </ul>
             </li>
 
-            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#student" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="student">Students/Pupils</a>
-              <ul class="nav collapse" id="student" data-parent="#user">
-                <li class="nav-item"><a class="nav-link" href="../pages/errors/404.html">404</a>
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#teachers" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="teachers">Teachers</a>
+              <ul class="nav collapse" id="teachers" data-parent="#user">
+                <li class="nav-item"><a class="nav-link" href="{% url 'new-teacher' %}">New</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="../pages/errors/500.html">500</a>
-                </li>
-              </ul>
-            </li>
-
-            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#staff" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="staff">Staff</a>
-              <ul class="nav collapse" id="staff" data-parent="#user">
-                <li class="nav-item"><a class="nav-link" href="../pages/errors/404.html">404</a>
-                </li>
-                <li class="nav-item"><a class="nav-link" href="../pages/errors/500.html">500</a>
+                <li class="nav-item"><a class="nav-link" href="{% url 'list-teacher' %}">List</a>
                 </li>
               </ul>
             </li>
 
           </ul>
         </li>
+
+
+        <li class="nav-item"><a class="nav-link dropdown-indicator" href="#settings" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="settings">
+            <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-copy"></span></span><span class="nav-link-text">Settings</span>
+            </div>
+          </a>
+          <ul class="nav collapse" id="settings" data-parent="#navbarVerticalCollapse">
+
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#termly" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="termly">Term</a>
+              <ul class="nav collapse" id="termly" data-parent="#settings">
+                <li class="nav-item"><a class="nav-link" href="{% url 'create-term' %}">New</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#classes" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="classes">Class</a>
+              <ul class="nav collapse" id="classes" data-parent="#settings">
+                <li class="nav-item"><a class="nav-link" href="{% url 'add-class' %}">Add Class</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'all-classes' %}">List</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'assign-class-teacher' %}">Add Class Teacher</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'list-class-teacher' %}">List Class Teachers</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#sessions" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="sessions">Session</a>
+              <ul class="nav collapse" id="sessions" data-parent="#settings">
+                <li class="nav-item"><a class="nav-link" href="{% url 'add-session' %}">New Session</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'all-sessions' %}">List</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#subjects" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="subjects">Subjects</a>
+              <ul class="nav collapse" id="subjects" data-parent="#settings">
+                <li class="nav-item"><a class="nav-link" href="{% url 'add-subject' %}">Add Subject</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'all-subjects' %}">List Subjects</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'assign-subject' %}">Assign Subjects</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'list-subject-teachers' %}">Subject Teachers </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#attendance" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="attendance">Attendance</a>
+              <ul class="nav collapse" id="attendance" data-parent="#settings">
+                <li class="nav-item"><a class="nav-link" href="{% url 'attendance-setting' %}">New</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="../pages/errors/500.html">List</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#resumption" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="resumption">Resumption Date</a>
+              <ul class="nav collapse" id="resumption" data-parent="#settings">
+                <li class="nav-item"><a class="nav-link" href="{% url 'resumption-setting' %}">Add Resumption Date</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'resumption-dates' %}">List</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#subjperclass" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="subjperclass">Subject Per Class</a>
+              <ul class="nav collapse" id="subjperclass" data-parent="#settings">
+                <li class="nav-item"><a class="nav-link" href="{% url 'subject-perclass' %}">Subjects Per Class</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'subject-perclass-list' %}">List</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#demographics" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="demographics">Demographics</a>
+              <ul class="nav collapse" id="demographics" data-parent="#settings">
+                <li class="nav-item"><a class="nav-link" href="{% url 'subject-perclass' %}">Add Country</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'subject-perclass-list' %}">List Country</a>
+                </li>
+              </ul>
+            </li>
+
+          </ul>
+        </li>
+
+
 
         <li class="nav-item"><a class="nav-link dropdown-indicator" href="#pages" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="pages">
             <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-copy"></span></span><span class="nav-link-text">Pages</span>
@@ -73,6 +146,8 @@
             <li class="nav-item"><a class="nav-link" href="../pages/associations.html">Associations</a>
             </li>
 
+
+
             <li class="nav-item"><a class="nav-link dropdown-indicator" href="#pages-errors" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="pages-errors">Errors</a>
               <ul class="nav collapse" id="pages-errors" data-parent="#pages">
                 <li class="nav-item"><a class="nav-link" href="../pages/errors/404.html">404</a>
@@ -81,6 +156,7 @@
                 </li>
               </ul>
             </li>
+
           </ul>
         </li>
 
