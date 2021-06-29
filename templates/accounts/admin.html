@@ -59,7 +59,7 @@
                   </div>
                 </div>
                 <div id="dashboard-actions">
-                  <button class="btn btn-falcon-default btn-sm" type="button"><span class="fas fa-plus" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ml-1">New</span></button>
+                  <a href="{% url 'new-student' %}" class="btn btn-falcon-default btn-sm" type="button"><span class="fas fa-plus" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ml-1">New</span></a>
                   <!-- <button class="btn btn-falcon-default btn-sm mx-2" type="button"><span class="fas fa-filter" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ml-1">Filter</span></button>
                   <button class="btn btn-falcon-default btn-sm" type="button"><span class="fas fa-external-link-alt" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ml-1">Export</span></button>
                 </div> -->
@@ -86,6 +86,7 @@
                   </tr>
                 </thead>
                 <tbody id="purchases">
+                  {% for student in students %}
                   <tr class="btn-reveal-trigger">
                     <td class="align-middle">
                       <div class="custom-control custom-checkbox">
@@ -93,27 +94,30 @@
                         <label class="custom-control-label" for="checkbox-0"></label>
                       </div>
                     </td>
-                    <th class="align-middle"><a href="pages/customer-details.html">Sylvia Plath</a></th>
-                    <td class="align-middle">john@gmail.com</td>
-                    <td class="align-middle">Slick - Drag &amp; Drop Bootstrap Generator</td>
-                    <td class="align-middle text-center fs-0"><span class="badge badge rounded-capsule badge-soft-success">Success<span class="ml-1 fas fa-check" data-fa-transform="shrink-2"></span></span>
+                    <th class="align-middle"><a href="pages/customer-details.html">{{ student.sur_name}}  {{student.first_name}}</a></th>
+                    <td class="align-middle">{{student.class_admitted}}</td>
+                    <td class="align-middle">{{student.sex}}</td>
+                    <td class="align-middle text-center fs-0"><span class="badge badge rounded-capsule badge-soft-success">{{student.user.is_active}}<span class="ml-1 fas fa-check" data-fa-transform="shrink-2"></span></span>
                     </td>
                     <!-- <td class="align-middle text-right">$99</td> -->
                     <td class="align-middle white-space-nowrap">
                       <div class="dropdown text-sans-serif">
                         <button class="btn btn-link text-600 btn-sm dropdown-toggle btn-reveal mr-3" type="button" id="dropdown0" data-toggle="dropdown" data-boundary="html" aria-haspopup="true" aria-expanded="false"><span class="fas fa-ellipsis-h fs--1"></span></button>
                         <div class="dropdown-menu dropdown-menu-right border py-0" aria-labelledby="dropdown0">
-                          <div class="bg-white py-2"><a class="dropdown-item" href="#!">View</a><a class="dropdown-item" href="#!">Edit</a><a class="dropdown-item" href="#!">Refund</a>
-                            <div class="dropdown-divider"></div><a class="dropdown-item text-warning" href="#!">Archive</a><a class="dropdown-item text-danger" href="#!">Delete</a>
+                          <div class="bg-white py-2"><a class="dropdown-item" href="{% url 'view-student' student.user_id %}">View</a><a class="dropdown-item" href="{% url 'update-student' student.user_id %}">Edit</a><a class="dropdown-item" href="#!">Add Parent</a>
+                            <!-- <div class="dropdown-divider"></div><a class="dropdown-item text-warning" href="#!">Archive</a><a class="dropdown-item text-danger" href="#!">Delete</a> -->
                           </div>
                         </div>
                       </div>
                     </td>
                   </tr>
+
+                  {% endfor %}
                 </tbody>
               </table>
             </div>
           </div>
+        </div>
         </div>
         <!-- end list of recently added students  -->
 

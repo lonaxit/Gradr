@@ -123,7 +123,9 @@
       </div>
     </div>
 
-    <div class="card mb-3">
+
+<!-- subjecct header -->
+    <!-- <div class="card mb-3">
       <div class="card-header bg-light d-flex justify-content-between">
         <h5 class="mb-0"> <a class="text-sans-serif" href="{% url 'all-subjects' %}">Subjects </a> </h5><a class="text-sans-serif" href="{% url 'add-subject' %}"> Add Subject </a>
       </div>
@@ -144,9 +146,9 @@
         {% endfor %}
 
       </div>
-    </div>
-
-
+    </div> -->
+<!-- end subject header  -->
+<!--
     <div class="card mb-3">
       <div class="card-header bg-light d-flex justify-content-between">
         <h5 class="mb-0">  <a class="text-sans-serif" href="{% url 'all-sessions' %}">Academic Sessions </a></h5><a class="text-sans-serif" href="{% url 'add-session' %}"> Add Session </a>
@@ -161,16 +163,16 @@
           </div>
           <div class="notification-body">
             <p class="mb-1"><strong>{{session.session}}</strong></p>
-            <span class="notification-time"><a href="{% url 'update-session' session.id %}">Edit</a></span>
+            <span class="notification-time"><a href="{% url 'update-session' session.id ">Edit</a></span>
           </div>
         </span>
         {% endfor %}
 
       </div>
-    </div>
+    </div> -->
 
 
-    <div class="card mb-3">
+    <!-- <div class="card mb-3">
       <div class="card-header bg-light d-flex justify-content-between">
         <h5 class="mb-0"> <a class="text-sans-serif" href="{% url 'all-classes' %}">Class </a> </h5><a class="text-sans-serif" href="{% url 'add-class' %}">Add Class </a>
       </div>
@@ -191,7 +193,7 @@
         {% endfor %}
 
       </div>
-    </div>
+    </div> -->
 
     <div class="card mb-3">
       <div class="card-header bg-light d-flex justify-content-between">
@@ -247,10 +249,13 @@
   <div class="col-lg-4 pl-lg-2">
     <div class="sticky-top sticky-sidebar">
 
+
+
       <div class="card mb-3">
         <div class="card-header bg-light">
           <h5 class="mb-0">Current Settings</h5>
         </div>
+
         <div class="card-body fs--1">
           <div class="media"><a href="#!"> <img class="img-fluid" src="{% static 'img/logos/g.png' %}" alt="" width="56" /></a>
             <div class="media-body position-relative pl-3">
@@ -266,14 +271,15 @@
 
         </div>
 
+
         <div class="card-body fs--1">
           <div class="media"><a href="#!"> <img class="img-fluid" src="{% static 'img/logos/g.png' %}" alt="" width="56" /></a>
             <div class="media-body position-relative pl-3">
               <h6 class="fs-0 mb-0"> Active Session <small class="fas fa-check-circle text-primary ml-1" data-toggle="tooltip" data-placement="top" title="Verified" data-fa-transform="shrink-4 down-2"></small>
               </h6>
 
-              <p class="text-1000 mb-0">{{activeSession.session}}</p>
-              <p class="mb-1"> <a href="{% url 'update-session' activeSession.id %}">Edit</a></p>
+              <p class="text-1000 mb-0">GoHGD</p>
+              <p class="mb-1"> <a href="">Edit</a></p>
               <hr class="border-dashed border-bottom-0" />
             </div>
           </div>
@@ -299,7 +305,7 @@
       </div>
 
 
-      <div class="card mb-3">
+      <!-- <div class="card mb-3">
         <div class="card-header bg-light">
           <h5 class="mb-0">Education</h5>
         </div>
@@ -335,13 +341,15 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
+
+
       <div class="card mb-3 mb-lg-0">
         <div class="card-header bg-light">
           <h5 class="mb-0">Events</h5>
         </div>
         <div class="card-body fs--1">
-          <div class="media btn-reveal-trigger">
+          <!-- <div class="media btn-reveal-trigger">
             <div class="calendar"><span class="calendar-month">Feb</span><span class="calendar-day">21</span></div>
             <div class="media-body position-relative pl-3">
               <h6 class="fs-0 mb-0"><a href="../pages/event-detail.html">Newmarket Nights</a></h6>
@@ -350,8 +358,8 @@
               <p class="text-1000 mb-0">Duration: 6:00AM - 5:00PM</p>Place: Cambridge Boat Club, Cambridge
               <hr class="border-dashed border-bottom-0" />
             </div>
-          </div>
-          <div class="media btn-reveal-trigger">
+          </div> -->
+          <!-- <div class="media btn-reveal-trigger">
             <div class="calendar"><span class="calendar-month">Dec</span><span class="calendar-day">31</span></div>
             <div class="media-body position-relative pl-3">
               <h6 class="fs-0 mb-0"><a href="../pages/event-detail.html">31st Night Celebration</a></h6>
@@ -360,7 +368,7 @@
               <p class="text-1000 mb-0">280 people interested</p>Place: Tavern on the Greend, New York
               <hr class="border-dashed border-bottom-0" />
             </div>
-          </div>
+          </div> -->
           <div class="media btn-reveal-trigger">
             <div class="calendar"><span class="calendar-month">Dec</span><span class="calendar-day">16</span></div>
             <div class="media-body position-relative pl-3">
@@ -377,8 +385,8 @@
   </div>
 </div>
 
-
-<div class="card mt-3">
+<!-- followers -->
+<!-- <div class="card mt-3">
   <div class="card-header bg-light">
     <div class="row align-items-center">
       <div class="col">
@@ -476,6 +484,6 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
           {% endblock %}

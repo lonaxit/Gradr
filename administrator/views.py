@@ -1,9 +1,10 @@
 from django.shortcuts import render,redirect
 
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 # import for user registration form
 from  django.contrib.auth.forms import UserCreationForm
-from accounts.forms import ClientRegisterForm, contactForm, ClientForm
+# from accounts.forms import ClientRegisterForm, contactForm, ClientForm,StudentRegisterForm
+from accounts.forms import *
 # from administrator.forms import TermForm,SessionForm
 from administrator.forms import *
 from django.contrib import messages
@@ -14,8 +15,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 
 # import models
-from accounts.models import Client
+from accounts.models import *
 from .models import *
+from django.db.models import Q
 
 #custom decorator
 from accounts.decorators import unauthenticated_user,allowed_users,admin_only
@@ -68,6 +70,326 @@ def updateClient(request,pk):
     context = {'form':form}
     return render(request, 'admin/updateClient.html',context)
 
+# sign up new a student user
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def newStudent(request):
+    # redirect authenticated user to the dashboard
+    form = StudentRegisterForm()
+    logged_inuser = request.user
+    clientProfile  = Client.objects.get(user_id=logged_inuser.id)
+    context={'form': form}
+    if request.method == 'POST':
+        form  = StudentRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            #getting username from form
+            username = form.cleaned_data.get('username')
+            # associate user with admin
+            group = Group.objects.get(name='student')
+            user.groups.add(group)
+
+            # attach a profile to a client
+            Student.objects.create(
+                user = user,
+                client = clientProfile,
+            )
+
+            messages.success(request, 'Student account creation successful for ' + username + ',  please update the profile')
+            return redirect('update-student',pk=user.id)
+
+    return render (request,'admin/newStudent.html',{'form':form})
+
+
+
+# update student profile
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updateStudentProfile(request,pk):
+    user = request.user
+    ClientProfile  = Client.objects.get(user_id=user.id)
+    student  = Student.objects.get(user_id=pk)
+    form = StudentProfileForm(instance=student)
+    # form = StudentProfileForm()
+    context = {'form':form}
+    if request.method == 'POST':
+        form = StudentProfileForm(request.POST,request.FILES, instance=student)
+        if form.is_valid():
+            form.save()
+
+            messages.success(request, 'Student profile  modification/creation was  successful')
+            return redirect('view-student',pk=pk)
+        else:
+
+            messages.success(request, 'Something went wrong')
+            return redirect('update-student',pk=pk)
+
+    return render(request, 'admin/updateStudentProfile.html',context)
+
+# list all students
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def listStudents(request):
+    students = Student.objects.all()
+    context = {'students':students}
+    return render(request, "admin/list_students.html", context)
+
+
+# sign up new a teacher user
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def newTeacher(request):
+    # redirect authenticated user to the dashboard
+    form = StaffRegisterForm()
+    logged_inuser = request.user
+    clientProfile  = Client.objects.get(user_id=logged_inuser.id)
+    context={'form': form}
+    if request.method == 'POST':
+        form  = StaffRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            #getting username from form
+            username = form.cleaned_data.get('username')
+            # associate user with admin
+            group = Group.objects.get(name='teacher')
+            user.groups.add(group)
+
+            # attach a profile to a client
+            Teacher.objects.create(
+                user = user,
+                client = clientProfile,
+            )
+
+            messages.success(request, 'Account creation successful for ' + username + ',  please update the profile')
+            return redirect('update-teacher',pk=user.id)
+
+    return render (request,'admin/newTeacher.html',{'form':form})
+
+# update teacher profile
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updateTeacherProfile(request,pk):
+    user = request.user
+    # ClientProfile  = Client.objects.get(user_id=user.id)
+    teacher  = Teacher.objects.get(user_id=pk)
+    form = TeacherProfileForm(instance=teacher)
+    # form = StudentProfileForm
+    context = {'form':form}
+    if request.method == 'POST':
+        form = TeacherProfileForm(request.POST,request.FILES, instance=teacher)
+        if form.is_valid():
+            form.save()
+
+            messages.success(request, 'Teacher profile  modification/creation was  successful')
+            return redirect('view-teacher',pk=pk)
+        else:
+
+            messages.success(request, 'Something went wrong')
+            return redirect('update-teacher',pk=pk)
+
+    return render(request, 'admin/updateTeacherProfile.html',context)
+
+
+# student profile
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def viewTeacher(request,pk):
+    context ={}
+    teacher = Teacher.objects.get(user_id=pk)
+
+    context ={
+    'teacher':teacher,
+    }
+
+    return render(request, 'admin/view_teacher.html',context)
+
+
+# list teacher
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def listTeacher(request):
+    teacher = Teacher.objects.all()
+    context = {'teacher':teacher}
+    return render(request, "admin/list_teachers.html", context)
+
+
+# assign subject to teaccher
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def assignSubject(request):
+    form = AssignSubjectForm()
+    context = {'form':form}
+    client = Client.objects.get(user_id=request.user.id)
+    if request.method == "POST":
+        form = AssignSubjectForm(request.POST)
+        if form.is_valid():
+            teacher = request.POST["teacher"]
+            classroom = request.POST["classroom"]
+            subject = request.POST["subject"]
+
+            # #
+            teacherObj = Teacher.objects.get(id=teacher)
+            subjectObj = Subject.objects.get(id=subject)
+            classroomObj = StudentClass.objects.get(id=classroom)
+            result = SubjectTeacher.objects.filter(Q(teacher=teacherObj) & Q(classroom=classroomObj)
+            | Q(classroom=classroomObj) & Q(subject=subjectObj))
+
+            if result:
+
+                 messages.error(request, 'Unable to assign subject teacher, check the deails')
+                 return redirect('assign-subject')
+            else:
+
+
+                obj = SubjectTeacher.objects.create(
+                                     teacher = teacherObj,
+                                     classroom = classroomObj,
+                                     subject = subjectObj,
+                                     client = client
+                                         )
+                obj.save()
+                messages.success(request, 'Subject successfully assigned')
+                return redirect('assign-subject')
+    return render(request, "admin/assign_subject.html", context)
+
+# update subject assinged to teacher
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updateSubjectTeacher(request,pk):
+    subjectTeacher = SubjectTeacher.objects.get(id=pk)
+    form = AssignSubjectForm(instance=subjectTeacher)
+    context = {'form':form}
+    client = Client.objects.get(user_id=request.user.id)
+    if request.method == "POST":
+        form = AssignSubjectForm(request.POST,instance=subjectTeacher)
+        if form.is_valid():
+            # print('valid')
+            teacher = request.POST["teacher"]
+            classroom = request.POST["classroom"]
+            subject = request.POST["subject"]
+
+            # #
+            teacherObj = Teacher.objects.get(id=teacher)
+            subjectObj = Subject.objects.get(id=subject)
+            classroomObj = StudentClass.objects.get(id=classroom)
+            result = SubjectTeacher.objects.filter(Q(teacher=teacherObj) & Q(subject=subjectObj)
+            | Q(classroom=classroomObj) & Q(subject=subjectObj))
+
+            # result = SubjectTeacher.objects.filter(Q(teacher=teacherObj) & Q(classroom=classroomObj)
+            # | Q(classroom=classroomObj) & Q(subject=subjectObj))
+
+            if result:
+                 messages.error(request, 'Unable to update record, check for details')
+                 return redirect('update-subject-teacher',pk=pk)
+            else:
+                form.save()
+                messages.success(request, 'Record updated successfully')
+                return redirect('list-subject-teachers')
+    return render(request, "admin/assign_subject.html", context)
+
+
+
+# list subejct teachers
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def listSubjectTeachers(request):
+    records = SubjectTeacher.objects.all()
+    context = {'records':records}
+    return render(request, "admin/all_subject_teachers.html", context)
+
+# assign class teacher
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def assignClassTeacher(request):
+    form = AssignClassTeacherForm()
+    context = {'form':form}
+    client = Client.objects.get(user_id=request.user.id)
+    if request.method == "POST":
+        form = AssignClassTeacherForm(request.POST)
+        if form.is_valid():
+            # form.save()
+            teacher = request.POST["teacher"]
+            classroom = request.POST["classroom"]
+            session = request.POST["session"]
+            term = request.POST["term"]
+
+            # #
+            teacherObj = Teacher.objects.get(id=teacher)
+            sessionObj = Session.objects.get(id=session)
+            termObj = Term.objects.get(id=term)
+            classroomObj = StudentClass.objects.get(id=classroom)
+            result = ClassTeacher.objects.filter(Q(teacher=teacherObj) & Q(classroom=classroomObj))
+
+            if result:
+
+                 messages.error(request, 'Record already exist')
+                 return redirect('assign-class-teacher')
+            else:
+
+                obj = ClassTeacher.objects.create(
+                                     teacher = teacherObj,
+                                     classroom = classroomObj,
+                                     session =sessionObj,
+                                     term = termObj,
+                                     client = client
+                                         )
+                obj.save()
+                messages.success(request, 'Class teacher  successfully assigned')
+                return redirect('assign-class-teacher')
+    return render(request, "admin/assign_class_teacher.html", context)
+
+# update class teacher
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updateClassTeacher(request,pk):
+    classTeacher = ClassTeacher.objects.get(id=pk)
+    form = AssignClassTeacherForm(instance=classTeacher)
+    context = {'form':form}
+
+    if request.method == "POST":
+        form = AssignClassTeacherForm(request.POST,instance=classTeacher)
+        if form.is_valid():
+            # form.save()
+            teacher = request.POST["teacher"]
+            classroom = request.POST["classroom"]
+            session = request.POST["session"]
+            term = request.POST["term"]
+
+            # #
+            teacherObj = Teacher.objects.get(id=teacher)
+            sessionObj = Session.objects.get(id=session)
+            termObj = Term.objects.get(id=term)
+            classroomObj = StudentClass.objects.get(id=classroom)
+            result = ClassTeacher.objects.filter(Q(teacher=teacherObj) & Q(classroom=classroomObj))
+
+            if result:
+
+                 messages.error(request, 'Record already exist')
+                 return redirect('update-class-teacher',pk=pk)
+            else:
+                form.save()
+
+                # obj = ClassTeacher.objects.create(
+                #                      teacher = teacherObj,
+                #                      classroom = classroomObj,
+                #                      session =sessionObj,
+                #                      term = termObj,
+                #                      client = client
+                #                          )
+                # obj.save()
+                messages.success(request, 'Class teacher updated successfully')
+                return redirect('list-class-teacher')
+    return render(request, "admin/assign_class_teacher.html", context)
+
+
+# list class teachers
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def listClassTeacher(request):
+    records = ClassTeacher.objects.all()
+    context = {'records':records}
+    return render(request, "admin/list_class_teacher.html", context)
+
 # create a new term
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -94,8 +416,80 @@ def addTerm(request):
     context={'form':form}
     return render(request, "admin/addTerm.html", context)
 
-# Edit term
 
+# add subject per class
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def subjectPerClass(request):
+    client = Client.objects.get(user_id=request.user.id)
+    form = SubjectPerClassForm()
+    context={'form':form}
+    if request.method == "POST":
+
+        form = SubjectPerClassForm(request.POST)
+        if form.is_valid():
+
+            sch_class = form.cleaned_data.get("sch_class")
+            no_subject = form.cleaned_data.get("no_subject")
+
+            obj = SubjectPerClass.objects.create(
+                                 sch_class = sch_class,
+                                 no_subject = no_subject,
+                                 client = client
+                                     )
+            obj.save()
+            messages.success(request, 'Record added')
+            return redirect('subject-perclass')
+        else:
+            messages.success(request, 'Something went wrong')
+            return redirect('subject-perclass')
+
+    return render(request, "admin/subjectperclass.html", context)
+
+
+# list subject per class
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def listSubjectPerClass(request):
+    subjectsInClass = SubjectPerClass.objects.all()
+    context = {'subjectsInClass':subjectsInClass}
+    return render(request, "admin/subjectsperclass_list.html", context)
+
+
+# update subjects in class
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updateSubjectPerClass(request,pk):
+    subjectsInClass = SubjectPerClass.objects.get(id=pk)
+    form = SubjectPerClassForm(instance=subjectsInClass)
+    context={'form':form}
+    if request.method == "POST":
+
+        form = SubjectPerClassForm(request.POST,instance=subjectsInClass)
+        if form.is_valid():
+            form.save()
+
+            # sch_class = form.cleaned_data.get("sch_class")
+            # no_subject = form.cleaned_data.get("no_subject")
+            #
+            # obj = SubjectPerClass.objects.create(
+            #                      sch_class = sch_class,
+            #                      no_subject = no_subject,
+            #                      client = client
+            #                          )
+            # obj.save()
+            messages.success(request, 'Record updated!')
+            return redirect('subject-perclass-list')
+        else:
+            messages.success(request, 'Something went wrong')
+            return redirect('update=subject-perclass-list')
+
+    return render(request, "admin/updateSubjPerClass.html", context)
+
+
+
+# Edit term
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def editTerm(request,pk):
@@ -212,7 +606,7 @@ def updateClass(request,pk):
 
 
             messages.success(request, 'Class updated')
-            return redirect('admin-profile')
+            return redirect('all-classes')
         else:
 
             messages.success(request, 'oops! something went wrong')
@@ -282,9 +676,6 @@ def allSubjects(request):
     subjects = Subject.objects.all()
     context = {'subjects':subjects}
     return render(request, "admin/list-subjects.html", context)
-
-
-
 
 
 # add attendance settings
@@ -388,8 +779,6 @@ def resumptionDates(request):
     return render(request, "admin/list_resumption.html", context)
 
 
-
-
 # client profile
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -399,12 +788,12 @@ def profile(request):
     classlist = StudentClass.objects.all()[:3]
     sessions = Session.objects.all()[:3]
     subjects = Subject.objects.all()[:3]
-    subjects = Subject.objects.all()[:3]
+    # subjects = Subject.objects.all()[:3]
     resumption = ResumptionSetting.objects.all()
     # active settings
-    term = Term.objects.get(status='True')
-    activeSession = Session.objects.get(status='True')
-
+    term = Term.objects.all()[:3]
+    # activeSession = Session.objects.all()[:3]
+    attendance = AttendanceSetting.objects.all()[:3]
     # attendance = AttendanceSetting.objects.filter(term_id=term.id)
 
 
@@ -413,14 +802,53 @@ def profile(request):
     'classlist':classlist,
     'sessions':sessions,
     'subjects':subjects,
-    # 'attendance':attendance,
+    'attendance':attendance,
     'activeTerm':term,
-    'activeSession':activeSession,
+    # 'activeSession':activeSession,
     'resumption':resumption
     }
 
     return render(request, 'admin/client-profile.html',context)
 
+
+# student profile
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def viewStudent(request,pk):
+    context ={}
+    student = Student.objects.get(user_id=pk)
+
+    context ={
+    'student':student,
+    }
+
+    return render(request, 'admin/view_student_profile.html',context)
+
+
+# admission list
+# student profile
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def admissionList(request):
+    form = AdmissionListForm()
+    # context ={'form':form}
+    if request.method == 'POST':
+        form = AdmissionListForm(request.POST)
+        if form.is_valid():
+            term = Term.objects.get(id=request.POST['term'])
+            session = Session.objects.get(id=request.POST['session'])
+
+            # select students based on search parameter
+            result = Student.objects.filter(Q(session_admitted=session) & Q(term_admitted=term))
+
+            return redirect('admin-profile')
+        else:
+            # print('shhhh')
+            messages.error(request, 'oops! something went wrong')
+            return redirect('admission-list')
+        context ={'form':form}
+
+    return render(request, 'admin/filter_admission_list.html',context)
 
 # register user with group
 @unauthenticated_user
@@ -450,9 +878,6 @@ def register(request):
     return render (request,'accounts/register.html',{'form':form})
 
 
-
-
-#
 # register user with out group
 @unauthenticated_user
 def registerPage(request):
@@ -470,3 +895,19 @@ def registerPage(request):
     context={'form': form}
 
     return render (request,'accounts/register.html',{'form':form})
+
+
+# get state data via json
+def get_json_state_data(request,pk):
+
+    state_data = list(State.objects.filter(country_id=pk).values())
+
+    return JsonResponse({'data':state_data})
+
+
+
+# get lg data via json
+def get_json_lg_data(request,pk):
+    lg_data = list(Lga.objects.filter(state_id=pk).values())
+    # counrty_data = list(Country.objects.values())
+    return JsonResponse({'data':lg_data})
