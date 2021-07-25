@@ -111,7 +111,7 @@ class SubjectTeacher(models.Model):
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
     subject = models.ForeignKey(Subject,on_delete=models.DO_NOTHING)
     classroom = models.ForeignKey(StudentClass,on_delete=models.DO_NOTHING)
-    teacher = models.ForeignKey(Teacher,on_delete=models.DO_NOTHING)
+    teacher = models.ForeignKey("accounts.Teacher",on_delete=models.DO_NOTHING)
     date_created = models.DateTimeField(auto_now_add=True,null=True,blank=True)
     def __str__(self):
         return self.teacher.surname
