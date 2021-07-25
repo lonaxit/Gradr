@@ -9,8 +9,8 @@ from datetime import datetime
 
 class Scores(models.Model):
     # user = models.OneToOneField(User,on_delete=models.CASCADE,primary_key=True)
-    client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
-    student = models.ForeignKey(Student,on_delete=models.DO_NOTHING)
+    client = models.ForeignKey("accounts.Client",on_delete=models.DO_NOTHING)
+    student = models.ForeignKey("accounts.Student",on_delete=models.DO_NOTHING)
     term = models.ForeignKey("administrator.Term",on_delete=models.DO_NOTHING)
     session = models.ForeignKey("administrator.Session",on_delete=models.DO_NOTHING)
     studentclass = models.ForeignKey("administrator.StudentClass",on_delete=models.DO_NOTHING)
