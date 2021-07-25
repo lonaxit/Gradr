@@ -34,16 +34,19 @@
                           <div class="form-group col-4">
                             {{ form.studentclass.label_tag }}
                             {{form.studentclass}}
+
                           </div>
 
                           <div class="form-group col-4">
                             {{ form.subject.label_tag }}
                             {{form.subject}}
+                            Hint: {{scores.subject.subject}}
                           </div>
 
                           <div class="form-group col-4">
                             {{ form.studentnumber.label_tag }}
                             {{form.studentnumber}}
+                            Hint: {{scores.student.sur_name}} {{scores.student.first_name }} -- ID: {{scores.student.id}}
                           </div>
 
                         </div>
