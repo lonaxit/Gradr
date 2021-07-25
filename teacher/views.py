@@ -1,6 +1,16 @@
 from django.shortcuts import render,redirect
 
+
 from django.http import HttpResponse,JsonResponse
+
+
+# import models
+# from accounts.models import *
+# from administrator.models import *
+from accounts.models import Client,Student
+from administrator.models import Session,Term,StudentClass,Subject,SubjectTeacher
+from .models import *
+from django.db.models import Q, Sum, Avg, Max
 # import for user registration form
 from  django.contrib.auth.forms import UserCreationForm
 # from accounts.forms import ClientRegisterForm, contactForm, ClientForm,StudentRegisterForm
@@ -15,11 +25,6 @@ from django.contrib.auth.decorators import login_required
 # import for creating a group
 from django.contrib.auth.models import Group
 
-# import models
-from accounts.models import *
-from administrator.models import *
-from .models import *
-from django.db.models import Q
 
 #custom decorator
 from accounts.decorators import unauthenticated_user,allowed_users,admin_only
@@ -58,10 +63,11 @@ def addScores(request):
         activeTerm = Term.objects.get(status='True')
         activeSession = Session.objects.get(status='True')
 
-        teacherObj = SubjectTeacher.objects.get(id=loggedin.id)
-        subjectObj = Subject.objects.get(id=subj)
-        classroomObj = StudentClass.objects.get(id=studclass)
-        studObj = Student.objects.get(id=studid)
+        teacherObj = SubjectTeacher.objects.get(pk=loggedin.id)
+        subjectObj = Subject.objects.get(pk=subj)
+        classroomObj = StudentClass.objects.get(pk=studclass)
+        studObj = Student.objects.get(pk=studid)
+
 
         # check if record for the subject exist
         scores = Scores.objects.filter(Q(term=activeTerm) & Q(studentclass=classroomObj)
@@ -95,65 +101,78 @@ def addScores(request):
 
 # edit scores
 @allowed_users(allowed_roles=['teacher'])
-def editScores(request,pk):
+def editScores(request,id):
 
     loggedin = request.user.teacher
-    scores = Scores.objects.get(id=pk)
+    scores = Scores.objects.get(pk=id)
     form = ScoresForm(instance=scores)
+    # student = Student.objects.get(id=scores.student.id)
 
-    context = {'form':form}
+    context = {'form':form,'scores':scores}
     if request.method =='POST':
 
-        form = ScoresForm(request.POST,instance=scores)
 
-        # subj = request.POST['subject']
-        # studclass = request.POST['studentclass']
-        # studid = request.POST['studentnumber']
-        # ca1 = request.POST['firstscore']
-        # ca2 = request.POST['secondscore']
-        # ca3 = request.POST['thirdscore']
-        # totalass = request.POST['totalca']
-        # exam = request.POST['examscore']
-        # total = request.POST['subjecttotal']
+        # form = ScoresForm(request.POST,instance=scores)
+        subj = request.POST['subject']
+        studclass = request.POST['studentclass']
+        studid = request.POST['studentnumber']
 
-        # get sctive term and session
-        # activeTerm = Term.objects.get(status='True')
-        # activeSession = Session.objects.get(status='True')
-        #
-        # teacherObj = SubjectTeacher.objects.get(id=loggedin.id)
-        # subjectObj = Subject.objects.get(id=subj)
-        # classroomObj = StudentClass.objects.get(id=studclass)
-        # studObj = Student.objects.get(id=studid)
-        #
-        # # check if record for the subject exist
-        # scores = Scores.objects.filter(Q(term=activeTerm) & Q(studentclass=classroomObj)
-        # & Q(session=activeSession) & Q(subject=subjectObj) & Q(student=studObj) )
-        #
-        # if scores:
-        #     messages.error(request, 'Record exist')
-        #     return redirect('new-scores')
-        # else:
-        #     obj = Scores.objects.create(
-        #                          firstscore = ca1,
-        #                          secondscore = ca2,
-        #                          thirdscore = ca3,
-        #                          totalca = totalass,
-        #                          examscore = exam,
-        #                          session = activeSession,
-        #                          studentclass = classroomObj,
-        #                          subject = subjectObj,
-        #                          subjectteacher = teacherObj,
-        #                          term = activeTerm,
-        #                          subjecttotal = total,
-        #                          client = loggedin.client,
-        #                          student = studObj,
-        #                              )
-        #     obj.save()
-        #     messages.success(request, 'Scores created')
-            # return redirect('assign-subject')
+        ca1 = request.POST['firstscore']
+        ca2 = request.POST['secondscore']
+        ca3 = request.POST['thirdscore']
+        totalass = request.POST['totalca']
+        exam = request.POST['examscore']
+        total = request.POST['subjecttotal']
+
+        # get active term and session
+        activeTerm = Term.objects.get(status='True')
+        activeSession = Session.objects.get(status='True')
+
+        teacherObj = SubjectTeacher.objects.get(pk=loggedin.id)
+        subjectObj = Subject.objects.get(pk=subj)
+        classroomObj = StudentClass.objects.get(pk=studclass)
+        studObj = Student.objects.get(pk=studid)
+        
+        
+        scores.firstscore = ca1
+        scores.secondscore = ca2
+        scores.thirdscore = ca3
+        scores.totalca = totalass
+        scores.examscore = exam
+        scores.session = activeSession
+        scores.studentclass = classroomObj
+        scores.subject = subjectObj
+        scores.subjectteacher = teacherObj
+        scores.term = activeTerm
+        scores.subjecttotal = total
+        scores.client = loggedin.client
+        scores.student = studObj
+        scores.save()
+        
+        subjavg = subjectAverage(subjectObj,classroomObj)
+        
+        # update scores with subjaverage
+        scores = Scores.objects.filter(subject=subj,studentclass=classroomObj,term=activeTerm,session=activeSession).update(subjaverage=subjavg)
+        # Scores.objects.filter(id=data['id']).update(email=data['email'], phone=data['phone'])
+        messages.success(request, 'Scores edited successfully')
+        return redirect('filter-scores')
     # context = {'form':form}
     return render(request,'teacher/edit_scores.html',context)
 
+# remove scores
+
+@allowed_users(allowed_roles=['teacher'])
+def deleteScores(request,id):
+
+    loggedin = request.user.teacher
+    scores = Scores.objects.get(pk=id)
+    
+    scores.delete()
+    
+    messages.success(request, 'Scores deleted successfully')
+    return redirect('filter-scores')
+    
+    # return render(request,'teacher/edit_scores.html')
 
 
 # get scores filter form
@@ -206,3 +225,21 @@ def get_subjects(request,pk):
 
 
     return JsonResponse({'data':result})
+
+# find subject and class average
+def subjectAverage(subj,classroom):
+    # scores = Scores.objects.get(pk=id)
+    # get sctive term and session
+    activeTerm = Term.objects.get(status='True')
+    activeSession = Session.objects.get(status='True')
+
+    # get scores based on subject
+    # scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).distinct('student').aggregate(Sum('subjAverage'))
+    
+    scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).aggregate(scoresav=Avg('subjecttotal'))
+    
+    av = scores['scoresav']
+    
+    # scoresAv = scores.aggregate(Sum('subjAverage'))
+    
+    return av
