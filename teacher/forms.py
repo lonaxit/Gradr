@@ -65,7 +65,7 @@ class ScoresForm(forms.ModelForm):
     class Meta:
         model = Scores
         fields = '__all__'
-        exclude = ['client','user','student','term','session','subjectteacher','subjaverage','subjectposition']
+        exclude = ['client','student','term','session','subjectteacher','subjaverage','subjectposition']
 
 
 class ScoresFilterForm(forms.Form):
