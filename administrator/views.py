@@ -70,10 +70,11 @@ def updateClient(request,pk):
     context = {'form':form}
     return render(request, 'admin/updateClient.html',context)
 
+
 # sign up new a student user
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
-def newStudent(request):
+def newStudent(request): 
     # redirect authenticated user to the dashboard
     form = StudentRegisterForm()
     logged_inuser = request.user
@@ -213,7 +214,7 @@ def listTeacher(request):
     return render(request, "admin/list_teachers.html", context)
 
 
-# assign subject to teaccher
+# assign subject to teacher
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def assignSubject(request):
@@ -232,7 +233,7 @@ def assignSubject(request):
             subjectObj = Subject.objects.get(id=subject)
             classroomObj = StudentClass.objects.get(id=classroom)
             result = SubjectTeacher.objects.filter(Q(teacher=teacherObj) & Q(classroom=classroomObj)
-            | Q(classroom=classroomObj) & Q(subject=subjectObj))
+            & Q(subject=subjectObj))
 
             if result:
 
