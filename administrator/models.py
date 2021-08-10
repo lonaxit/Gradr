@@ -120,11 +120,12 @@ class SubjectTeacher(models.Model):
 # assign class teacher
 class ClassTeacher(models.Model):
     # user = models.ForeignKey(User,on_delete=models.DO_NOTHING)
-    client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
+    client = models.ForeignKey("accounts.Client",on_delete=models.DO_NOTHING)
     session = models.ForeignKey(Session,on_delete=models.DO_NOTHING)
     term = models.ForeignKey(Term,on_delete=models.DO_NOTHING)
     classroom = models.ForeignKey(StudentClass,on_delete=models.DO_NOTHING)
-    teacher = models.ForeignKey(Teacher,on_delete=models.DO_NOTHING)
+    teacher = models.ForeignKey("accounts.Teacher",on_delete=models.DO_NOTHING)
+    # name = models.CharField(max_length=200)
     date_created = models.DateTimeField(auto_now_add=True,null=True,blank=True)
     def __str__(self):
         return self.teacher.surname
