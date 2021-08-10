@@ -7,7 +7,7 @@ from django import forms
 
 
 
-# student profile form
+# Scores form
 class ScoresForm(forms.ModelForm):
 
     subject = forms.CharField(label='Subject',
@@ -23,16 +23,20 @@ class ScoresForm(forms.ModelForm):
                   widget=forms.Select(attrs={'class': 'form-control','id':'stud-class'}))
     studentnumber = forms.IntegerField(
                   label='Student Number',
+                  required=False,
                   widget=forms.NumberInput(attrs={'class': 'form-control','id':'student'}))
     firstscore = forms.DecimalField(
               label='First CA',
+              required=False,
               widget=forms.NumberInput(attrs={'class': 'form-control','id':'firstscore'}))
     secondscore = forms.DecimalField(
 
               label='Second CA',
+              required=False,
               widget=forms.NumberInput(attrs={'class': 'form-control','id':'secondscore'}))
     thirdscore = forms.DecimalField(
               label='Third CA',
+              required=False,
               widget=forms.NumberInput(attrs={'class': 'form-control','id':'thirdscore'}))
     totalca = forms.DecimalField(
               label='Total CA',
@@ -40,6 +44,7 @@ class ScoresForm(forms.ModelForm):
               widget=forms.NumberInput(attrs={'class': 'form-control','id':'totalca'}))
     examscore = forms.DecimalField(
               label='Exam Score',
+              required=False,
               widget=forms.NumberInput(attrs={'class': 'form-control','id':'examscore'}))
     subjecttotal = forms.DecimalField(
               label='Subject Total',
@@ -97,3 +102,38 @@ class ScoresFilterForm(forms.Form):
                   to_field_name='id',
                   label='Select session',
                   widget=forms.Select(attrs={'class': 'form-control','id':'session'}))
+    
+
+class ResultFilterForm(forms.Form):
+    classroom = forms.ModelChoiceField(
+                  queryset=StudentClass.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Choose Class',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'classroom'}))
+    term = forms.ModelChoiceField(
+                  queryset=Term.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Select Term',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'term'}))
+    session = forms.ModelChoiceField(
+                  queryset=Session.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Select session',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'session'}))
+
+# Comment form
+class CommentForm(forms.ModelForm):
+
+    classteachercomment = forms.CharField(label='Comment',
+             max_length=100, required=True,
+             widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Enter Comments','id':'comments'}))
+    class Meta:
+        model = Result
+        exclude = ['client','student','term','session','studentclass','classteacher','termtotal','termposition','termaverage','headteachercomment']
+
