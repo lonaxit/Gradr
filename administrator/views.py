@@ -16,6 +16,7 @@ from django.contrib.auth.models import Group
 
 # import models
 from accounts.models import *
+from teacher.models import *
 from .models import *
 from django.db.models import Q
 
@@ -751,7 +752,6 @@ def resumption_settings(request):
 
 
 # update resumption dates
-# update subject
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def updateResumption(request,pk):
@@ -841,13 +841,18 @@ def admissionList(request):
 
             # select students based on search parameter
             result = Student.objects.filter(Q(session_admitted=session) & Q(term_admitted=term))
-
-            return redirect('admin-profile')
+            if not result:
+                messages.error(request, 'No record exist')
+                return redirect('admission-list')
+            else:
+                context = { 'form':form,'result':result}
+                return render(request,'admin/filter_admission_list.html',context)
         else:
             # print('shhhh')
             messages.error(request, 'oops! something went wrong')
             return redirect('admission-list')
-        context ={'form':form}
+        
+    context ={'form':form}
 
     return render(request, 'admin/filter_admission_list.html',context)
 
@@ -878,6 +883,70 @@ def register(request):
 
     return render (request,'accounts/register.html',{'form':form})
 
+
+
+
+# create affective domain
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def addAffective(request):
+    # client = Client.objects.get(user_id=request.user.id)
+    form = AffectiveForm()
+    context = {}
+    if request.method == "POST":
+
+        form = AffectiveForm(request.POST)
+        if form.is_valid():
+            domain = form.cleaned_data.get("domain")
+            # client = client
+            obj = Affective.objects.create(
+                                 domain = domain
+                                     )
+            obj.save()
+            messages.success(request, 'Record added')
+            return redirect('add-affective')
+        else:
+            messages.error(request, 'Something went wrong')
+            return redirect('add-affective')
+    context={'form':form}
+    return render(request, "admin/addAffective.html", context)
+
+
+# list all affective domain
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def listAffective(request):
+    affective = Affective.objects.all()
+    
+    if affective:
+        context = { 'affective': affective}
+        return render(request, "admin/listAffective.html", context)
+    else:
+        messages.error(request, 'No record available')
+        return redirect('list-affective')
+    return render(request, "admin/listAffective.html")
+
+
+# update affective domain
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updateAffective(request,pk):
+
+    affective = Affective.objects.get(id=pk)
+    form = AffectiveForm(instance=affective)
+    context = {'form':form}
+    if request.method == "POST":
+
+        form = AffectiveForm(request.POST,instance=affective)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Record updated')
+            return redirect('list-affective')
+        else:
+            messages.success(request, 'Something went wrong')
+            return redirect('update-affective',pk=pk)
+    context={'form':form}
+    return render(request, "admin/updateAffective.html", context)
 
 # register user with out group
 @unauthenticated_user
