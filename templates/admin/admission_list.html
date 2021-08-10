@@ -1,0 +1,69 @@
+{% extends 'layout/base_layout.html' %}
+
+{% load static %}
+{% block title %} | Filtered Admission List {% endblock %}
+
+{% block content %}
+
+
+          <!-- list of recently added students  -->
+          <div class="card mb-3">
+          <div class="card-header">
+            <div class="row align-items-center justify-content-between">
+              <div class="col-6 col-sm-auto d-flex align-items-center pr-0">
+                <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Filtered admission List</h5>
+              </div>
+          </div>
+
+          <!-- datatable -->
+
+          <table class="table table-sm table-dashboard data-table no-wrap mb-0 fs--1 w-100">
+            <thead class="bg-200">
+              <tr>
+                <th class="sort">Name</th>
+                <th class="sort">Sex</th>
+                <th class="sort">Status</th>
+                <!-- <th class="sort">Age</th> -->
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white">
+              {% for teacher in teacher %}
+              <tr>
+                <td>{{teacher.surname}} {{teacher.firstname}}</td>
+                <td>{{teacher.sex}}</td>
+                <td>{{teacher.user.is_active}}</td>
+                <!-- <td>61</td> -->
+
+                <td class="align-middle white-space-nowrap">
+                  <div class="dropdown text-sans-serif">
+                    <button class="btn btn-link text-600 btn-sm dropdown-toggle btn-reveal mr-3" type="button" id="dropdown0" data-toggle="dropdown" data-boundary="html" aria-haspopup="true" aria-expanded="false"><span class="fas fa-ellipsis-h fs--1"></span></button>
+                    <div class="dropdown-menu dropdown-menu-right border py-0" aria-labelledby="dropdown0">
+                      <div class="bg-white py-2"><a class="dropdown-item" href="{% url 'view-teacher' teacher.user_id %}">View</a><a class="dropdown-item" href="{% url 'update-teacher' teacher.user_id %}">Edit</a>
+                        <!-- <div class="dropdown-divider"></div><a class="dropdown-item text-warning" href="#!">Archive</a><a class="dropdown-item text-danger" href="#!">Delete</a> -->
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot class="bg-200">
+              <tr>
+                <th>Name</th>
+                <th>Sex</th>
+                <th>Status</th>
+                <th>Action</th>
+
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- end datatable -->
+
+
+        </div>
+        </div>
+        <!-- end list of recently added students  -->
+
+  {% endblock %}
