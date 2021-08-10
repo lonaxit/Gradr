@@ -44,4 +44,8 @@ urlpatterns = [
   path('list-class-teacher', views.listClassTeacher, name='list-class-teacher'),
   path('update-class-teacher/<str:pk>', views.updateClassTeacher, name='update-class-teacher'),
   path('admission-list', views.admissionList, name='admission-list'),
+  
+  path('add-affective', views.addAffective, name='add-affective'),
+  path('list-affective', views.listAffective, name='list-affective'),
+  path('update-affective/<str:pk>', views.updateAffective, name='update-affective'),
 ]
