@@ -149,3 +149,20 @@ $('#examscore').on('keyup',function(event){
 
     subject_total.value = +totalexam;
 });
+
+
+//
+//
+const resultid = document.getElementById('result-id')
+$('#comment-table').on('click','#comment-id',function(event){
+    resultid.value = $(this).data('id');
+    // const session_ = $(this).data('session');
+    // const term = $(this).data('term');
+    // const classroom = $(this).data('classroom');
+    // console.log(resultid)
+    // var comm = comment.value = id
+    // var totalexam = +totalca.value + +examscore;
+    // // var total = fca.value + sca.value + tca.value
+    //
+    // subject_total.value = +totalexam;
+});
