@@ -2,6 +2,7 @@ from django.forms import ModelForm
 from  django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import *
+from teacher.models import *
 from django import forms
 
 
@@ -464,3 +465,15 @@ class AdmissionListForm(forms.Form):
                   to_field_name='id',
                   label='Select Session',
                   widget=forms.Select(attrs={'class': 'form-control','id':'session'}))
+
+
+class AffectiveForm(ModelForm):
+    class Meta:
+        model = Affective
+        fields = '__all__'
+        # exclude = ['client']
+        widgets= {'domain': forms.TextInput(attrs={'class':'form-control','placeholder':'Enter new domain','id':'affective-domain'}),
+                # 'venuetypes' : forms.Select(queryset=Venuetypes.objects.all,
+                #                                     attrs={'class' : 'venue_type_select'}
+                #                                     )
+                  }
