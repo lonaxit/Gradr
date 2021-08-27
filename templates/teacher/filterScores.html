@@ -99,7 +99,7 @@
             <tbody class="bg-white">
               {% for score in scores %}
               <tr>
-                <td>{{score.student.sur_name |capfirst}}</td>
+                <td>{{score.student.sur_name |capfirst}} {{score.student.first_name |capfirst}}</td>
                 <td>{{score.studentclass}}</td>
                 <td>{{score.subject|truncatechars:5}}</td>
                 <td>{{score.term|truncatewords:1}}</td>
