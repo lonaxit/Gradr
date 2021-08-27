@@ -1,0 +1,83 @@
+{% extends 'layout/base_layout.html' %}
+
+{% load static %}
+{% load humanize %}
+{% block title %} | Psychomotor Skills {% endblock %}
+
+{% block content %}
+
+
+     <div class="card mt-3 mb-3">
+                <div class="card-body">
+                  <div class="row justify-content-between align-items-center">
+                    <div class="col-md">
+                      <h5 class="mb-2 mb-md-0"></h5>
+                    </div>
+                    <div class="col-auto">
+                      <a href="{% url 'add-psychomotor' %}" class="btn btn-falcon-default btn-sm mr-2">New</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+          <!-- list of recently added students  -->
+          <div class="card mb-3">
+          <div class="card-header">
+            <div class="row align-items-center justify-content-between">
+              <div class="col-6 col-sm-auto d-flex align-items-center pr-0">
+                <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Psychomotor Skills</h5>
+              </div>
+          </div>
+
+          <!-- datatable -->
+       
+
+          <table class="table table-sm table-dashboard data-table no-wrap mb-0 fs--1 w-100">
+            <thead class="bg-200">
+              <tr>
+                <th class="sort">Skill</th>
+                <th class="sort">Created On</th>
+                <th class="sort">Updated On</th>
+                
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white">
+              {% for skill in skills %}
+              <tr>
+                <td>{{skill.skill}}</td>
+                <td>{{skill.date_created|naturaltime}}</td>
+                <td>{{skill.date_modified|naturaltime}}</td>
+                <!-- <td>61</td> -->
+
+                <td class="align-middle white-space-nowrap">
+                  <div class="dropdown text-sans-serif">
+                    <button class="btn btn-link text-600 btn-sm dropdown-toggle btn-reveal mr-3" type="button" id="dropdown0" data-toggle="dropdown" data-boundary="html" aria-haspopup="true" aria-expanded="false"><span class="fas fa-ellipsis-h fs--1"></span></button>
+                    <div class="dropdown-menu dropdown-menu-right border py-0" aria-labelledby="dropdown0">
+                      <div class="bg-white py-2"><a class="dropdown-item" href="{% url 'update-psychomotor' skill.pk %}">Edit</a>
+                      
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot class="bg-200">
+              <tr>
+                <th>Skill</th>
+                <th>Created On</th>
+                <th>Updated On</th>
+                <th>Action</th>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- end datatable -->
+
+
+        </div>
+        </div>
+        <!-- end list of recently added students  -->
+
+  {% endblock %}
