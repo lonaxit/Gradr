@@ -38,6 +38,13 @@ def teacherHome(request):
     context = {'students':students}
     return render(request,'teacher/teacher_home.html',context)
 
+# list all my subjects
+def mySubjects(request):
+    loggedin = request.user.teacher
+    my_subjects = SubjectTeacher.objects.filter(teacher=loggedin.pk)
+    context = {'mysubjects':my_subjects}
+    return render(request,'teacher/my_subjects.html',context)
+
 
 # add new scores
 @allowed_users(allowed_roles=['teacher'])
@@ -262,9 +269,9 @@ def resultFilter(request):
         
         if request.POST.get('result-id'):
             
-            # print
             resultObj = Result.objects.get(pk=request.POST['result-id'])
             # select all result that fit criteria
+            # the result is used to send back to the page
             result = Result.objects.filter(Q(term=resultObj.term) & Q(studentclass=resultObj.studentclass)
             & Q(session=resultObj.session)).order_by('termposition')
             
@@ -275,12 +282,8 @@ def resultFilter(request):
             resultObj.save()
             
             messages.success(request, 'Comment added')
-            
             context ={ 'form':form,'result':result}
-            return render(request,'teacher/filterResult.html',context)
-
-            
-            
+            return render(request,'teacher/filterResult.html',context)            
         else:
             classroom = request.POST['classroom']
             session = request.POST['session']
@@ -297,15 +300,17 @@ def resultFilter(request):
                     messages.error(request, 'No record exist')
                     return redirect('filter-result')
                 else:
-                    
+                       
                     context ={ 'form':form,'result':result}
                     return render(request,'teacher/filterResult.html',context)
+                
     context = {'form':form}
     return render(request,'teacher/filterResult.html',context)
 
-# Add comment
+
+# Add term Attendance
 @allowed_users(allowed_roles=['teacher'])
-def addComment(request):
+def addAttendance(request):
 
     loggedin = request.user.teacher.pk
 
@@ -315,28 +320,339 @@ def addComment(request):
         
 
     if request.method =='POST':
+        
+        if request.POST.get('result-id'):
+            
+            resultObj = Result.objects.get(pk=request.POST['result-id'])
+            
+            # select all result that fit criteria
+            # the result is used to send back to the page
+            
+            result = Result.objects.filter(Q(term=resultObj.term) & Q(studentclass=resultObj.studentclass)
+            & Q(session=resultObj.session)).order_by('termposition')
+            
+            # save/update comment here
+            attendance = request.POST['attendance']
+            
+            resultObj.attendance=attendance
+            resultObj.save()
+            
+            messages.success(request, 'Attendance added')
+            context ={ 'form':form,'result':result}
+            return render(request,'teacher/addAttendance.html',context)            
+        else:
+            classroom = request.POST['classroom']
+            session = request.POST['session']
+            term = request.POST['term']
 
+            if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
+                
+                # select reesult
+                result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).order_by('termposition')
+
+                #check for availability of result
+                if not result:
+                    messages.error(request, 'No record exist')
+                    return redirect('filter-result')
+                else:   
+                    context ={ 'form':form,'result':result}
+                    return render(request,'teacher/addAttendance.html',context)
+                
+    context = {'form':form}
+    return render(request,'teacher/addAttendance.html',context)
+
+
+
+
+# Select result from finish button action
+@allowed_users(allowed_roles=['teacher'])
+def resultComments(request,classroom,term,session):
+
+    loggedin = request.user.teacher.pk
+
+    form = ResultFilterForm()
+    # entry = ClassTeacher.objects.filter(teacher=loggedin)
+    result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).order_by('termposition')
+
+    if request.method =='POST':
+        
+        if request.POST.get('result-id'):
+            
+            resultObj = Result.objects.get(pk=request.POST['result-id'])
+            # select all result that fit criteria
+            # the result is used to send back to the page
+            result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+            & Q(session=session)).order_by('termposition')
+            
+            # save/update comment here
+            comment = request.POST['comment']
+            
+            resultObj.classteachercomment=comment
+            resultObj.save()
+            
+            messages.success(request, 'Comment added')
+            context ={ 'form':form,'result':result}
+            return render(request,'teacher/filterResult.html',context)            
+        else:
+            classroom = request.POST['classroom']
+            session = request.POST['session']
+            term = request.POST['term']
+
+            if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
+                
+                # select reesult
+                result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).order_by('termposition')
+
+                #check for availability of result
+                if not result:
+                    messages.error(request, 'No record exist')
+                    return redirect('filter-result')
+                else:
+                       
+                    context ={ 'form':form,'result':result}
+                    return render(request,'teacher/filterResult.html',context)
+                
+    context ={'form':form,'result':result}
+    return render(request,'teacher/filterResult.html',context)
+
+
+# Result Summary
+@allowed_users(allowed_roles=['teacher'])
+def resultSummary(request):
+
+    loggedin = request.user.teacher.pk
+
+    form = ResultFilterForm()
+    # entry = ClassTeacher.objects.filter(teacher=loggedin)
+    
+        
+
+    if request.method =='POST':
+        
+       
         classroom = request.POST['classroom']
         session = request.POST['session']
         term = request.POST['term']
 
         if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
-            
+                
             # select reesult
-            result = Result.objects.filter(Q(term=term) & Q(term=term) & Q(studentclass=classroom)
-            & Q(session=session)).order_by('termposition')
+            result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).order_by('termposition')
+            resultObj = result.first()
+           
 
+            nocommentsCount = result.filter(classteachercomment__isnull=True).count()
+            yescommentsCount = result.filter(classteachercomment__isnull=False).count()
+            
+            affective = Studentaffective.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).values('student').distinct('student')
+            
+            
+            yesaffective = result.filter(student__in=affective).count()
+            noaffective = result.exclude(student__in=affective).count()
+            
+            
+            psychomotor = Studentpsychomotor.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).values('student').distinct('student')
+            
+            
+            yespsycho = result.filter(student__in=psychomotor).count()
+            nopsycho = result.exclude(student__in=psychomotor).count()
+            
+            noattendance = result.filter(attendance__isnull=True).count()
+            yesattendance = result.filter(attendance__isnull=False).count()
+
+            
+            # find pass rate
+            totalStudents = result.count()
+            
+            passedStudents = result.filter(termaverage__gte=40).count()
+            
+            passRate = passedStudents/totalStudents*100
+            
+            
+            
             #check for availability of result
             if not result:
-                
                 messages.error(request, 'No record exist')
-                return redirect('filter-result')
+                return redirect('result-summary')
             else:
-                
-                context ={ 'form':form,'result':result}
-                return render(request,'teacher/filterResult.html',context)
+                context ={ 'form':form,
+                          'result':result,
+                          'yescomment':yescommentsCount,
+                          'nocomment':nocommentsCount,
+                          'yesaffective':yesaffective,
+                          'noaffective':noaffective,
+                          'yespsycho':yespsycho,
+                          'nopsycho':nopsycho,
+                          'yesattendance':yesattendance,
+                          'noattendance':noattendance,
+                          'resultObj':resultObj,
+                          'passRate':passRate,
+                          'totalStudents':totalStudents
+                          }
+                return render(request,'teacher/resultSummary.html',context)
     context = {'form':form}
-    return render(request,'teacher/filterResult.html',context)
+    return render(request,'teacher/resultSummary.html',context)
+
+# submit result
+@allowed_users(allowed_roles=['teacher'])
+def submitResult(request,classroom,term,session):
+    
+
+    loggedin = request.user.teacher.pk
+
+    if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():     
+                # select reesult
+        result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+        & Q(session=session))
+        
+        # Update the status of the result
+        result.update(status='submitted')
+        submitCount = result.filter(status__isnull=False).count()
+        messages.success(request, 'Result Submitted Successfully!')
+        context={ 'result':result,'published':submitCount}
+        return render(request, 'teacher/resultSummary')
+
+    return redirect('result-summary')
+
+
+
+# Add student affective
+@allowed_users(allowed_roles=['teacher'])
+def addStudentAffective(request,pk):
+
+    loggedin = request.user.teacher.pk
+    
+    client = Client.objects.get(pk=request.user.teacher.client.pk)
+    
+    resultObj = Result.objects.get(pk=pk)
+    student = Student.objects.get(pk=resultObj.student.pk)
+    term = Term.objects.get(pk=resultObj.term.pk)
+    session = Session.objects.get(pk=resultObj.session.pk)
+    classroom = StudentClass.objects.get(pk=resultObj.studentclass.pk)
+    classteacher = ClassTeacher.objects.get(teacher=loggedin)
+
+    form = StudentAffectiveForm()
+
+
+    list_traits = Studentaffective.objects.filter(Q(term=resultObj.term.pk) & Q(studentclass=resultObj.studentclass.pk) & Q(session=resultObj.session.pk) & Q(student=student.pk))
+
+    if request.method =='POST':
+
+        affective = request.POST['affective']
+        rating = request.POST['rating']
+        
+        affectiveObj = Affective.objects.get(pk=affective)
+        ratingObj = Rating.objects.get(pk=rating)
+        
+        
+
+        if ClassTeacher.objects.filter(teacher=loggedin,classroom=resultObj.studentclass.pk,session=resultObj.session.pk,term=resultObj.term.pk).exists():
+            
+            # select traits
+            affective_traits = Studentaffective.objects.filter(Q(term=resultObj.term.pk) & Q(studentclass=resultObj.studentclass.pk) & Q(session=resultObj.session.pk) & Q(affective=affective) & Q(student=student.pk))
+
+            #check for availability of selected trait
+            if affective_traits:
+                messages.error(request, 'Selected trait already added!')
+                return redirect('add-student-affective',pk=pk)
+            else:  
+                # add the trait to the database
+                obj = Studentaffective.objects.create(
+                                     affective = affectiveObj,
+                                     classteacher = classteacher,
+                                     rating = ratingObj,
+                                     client = client,
+                                     session = session,
+                                     student=student,
+                                     studentclass=classroom,
+                                     term=term
+                                         )
+                obj.save()
+                messages.success(request, 'Trait added successfully!')
+                context ={ 'form':form,'list_traits':list_traits}
+                return redirect('add-student-affective',pk=pk)
+        else:
+            
+            messages.error(request, 'You are not allowed to add affective traits')
+            context = {'form':form,'student':student,'resultObj':resultObj}
+            return render(request,'teacher/addStudentAffectiveDomain.html',context)
+            
+    context = {'form':form,'student':student,'resultObj':resultObj,'list_traits':list_traits}
+    return render(request,'teacher/addStudentAffectiveDomain.html',context)
+
+
+
+#  Add student psycho
+@allowed_users(allowed_roles=['teacher'])
+def addStudentPsycho(request,pk):
+
+    loggedin = request.user.teacher.pk
+    
+    client = Client.objects.get(pk=request.user.teacher.client.pk)
+    
+    resultObj = Result.objects.get(pk=pk)
+    student = Student.objects.get(pk=resultObj.student.pk)
+    term = Term.objects.get(pk=resultObj.term.pk)
+    session = Session.objects.get(pk=resultObj.session.pk)
+    classroom = StudentClass.objects.get(pk=resultObj.studentclass.pk)
+    classteacher = ClassTeacher.objects.get(teacher=loggedin)
+
+    form = StudentPsychomotorForm()
+
+
+    list_traits = Studentpsychomotor.objects.filter(Q(term=resultObj.term.pk) & Q(studentclass=resultObj.studentclass.pk) & Q(session=resultObj.session.pk) & Q(student=student.pk))
+
+    if request.method =='POST':
+
+        psychomotor = request.POST['psychomotor']
+        rating = request.POST['rating']
+        
+        psychomotorObj = Psychomotor.objects.get(pk=psychomotor)
+        ratingObj = Rating.objects.get(pk=rating)
+        
+        
+
+        if ClassTeacher.objects.filter(teacher=loggedin,classroom=resultObj.studentclass.pk,session=resultObj.session.pk,term=resultObj.term.pk).exists():
+            
+            # select traits
+            psycho_traits = Studentpsychomotor.objects.filter(Q(term=resultObj.term.pk) & Q(studentclass=resultObj.studentclass.pk) & Q(session=resultObj.session.pk) & Q(psychomotor=psychomotor) & Q(student=student.pk))
+
+            #check for availability of selected trait
+            if psycho_traits:
+                messages.error(request, 'Selected trait already added!')
+                return redirect('add-student-psycho',pk=pk)
+            else:  
+                # add the trait to the database
+                obj = Studentpsychomotor.objects.create(
+                                     psychomotor = psychomotorObj,
+                                     classteacher = classteacher,
+                                     rating = ratingObj,
+                                     client = client,
+                                     session = session,
+                                     student=student,
+                                     studentclass=classroom,
+                                     term=term
+                                         )
+                obj.save()
+                messages.success(request, 'Psychomotor Trait added successfully!')
+                context ={ 'form':form,'list_traits':list_traits}
+                return redirect('add-student-psycho',pk=pk)
+        else:
+            
+            messages.error(request, 'You are not allowed to add psychomotor traits')
+            context = {'form':form,'student':student,'resultObj':resultObj}
+            return render(request,'teacher/addStudentPsychomotorDomain.html',context)
+            
+    context = {'form':form,'student':student,'resultObj':resultObj,'list_traits':list_traits}
+    return render(request,'teacher/addStudentPsychomotorDomain.html',context)
+
+
 
 # get subjects on class change
 def get_subjects(request,pk):
@@ -657,6 +973,8 @@ def processTerminalResult(scoresObj):
         # update  term position
         terminalPosition(scoresObj.studentclass)
         
+        
+#   TODO: REMOVE DELETE RESULT METHOD
 # delete result object
 def deleteResult(studentid,classroom):
     
