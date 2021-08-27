@@ -21,6 +21,7 @@
   <thead class="bg-200">
     <tr>
       <th scope="col">Name</th>
+      <th scope="col">Subject Code</th>
       <th scope="col">Created On</th>
       <!-- <th class="sort">Age</th> -->
       <th>Action</th>
@@ -29,7 +30,8 @@
   <tbody class="bg-white">
     {% for subject in subjects %}
     <tr>
-      <td>{{subject.subject}}</td>
+      <td>{{subject.subject|upper}}</td>
+      <td>{{subject.subject_code|upper}}</td>
       <td>{{subject.date_created}}</td>
       <!-- <td>61</td> -->
 
@@ -49,6 +51,7 @@
   <tfoot class="bg-200">
     <tr>
       <th scope="col">Name</th>
+      <th scope="col">Subject Code</th>
       <th scope="col">Created On</th>
       <th>Action</th>
 
