@@ -40,6 +40,7 @@ class StudentClass(models.Model):
 class Subject(models.Model):
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
     subject = models.CharField(max_length=100,null=True,blank=True)
+    subject_code = models.CharField(max_length=6)
     date_created = models.DateTimeField(auto_now_add=True,null=True)
     def __str__(self):
         return self.subject
@@ -111,7 +112,9 @@ class SubjectTeacher(models.Model):
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
     subject = models.ForeignKey(Subject,on_delete=models.DO_NOTHING)
     classroom = models.ForeignKey(StudentClass,on_delete=models.DO_NOTHING)
+    session = models.ForeignKey(Session,on_delete=models.DO_NOTHING)
     teacher = models.ForeignKey("accounts.Teacher",on_delete=models.DO_NOTHING)
+    status = models.CharField(max_length=50, default='Active')
     date_created = models.DateTimeField(auto_now_add=True,null=True,blank=True)
     def __str__(self):
         return self.teacher.surname
