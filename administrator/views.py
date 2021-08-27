@@ -636,10 +636,12 @@ def addSubject(request):
         form = SubjectForm(request.POST)
         if form.is_valid():
             subject = form.cleaned_data.get("subject")
+            subject_code = form.cleaned_data.get("subject_code")
             client = client
             obj = Subject.objects.create(
                                  subject = subject,
-                                 client = client
+                                 client = client,
+                                 subject_code=subject_code
                                      )
             obj.save()
             messages.success(request, 'Record added')
@@ -663,7 +665,8 @@ def updateSubject(request,pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Subject updated')
-            return redirect('admin-profile')
+            # return redirect('admin-profile')
+            return redirect('all-subjects')
         else:
             messages.success(request, 'oops! something went wrong')
             return redirect('update-subject')
@@ -947,6 +950,137 @@ def updateAffective(request,pk):
             return redirect('update-affective',pk=pk)
     context={'form':form}
     return render(request, "admin/updateAffective.html", context)
+
+
+# create psychomotor
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def addPsychomotor(request):
+    # client = Client.objects.get(user_id=request.user.id)
+    form = PsychomotorForm()
+    context = {}
+    if request.method == "POST":
+
+        form = PsychomotorForm(request.POST)
+        if form.is_valid():
+            skill = form.cleaned_data.get("skill")
+            # client = client
+            obj = Psychomotor.objects.create(
+                                 skill = skill
+                                     )
+            obj.save()
+            messages.success(request, 'Record added')
+            return redirect('add-psychomotor')
+        else:
+            messages.error(request, 'Something went wrong')
+            return redirect('add-psychomotor')
+    context={'form':form}
+    return render(request, "admin/addPsychomotor.html", context)
+
+
+# list all psychomotor skills
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def listPsychomotor(request):
+    skills = Psychomotor.objects.all()
+    
+    if skills:
+        context = { 'skills': skills}
+        return render(request, "admin/listPsychomotor.html", context)
+    else:
+        messages.error(request, 'No record available')
+        return redirect('list-psychomotor')
+    return render(request, "admin/listPsychomotor.html")
+
+
+# update Psychomotor skill
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updatePsychomotor(request,pk):
+
+    skill = Psychomotor.objects.get(id=pk)
+    form = PsychomotorForm(instance=skill)
+    context = {'form':form}
+    if request.method == "POST":
+
+        form = PsychomotorForm(request.POST,instance=skill)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Record updated')
+            return redirect('list-psychomotor')
+        else:
+            messages.success(request, 'Something went wrong')
+            return redirect('update-psychomotor',pk=pk)
+    context={'form':form}
+    return render(request, "admin/updatePsychomotor.html", context)
+
+
+# create rating
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def addRating(request):
+   
+    form = RatingForm()
+    context = {}
+    if request.method == "POST":
+
+        form = RatingForm(request.POST)
+        if form.is_valid():
+            
+            description = form.cleaned_data.get("description")
+            score = form.cleaned_data.get("scores")
+            
+            obj = Rating.objects.create(
+                                 description = description,
+                                 scores=score
+                                     )
+            obj.save()
+            messages.success(request, 'Record added')
+            return redirect('add-rating')
+        else:
+            
+            messages.error(request, 'Something went wrong')
+            return redirect('add-rating')
+    context={'form':form}
+    return render(request, "admin/addRating.html", context)
+
+
+# list all ratings
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def listRating(request):
+    ratings = Rating.objects.all()
+    
+    if ratings:
+        context = { 'ratings': ratings}
+        return render(request, "admin/listRating.html", context)
+    else:
+        messages.error(request, 'No record available')
+        return redirect('list-rating')
+    return render(request, "admin/listRating.html")
+
+
+# update Rating
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updateRating(request,pk):
+
+    rating = Rating.objects.get(id=pk)
+    form = RatingForm(instance=rating)
+    context = {'form':form}
+    if request.method == "POST":
+
+        form = RatingForm(request.POST,instance=rating)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Record updated')
+            return redirect('list-rating')
+        else:
+            messages.success(request, 'Something went wrong')
+            return redirect('update-rating',pk=pk)
+    context={'form':form}
+    return render(request, "admin/updateRating.html", context)
+
 
 # register user with out group
 @unauthenticated_user
