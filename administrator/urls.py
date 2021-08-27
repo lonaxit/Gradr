@@ -48,4 +48,12 @@ urlpatterns = [
   path('add-affective', views.addAffective, name='add-affective'),
   path('list-affective', views.listAffective, name='list-affective'),
   path('update-affective/<str:pk>', views.updateAffective, name='update-affective'),
+  
+  path('add-psychomotor', views.addPsychomotor, name='add-psychomotor'),
+  path('list-psychomotor', views.listPsychomotor, name='list-psychomotor'),
+  path('update-psychomotor/<str:pk>', views.updatePsychomotor, name='update-psychomotor'),
+  
+  path('add-rating', views.addRating, name='add-rating'),
+  path('list-rating', views.listRating, name='list-rating'),
+  path('update-rating/<str:pk>', views.updateRating, name='update-rating'),
 ]
