@@ -79,6 +79,9 @@ class SubjectForm(forms.ModelForm):
     subject = forms.CharField(label='Subject',
              max_length=200,
              widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter subject','id':'subject'}))
+    subject_code = forms.CharField(label='Subject Code',
+             max_length=6,required=True,
+             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter Subject Code','id':'subject_code'}))
 # field_z = forms.ModelChoiceField(
 #     queryset=AnyClass.objects.all(),
 #     empty_label=None,
@@ -405,6 +408,12 @@ class AssignSubjectForm(forms.ModelForm):
                   label='Select Teacher',
                   to_field_name='id',
                   widget=forms.Select(attrs={'class': 'form-control','id':'teacher'}))
+    
+    session = forms.ModelChoiceField(
+                  queryset=Session.objects.all(),
+                  label='Select Session',
+                  to_field_name='id',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'sch_session'}))
 
 
     class Meta:
@@ -473,7 +482,29 @@ class AffectiveForm(ModelForm):
         fields = '__all__'
         # exclude = ['client']
         widgets= {'domain': forms.TextInput(attrs={'class':'form-control','placeholder':'Enter new domain','id':'affective-domain'}),
-                # 'venuetypes' : forms.Select(queryset=Venuetypes.objects.all,
-                #                                     attrs={'class' : 'venue_type_select'}
-                #                                     )
                   }
+
+class PsychomotorForm(ModelForm):
+    class Meta:
+        model = Psychomotor
+        fields = '__all__'
+        # exclude = ['client']
+        widgets= {'skill': forms.TextInput(attrs={'class':'form-control','placeholder':'Enter new psychomotor','id':'psychomotor-domain'}),
+                  }
+
+
+# Rating form
+class RatingForm(forms.ModelForm):
+    
+    description = forms.CharField(
+              label='Description',
+              required=True,
+              widget=forms.TextInput(attrs={'class': 'form-control','id':'rating-description'}))
+    scores = forms.CharField(
+              label='Rating Score',
+              required=True,
+              widget=forms.NumberInput(attrs={'class': 'form-control','id':'rating-score'}))
+    class Meta:
+        model = Rating
+        fields = '__all__'
+        # exclude = ['client','user']
