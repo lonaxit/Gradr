@@ -50,7 +50,7 @@
             </div>
           </a>
           <ul class="nav collapse" id="academics" data-parent="#navbarVerticalCollapse">
-            <li class="nav-item"><a class="nav-link" href="">My Subjects</a>
+            <li class="nav-item"><a class="nav-link" href="{% url 'my-subjects' %}">My Subjects</a>
             </li>
             <li class="nav-item"><a class="nav-link" href="">Class Room</a>
             </li>
@@ -59,10 +59,18 @@
 
             <li class="nav-item"><a class="nav-link dropdown-indicator" href="#more" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="more">More</a>
               <ul class="nav collapse" id="more" data-parent="#academics">
-                <li class="nav-item"><a class="nav-link" href="{% url 'filter-scores' %}">Scores</a>
+                <li class="nav-item"><a class="nav-link" href="{% url 'filter-scores' %}"> List Scores</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'filter-result' %}">Result</a>
+                <li class="nav-item"><a class="nav-link" href="{% url 'filter-result' %}">Add Comments</a>
                 </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'add-attendance' %}">Add Attendance</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'result-summary' %}">Result Summary</a>
+                </li>
+                {% comment %} <li class="nav-item"><a class="nav-link" href="">Affective</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="">Psychomotor</a>
+                </li> {% endcomment %}
               </ul>
             </li>
           </ul>
