@@ -132,11 +132,20 @@
               </ul>
             </li>
 
-            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#psychomotor" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="affective">Psychomotor</a>
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#psychomotor" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="psychomotor">Psychomotor</a>
               <ul class="nav collapse" id="psychomotor" data-parent="#settings">
-                <li class="nav-item"><a class="nav-link" href="">Add</a>
+                <li class="nav-item"><a class="nav-link" href="{% url 'add-psychomotor' %}">Add</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="">List</a>
+                <li class="nav-item"><a class="nav-link" href="{% url 'list-psychomotor' %}">List</a>
+                </li>
+              </ul>
+            </li>
+
+              <li class="nav-item"><a class="nav-link dropdown-indicator" href="#rating-score" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="rating-score">Rating</a>
+              <ul class="nav collapse" id="rating-score" data-parent="#settings">
+                <li class="nav-item"><a class="nav-link" href="{% url 'add-rating' %}">Add</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'list-rating' %}">List</a>
                 </li>
               </ul>
             </li>
