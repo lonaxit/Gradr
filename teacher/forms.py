@@ -51,22 +51,6 @@ class ScoresForm(forms.ModelForm):
               # disabled='True',
               widget=forms.NumberInput(attrs={'class': 'form-control','id':'subjecttotal'}))
 
-    # def clean_subject(self):
-    #     data = self.cleaned_data['subject']
-    #     # data = Subject.objects.get(id=subj_id)
-    #
-    #     # Check if a date is not in the past.
-    #     if not data:
-    #         raise ValidationError(_('Invalid date - renewal in past'))
-    #
-    #     # # Check if a date is in the allowed range (+4 weeks from today).
-    #     # if data > datetime.date.today() + datetime.timedelta(weeks=4):
-    #     #     raise ValidationError(_('Invalid date - renewal more than 4 weeks ahead'))
-    #     #
-    #     # Remember to always return the cleaned data.
-    #     return data
-
-
     class Meta:
         model = Scores
         fields = '__all__'
@@ -137,3 +121,47 @@ class CommentForm(forms.ModelForm):
         model = Result
         exclude = ['client','student','term','session','studentclass','classteacher','termtotal','termposition','termaverage','headteachercomment']
 
+
+# Add Affective domain
+class StudentAffectiveForm(forms.ModelForm):
+    
+    affective = forms.ModelChoiceField(
+                  queryset=Affective.objects.all(),
+                  empty_label=None,
+                  to_field_name='id',
+                  label='Affective Domain',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'affective-domain'}))
+    rating = forms.ModelChoiceField(
+                  queryset=Rating.objects.all(),
+                  empty_label=None,
+                  to_field_name='id',
+                  label='Rating',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'rating'}))
+
+    class Meta:
+        model = Studentaffective
+        fields = '__all__'
+        exclude = ['client','student','term','session','classteacher','studentclass']
+        
+        
+class StudentPsychomotorForm(forms.ModelForm):
+    
+    psychomotor = forms.ModelChoiceField(
+                  queryset=Psychomotor.objects.all(),
+                  empty_label=None,
+                  to_field_name='id',
+                  label='Psychomotor Domain',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'psychomotor-domain'}))
+    rating = forms.ModelChoiceField(
+                  queryset=Rating.objects.all(),
+                  empty_label=None,
+                  to_field_name='id',
+                  label='Rating',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'rating'}))
+
+    class Meta:
+        model = Studentpsychomotor
+        fields = '__all__'
+        exclude = ['client','student','term','session','classteacher','studentclass']
+        
+    
