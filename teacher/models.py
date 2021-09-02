@@ -113,3 +113,23 @@ class Studentpsychomotor(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.student.sur_name
+    
+# Admission Number Table
+class AdmissionNumber(models.Model):
+    client = models.ForeignKey("accounts.Client",on_delete=models.DO_NOTHING)
+    serial_no = models.IntegerField(null=True)
+    status = models.CharField(max_length=20,default='No')
+    date_created = models.DateTimeField(auto_now_add=True,null=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.serial_no
+    
+    
+# Registration number prefix
+class RegPrefix(models.Model):
+    client = models.ForeignKey("accounts.Client",on_delete=models.DO_NOTHING)
+    reg_prefix = models.CharField(max_length=20)
+    date_created = models.DateTimeField(auto_now_add=True,null=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.reg_prefix
