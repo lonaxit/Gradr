@@ -28,6 +28,10 @@ urlpatterns = [
   path('update-student/<str:pk>', views.updateStudentProfile, name='update-student'),
   path('view-student/<str:pk>', views.viewStudent, name='view-student'),
   path('list-students', views.listStudents, name='list-students'),
+  path('update-number/<str:pk>', views.updateNumber, name='update-number'),
+  path('define-prefix', views.definePrefix, name='define-prefix'),
+  path('list-prefix', views.listPrefix, name='list-prefix'),
+  path('update-prefix/<str:pk>', views.updatePrefix, name='update-prefix'),
   # path('country-json', views.get_json_country_data, name='country-json'),
   path('state-json/<str:pk>', views.get_json_state_data, name='state-json'),
   path('lg-json/<str:pk>', views.get_json_lg_data, name='lg-json'),
@@ -56,4 +60,6 @@ urlpatterns = [
   path('add-rating', views.addRating, name='add-rating'),
   path('list-rating', views.listRating, name='list-rating'),
   path('update-rating/<str:pk>', views.updateRating, name='update-rating'),
+  path('generate-numbers', views.generateAdmissionNumber, name='generate-numbers')
+  
 ]
