@@ -20,5 +20,8 @@ urlpatterns = [
   path('submit-result/<str:classroom>/<str:term>/<str:session>', views.submitResult, name='submit-result'),
   # path('lg-json/<str:pk>', views.get_json_lg_data, name='lg-json'),
   # path('update-profile/<str:pk>', views.updateClient, name='update-profile'),
+  
+  path('result-pdf', views.render_pdf_view, name='result-pdf'),
+  path('print-result', views.printResultHtml, name='print-result'),
 
 ]
