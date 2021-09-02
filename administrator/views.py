@@ -59,8 +59,6 @@ def generateAdmissionNumber(request):
     ClientProfile  = Client.objects.get(user_id=user.id)
     if request.method == 'POST':
         
-        
-    
         start = request.POST['start']
         end = request.POST['end']
         
