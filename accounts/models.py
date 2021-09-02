@@ -83,6 +83,8 @@ class Student(models.Model):
     country = models.ForeignKey("administrator.Country",on_delete=models.DO_NOTHING,null=True)
     state = models.ForeignKey("administrator.State",on_delete=models.DO_NOTHING,null=True)
     lga = models.CharField(max_length=200,null=True,blank=True)
+    reg_no = models.IntegerField()
+    full_reg_no = models.CharField(max_length=30,blank=True,null=True)
     # lga = models.ForeignKey("administrator.Lga",on_delete=models.DO_NOTHING,null=True)
     city = models.CharField(max_length=200,null=True,blank=True)
     religion = models.CharField(max_length=20,blank=True,null=True, choices=RELIGION)
@@ -96,6 +98,7 @@ class Student(models.Model):
     term_admitted = models.ForeignKey("administrator.Term",on_delete=models.DO_NOTHING,null=True)
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING,null=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True)
+
 
     def __str__(self):
         return self.sur_name
