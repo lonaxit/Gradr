@@ -50,6 +50,155 @@ def createClient(request):
     context = {'form':form}
     return render(request, 'admin/client-setting.html',context)
 
+# Generate Admission Numbers
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def generateAdmissionNumber(request):
+    
+    user = request.user
+    ClientProfile  = Client.objects.get(user_id=user.id)
+    if request.method == 'POST':
+        
+        
+    
+        start = request.POST['start']
+        end = request.POST['end']
+        
+        if not start or not end:
+            messages.success(request, 'All fields are required')
+            return redirect('generate-numbers')
+        else:
+            
+        # # create range and save in the database
+            for i in range(int(start),int(end)):
+                obj = AdmissionNumber.objects.create(
+                    client= ClientProfile,
+                    serial_no = i
+                )
+                obj.save()
+                
+        messages.success(request, 'Admission numbers generated successfully')
+        return redirect('generate-numbers')
+    
+    return render(request, 'admin/generateNumbers.html')
+
+# update student with admission number
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updateNumber(request,pk):
+    
+    user = request.user
+    student  = Student.objects.get(pk=pk)
+    context ={
+        'student': student
+    }
+    ClientProfile  = Client.objects.get(user_id=user.id)
+    if request.method == 'POST':
+        
+        reg_no = request.POST['reg_no']
+        
+        if not reg_no:
+            
+            messages.success(request, 'Please provide a value')
+            return redirect('update-numbers',pk=pk)
+        else:
+            # select the first reg number
+            no_item = AdmissionNumber.objects.filter(status='No').first()
+            no_ = no_item.serial_no
+            
+             # Get prefix
+            sch_prefix = RegPrefix.objects.filter(client=ClientProfile).first()
+            
+            # casting int to str 
+            full_adm_string = sch_prefix.reg_prefix + student.session_admitted.session + str(no_)
+            
+            
+            # update student with the serial reg number
+            student.reg_no = no_
+            student.full_reg_no = full_adm_string
+            student.save()
+            no_item.status='Yes'
+            no_item.save()
+            messages.success(request, 'Admission number updated successfully')
+            # return to list students
+            return redirect('list-students')
+    
+    return render(request, 'admin/update_number.html',context)
+
+
+# define prefix
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def definePrefix(request):
+    
+    user = request.user
+    ClientProfile  = Client.objects.get(user_id=user.id)
+  
+    if request.method == 'POST':
+        
+        prefix = request.POST['prefix']
+        
+        if not prefix:
+            
+            messages.success(request, 'Please provide a string')
+            return redirect('define-prefix')
+        else:
+            # save the record
+           
+            obj = RegPrefix.objects.create(
+                reg_prefix = prefix,
+                client = ClientProfile
+            )
+            obj.save()
+            messages.success(request, 'Admission prefix created  successfully')
+            # return to list students
+            return redirect('list-prefix')
+    
+    return render(request, 'admin/definePrefix.html')
+
+
+# list all prefix
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def listPrefix(request):
+    prefix = RegPrefix.objects.all()
+    context={
+        'prefix':prefix
+    }
+    return render(request, 'admin/list_prefix.html',context)
+
+
+# update prefix
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updatePrefix(request,pk):
+    
+    user = request.user
+    prefixObj  = RegPrefix.objects.get(pk=pk)
+    
+    context = {
+        'prefix': prefixObj
+    }
+    
+    if request.method == 'POST':
+        
+        prefix = request.POST['prefix']
+        
+        if not prefix:
+            
+            messages.success(request, 'Please provide a string')
+            return redirect('update-prefix',pk=pk)
+        else:
+          
+            prefixObj.reg_prefix=prefix
+            prefixObj.save()
+            messages.success(request, 'Updated successful!')
+            # return to list students
+            return redirect('list-prefix')
+    
+    return render(request, 'admin/update_prefix.html',context)
+
+
 # update client
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
