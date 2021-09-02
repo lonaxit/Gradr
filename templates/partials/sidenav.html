@@ -160,6 +160,16 @@
             </li>
 
 
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#regno" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="regno">Admision Numbers</a>
+              <ul class="nav collapse" id="regno" data-parent="#settings">
+                <li class="nav-item"><a class="nav-link" href="{% url 'generate-numbers' %}">New Numbers</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="">List Numbers</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'define-prefix' %}"> Define Prefix </a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'list-prefix' %}">List Prefix</a></li>  
+              </ul>
+            </li>
+
           </ul>
         </li>
 
