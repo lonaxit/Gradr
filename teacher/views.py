@@ -30,6 +30,65 @@ from django.contrib.auth.models import Group
 from accounts.decorators import unauthenticated_user,allowed_users,admin_only
 # Create your views here.
 
+# xhtml2pdf imports
+# import os
+# from django.conf import settings
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+# from django.contrib.staticfiles import finder
+
+def printResultHtml(request):
+    teacher_loggedin = request.user.teacher
+    result = Result.objects.get(pk=3)
+    academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
+    student_count = Scores.objects.filter(studentclass=result.studentclass,term=result.term,session=result.session).distinct('student').count()
+    affective = Studentaffective.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
+    
+    psychomotor = Studentpsychomotor.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
+    
+
+    
+    # academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
+    context={
+        'scores':academic_scores,
+        'result':result,
+        'student_count':student_count,
+        'affective':affective,
+        'psychomotor':psychomotor
+    }
+    return render(request,'teacher/print.html',context)
+
+
+def render_pdf_view(request):
+    template_path = 'teacher/print.html'
+    context = {'myvar': 'this is your template context'}
+    # Create a Django response object, and specify content_type as pdf
+    response = HttpResponse(content_type='application/pdf')
+    # if download: run this line of code below
+    response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+    
+    # if display: run this line of code
+    # response['Content-Disposition'] = 'filename="report.pdf"'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # create a pdf
+    # removed link call back
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    #    html, dest=response, link_callback=link_callback)
+    # if error then show some funy view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
+
+
+
+
+
+
 @login_required(login_url='login')
 # @admin_only
 @allowed_users(allowed_roles=['teacher'])
