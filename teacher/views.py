@@ -61,8 +61,24 @@ def printResultHtml(request):
 
 
 def render_pdf_view(request):
+    teacher_loggedin = request.user.teacher
+    result = Result.objects.get(pk=3)
+    academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
+    student_count = Scores.objects.filter(studentclass=result.studentclass,term=result.term,session=result.session).distinct('student').count()
+    affective = Studentaffective.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
+    
+    psychomotor = Studentpsychomotor.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
+    
     template_path = 'teacher/print.html'
-    context = {'myvar': 'this is your template context'}
+    # academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
+    context={
+        'scores':academic_scores,
+        'result':result,
+        'student_count':student_count,
+        'affective':affective,
+        'psychomotor':psychomotor
+    }
+    # context = {'myvar': 'this is your template context'}
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
     # if download: run this line of code below
@@ -96,6 +112,35 @@ def teacherHome(request):
     students = Student.objects.all()
     context = {'students':students}
     return render(request,'teacher/teacher_home.html',context)
+
+# teacher profile
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['teacher'])
+def teacherProfile(request):
+
+    return render(request, 'teacher/teacher_profile.html')
+
+# change avatar
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['teacher'])
+def teacherAvatar(request):
+    teacher = request.user.tutor
+    # teacher  = Teacher.objects.get(pk=pk)
+    
+    form = TeacherImageUpdateForm(instance=teacher)
+    
+    context = {'form':form}
+    if request.method == 'POST':
+        form = TeacherImageUpdateForm(request.POST,request.FILES,instance=teacher)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Photo changed')
+            return redirect('teacher-profile')
+        else:
+             messages.success(request, 'Photo update failed')
+             return redirect('teacher-avatar')
+            
+    return render(request, 'teacher/changeTeacherAvatar.html',context)
 
 # list all my subjects
 def mySubjects(request):
@@ -317,7 +362,7 @@ def scoresFilter(request):
 @allowed_users(allowed_roles=['teacher'])
 def resultFilter(request):
 
-    loggedin = request.user.teacher.pk
+    loggedin = request.user.tutor.pk
 
     form = ResultFilterForm()
     # entry = ClassTeacher.objects.filter(teacher=loggedin)
