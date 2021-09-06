@@ -21,14 +21,15 @@
       </div>
     </li>
   </ul>
+
   <ul class="navbar-nav navbar-nav-icons ml-auto flex-row align-items-center">
 
-
+<!--
     <li class="nav-item">
       <a class="nav-link px-0 notification-indicator notification-indicator-warning notification-indicator-fill icon-indicator" href="../e-commerce/shopping-cart.html"><span class="fas fa-shopping-cart fs-4" data-fa-transform="shrink-7"></span><span class="notification-indicator-number">1</span></a>
-    </li>
+    </li> -->
 
-    <li class="nav-item dropdown dropdown-on-hover">
+    <!-- <li class="nav-item dropdown dropdown-on-hover">
       <a class="nav-link notification-indicator notification-indicator-primary px-0 icon-indicator" id="navbarDropdownNotification" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-bell fs-4" data-fa-transform="shrink-6"></span></a>
       <div class="dropdown-menu dropdown-menu-right dropdown-menu-card" aria-labelledby="navbarDropdownNotification">
         <div class="card card-notification shadow-none" style="max-width: 20rem">
@@ -95,7 +96,7 @@
         </div>
       </div>
 
-    </li>
+    </li> -->
 
     <li class="ml-4 mr-2 nav-item">Hello, {{ request.user }}</li>
 
@@ -103,7 +104,7 @@
 
         <div class="avatar avatar-xl">
 
-          <img class="rounded-circle" src="" alt="" />
+          <img class="rounded-circle" src="{{request.user.administrator.profile_image.url}}" alt="" />
 
         </div>
       </a>
@@ -112,12 +113,12 @@
           <!-- <a class="dropdown-item font-weight-bold text-warning" href="#!"><span class="fas fa-crown mr-1"></span><span>Go Pro</span></a> -->
 
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#!">Set status</a>
-          <a class="dropdown-item" href="../pages/profile.html">Profile &amp; account</a>
-          <a class="dropdown-item" href="#!">Feedback</a>
+          <!-- <a class="dropdown-item" href="#!">Set status</a> -->
+          <a class="dropdown-item" href="{% url 'admin-profile' %}">Profile &amp; account</a>
+          <!-- <a class="dropdown-item" href="#!">Feedback</a> -->
 
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="{% url 'admin-profile' %}">Settings</a>
+          <!-- <a class="dropdown-item" href="">Settings</a> -->
           <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
         </div>
       </div>
