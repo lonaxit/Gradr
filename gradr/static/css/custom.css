@@ -1,14 +1,14 @@
 /* styles for terminal result */
 
 .national-emblem {
-    /* border-left: 3px solid deepskyblue; */
+   
     margin-bottom: 10px;
     text-align: center;
     margin-top: 10px;
     vertical-align: top;
 }
 .national-emblem p {
-      /* font-size: .5em; */
+      
       line-height: 1.3;
       margin-bottom: 0px; }
 .logo-img {
@@ -27,7 +27,7 @@
 }
     .examtable-print td {
       border: 1px solid #000;
-      /* text-align: left; */
+      
       font-size: .54em;
       white-space: nowrap;
     }
@@ -37,21 +37,7 @@
       font-size: .6em;
     }
 
-    /* .item-container h6 {
-        font-family: "Fjalla One";
-        font-size: .6em;
-        color: #000; }
 
-      .item-container span {
-        font-family: "Quicksand";
-        color: #000;
-        font-size: .7em;
-        font-weight: 400;
-     }
-
-      .item-container  {
-        font-size: .5em;
-        color: #000; } */
 
         .grading-items {
             display: inline-block;
