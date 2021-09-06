@@ -104,7 +104,7 @@
 
         <div class="avatar avatar-xl">
 
-          <img class="rounded-circle" src="" alt="" />
+          <img class="rounded-circle" src="{{ request.user.tutor.profile_image.url}}" alt="" />
 
         </div>
       </a>
@@ -114,9 +114,9 @@
 
           <div class="dropdown-divider"></div>
           <!-- <a class="dropdown-item" href="#!">Set status</a> -->
-          <a class="dropdown-item" href="">Profile</a>
+          <a class="dropdown-item" href="{% url 'teacher-profile' %}">Profile</a>
           <!-- <a class="dropdown-item" href="#!">Feedback</a> -->
-
+          <a class="dropdown-item" href="">Change Password</a>
           <div class="dropdown-divider"></div>
           <!-- <a class="dropdown-item" href="{% url 'admin-profile' %}">Settings</a> -->
           <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
