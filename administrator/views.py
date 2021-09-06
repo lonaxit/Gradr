@@ -87,8 +87,10 @@ def updateNumber(request,pk):
     
     user = request.user
     student  = Student.objects.get(pk=pk)
+    no_item = AdmissionNumber.objects.filter(status='No').first()
+    no_ = no_item.serial_no
     context ={
-        'student': student
+        'serial_no': no_
     }
     ClientProfile  = Client.objects.get(user_id=user.id)
     if request.method == 'POST':
@@ -101,8 +103,7 @@ def updateNumber(request,pk):
             return redirect('update-numbers',pk=pk)
         else:
             # select the first reg number
-            no_item = AdmissionNumber.objects.filter(status='No').first()
-            no_ = no_item.serial_no
+           
             
              # Get prefix
             sch_prefix = RegPrefix.objects.filter(client=ClientProfile).first()
@@ -239,13 +240,13 @@ def newStudent(request):
             user.groups.add(group)
 
             # attach a profile to a client
-            Student.objects.create(
+            StudObj = Student.objects.create(
                 user = user,
                 client = clientProfile,
             )
-
+            StudObj.save()
             messages.success(request, 'Student account creation successful for ' + username + ',  please update the profile')
-            return redirect('update-student',pk=user.id)
+            return redirect('update-student',pk=StudObj.pk)
 
     return render (request,'admin/newStudent.html',{'form':form})
 
@@ -256,8 +257,9 @@ def newStudent(request):
 @allowed_users(allowed_roles=['admin'])
 def updateStudentProfile(request,pk):
     user = request.user
+    student  = Student.objects.get(pk=pk)
     ClientProfile  = Client.objects.get(user_id=user.id)
-    student  = Student.objects.get(user_id=pk)
+    
     form = StudentProfileForm(instance=student)
     # form = StudentProfileForm()
     context = {'form':form}
@@ -267,13 +269,36 @@ def updateStudentProfile(request,pk):
             form.save()
 
             messages.success(request, 'Student profile  modification/creation was  successful')
-            return redirect('view-student',pk=pk)
+            return redirect('view-student',pk=student.pk)
         else:
+            
 
             messages.success(request, 'Something went wrong')
             return redirect('update-student',pk=pk)
 
     return render(request, 'admin/updateStudentProfile.html',context)
+
+# Change student photo
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def studentPhoto(request,pk):
+    user = request.user
+    student  = Student.objects.get(pk=pk)
+    
+    form = StudentImageUpdateForm(instance=student)
+    
+    context = {'form':form}
+    if request.method == 'POST':
+        form = StudentImageUpdateForm(request.POST,request.FILES,instance=student)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Photo changed')
+            return redirect('view-student',pk=pk)
+        else:
+             messages.success(request, 'Photo update failed')
+             return redirect('student-photo',pk=pk)
+            
+    return render(request, 'admin/changeProfilePicture.html',context)
 
 # list all students
 @login_required(login_url='login')
@@ -304,13 +329,15 @@ def newTeacher(request):
             user.groups.add(group)
 
             # attach a profile to a client
-            Teacher.objects.create(
+            TeacherObj = Teacher.objects.create(
                 user = user,
                 client = clientProfile,
             )
+            TeacherObj.save()
+            
 
             messages.success(request, 'Account creation successful for ' + username + ',  please update the profile')
-            return redirect('update-teacher',pk=user.id)
+            return redirect('update-teacher',pk=TeacherObj.pk)
 
     return render (request,'admin/newTeacher.html',{'form':form})
 
@@ -320,7 +347,7 @@ def newTeacher(request):
 def updateTeacherProfile(request,pk):
     user = request.user
     # ClientProfile  = Client.objects.get(user_id=user.id)
-    teacher  = Teacher.objects.get(user_id=pk)
+    teacher  = Teacher.objects.get(pk=pk)
     form = TeacherProfileForm(instance=teacher)
     # form = StudentProfileForm
     context = {'form':form}
@@ -339,12 +366,12 @@ def updateTeacherProfile(request,pk):
     return render(request, 'admin/updateTeacherProfile.html',context)
 
 
-# student profile
+# teacher profile
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def viewTeacher(request,pk):
     context ={}
-    teacher = Teacher.objects.get(user_id=pk)
+    teacher = Teacher.objects.get(pk=pk)
 
     context ={
     'teacher':teacher,
@@ -360,6 +387,30 @@ def listTeacher(request):
     teacher = Teacher.objects.all()
     context = {'teacher':teacher}
     return render(request, "admin/list_teachers.html", context)
+
+
+# update teacher photo
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def teacherPhoto(request,pk):
+    user = request.user
+    teacher  = Teacher.objects.get(pk=pk)
+    
+    form = TeacherImageUpdateForm(instance=teacher)
+    
+    context = {'form':form}
+    if request.method == 'POST':
+        form = TeacherImageUpdateForm(request.POST,request.FILES,instance=teacher)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Photo changed')
+            return redirect('view-teacher',pk=pk)
+        else:
+             messages.success(request, 'Photo update failed')
+             return redirect('teacher-photo',pk=pk)
+            
+    return render(request, 'admin/changeTeacherPicture.html',context)
+
 
 
 # assign subject to teacher
@@ -967,10 +1018,12 @@ def profile(request):
 @allowed_users(allowed_roles=['admin'])
 def viewStudent(request,pk):
     context ={}
-    student = Student.objects.get(user_id=pk)
+    student = Student.objects.get(pk=pk)
+    result = Result.objects.filter(student=student).distinct('session')
 
     context ={
     'student':student,
+    'result':result
     }
 
     return render(request, 'admin/view_student_profile.html',context)
