@@ -3,7 +3,7 @@
 {% load humanize %}
 
 {% load static %}
-{% block title %} | Create Profile {% endblock %}
+{% block title %} View Teacher Profile {% endblock %}
 
 {% block content %}
 <div class="card mb-3">
@@ -47,7 +47,9 @@
               <h5 class="mb-2">{{teacher.surname}}, {{teacher.firstname}} {{teacher.othername}}</h5>
               <!-- <a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-plus fs--2 mr-1"></span>Add note</a> -->
               <button class="btn btn-falcon-default btn-sm dropdown-toggle ml-2 dropdown-caret-none" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-ellipsis-h"></span></button>
-              <div class="dropdown-menu"><a class="dropdown-item" href="{% url 'update-teacher' teacher.user_id %}">Edit</a>
+              <div class="dropdown-menu">
+              <a class="dropdown-item" href="{% url 'update-teacher' teacher.pk %}">Edit</a>
+              <a class="dropdown-item" href="{% url 'teacher-photo' teacher.pk %}">Change Photo</a>
                 <!-- <a class="dropdown-item" href="#">Report</a><a class="dropdown-item" href="#">Archive</a> -->
                 <!-- <div class="dropdown-divider"></div><a class="dropdown-item text-danger" href="#">Delete user</a> -->
               </div>
@@ -204,11 +206,11 @@
 
 
           </div>
-          <div class="card-footer border-top text-right"><a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-dollar-sign fs--2 mr-1"></span>Refund</a><a class="btn btn-falcon-default btn-sm ml-2" href="#!"><span class="fas fa-check fs--2 mr-1"></span>Save changes</a></div>
+          <!-- <div class="card-footer border-top text-right"><a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-dollar-sign fs--2 mr-1"></span>Refund</a><a class="btn btn-falcon-default btn-sm ml-2" href="#!"><span class="fas fa-check fs--2 mr-1"></span>Save changes</a></div> -->
         </div>
 
         <!-- logs -->
-        <div class="card">
+        <!-- <div class="card">
           <div class="card-header">
             <h5 class="mb-0">Logs</h5>
           </div>
@@ -257,7 +259,7 @@
             </div>
           </div>
           <div class="card-footer bg-light p-0"><a class="btn btn-link btn-block" href="#!">View more logs<span class="fas fa-chevron-right fs--2 ml-1"></span></a></div>
-        </div>
+        </div> -->
 
 
 
