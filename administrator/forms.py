@@ -3,15 +3,32 @@ from  django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import *
 from teacher.models import *
+from accounts.models import *
 from django import forms
 
 
+# student photo form
+class StudentImageUpdateForm(forms.ModelForm):
+    profile_image = forms.ImageField(label='Upload Your logo',
+                            max_length=100,
+                            widget=forms.FileInput(attrs={'class': ''}))
+    class Meta:
+        model=Student
+        fields=['profile_image']
+        exclude = ['client','user','reg_no','full_reg_no','sur_name','first_name','other_name','sex','dob','country']
+       
+       
+# teacher photo form
+class TeacherImageUpdateForm(forms.ModelForm):
+    profile_image = forms.ImageField(label='Upload Your logo',
+                            max_length=100,
+                            widget=forms.FileInput(attrs={'class': ''}))
+    class Meta:
+        model=Teacher
+        fields=['profile_image']
+        exclude = ['client','user','surname','firstname','othername','sex','dob','country'] 
 
-# class TermForm(forms.Form):
-#
-#     term = forms.CharField(label='Term',
-#                            max_length=100, required=True,
-#                            widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter new term','id':'term'}))
+     
 
 
 # new term form
@@ -299,7 +316,7 @@ class StudentProfileForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = '__all__'
-        exclude = ['client','user']
+        exclude = ['client','user','reg_no','full_reg_no','profile_image']
 
 
 # teacher profile form
