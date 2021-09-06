@@ -18,9 +18,10 @@
               <div class="bg-holder rounded-soft rounded-bottom-0" style="background-image:url({% static 'img/generic/4.jpg' %});">
               </div>
               <!--/.bg-holder-->
-
+              
               <div class="avatar avatar-5xl avatar-profile"><img class="rounded-circle img-thumbnail shadow-sm" src="{{ student.profile_image.url }}" width="200" alt="" /></div>
             </div>
+            
             <div class="card-body">
               <!-- <div class="row">
                 <div class="col-lg-8">
@@ -47,7 +48,8 @@
               <h5 class="mb-2">{{student.sur_name}}, {{student.first_name}} {{student.other_name}}</h5>
               <!-- <a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-plus fs--2 mr-1"></span>Add note</a> -->
               <button class="btn btn-falcon-default btn-sm dropdown-toggle ml-2 dropdown-caret-none" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-ellipsis-h"></span></button>
-              <div class="dropdown-menu"><a class="dropdown-item" href="{% url 'update-student' student.user_id %}">Edit</a>
+              <div class="dropdown-menu"><a class="dropdown-item" href="{% url 'update-student' student.pk %}">Edit</a>
+              <a class="dropdown-item" href="{% url 'student-photo' student.pk %}">Change Photo</a>
                 <!-- <a class="dropdown-item" href="#">Report</a><a class="dropdown-item" href="#">Archive</a> -->
                 <!-- <div class="dropdown-divider"></div><a class="dropdown-item text-danger" href="#">Delete user</a> -->
               </div>
@@ -223,23 +225,27 @@
 
 
           </div>
-          <div class="card-footer border-top text-right"><a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-dollar-sign fs--2 mr-1"></span>Refund</a><a class="btn btn-falcon-default btn-sm ml-2" href="#!"><span class="fas fa-check fs--2 mr-1"></span>Save changes</a></div>
+          <!-- <div class="card-footer border-top text-right"><a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-dollar-sign fs--2 mr-1"></span>Refund</a><a class="btn btn-falcon-default btn-sm ml-2" href="#!"><span class="fas fa-check fs--2 mr-1"></span>Save changes</a></div> -->
         </div>
 
         <!-- logs -->
         <div class="card">
           <div class="card-header">
-            <h5 class="mb-0">Logs</h5>
+            <h5 class="mb-0">Class Logs</h5>
           </div>
           <div class="card-body border-top p-0">
+            {% for result in result %}
             <div class="row no-gutters align-items-center border-bottom py-2 px-3">
-              <div class="col-md-auto pr-3"><span class="badge badge-soft-success badge-pill">200</span></div>
-              <div class="col-md mt-1 mt-md-0"><code>POST /v1/invoiceitems</code></div>
-              <div class="col-md-auto">
+              <div class="col-md-auto pr-3"><span class="badge badge-soft-success badge-pill">{{result.studentclass}}</span></div>
+              <div class="col-md mt-1 mt-md-0"><code>{{result.session}}</code></div>
+              <!-- <div class="col-md-auto">
                 <p class="mb-0">2019/02/23 15:29:45</p>
-              </div>
+              </div> -->
             </div>
-            <div class="row no-gutters align-items-center border-bottom py-2 px-3">
+            {% endfor %}
+
+
+            <!-- <div class="row no-gutters align-items-center border-bottom py-2 px-3">
               <div class="col-md-auto pr-3"><span class="badge badge-soft-warning badge-pill">400</span></div>
               <div class="col-md mt-1 mt-md-0"><code>POST /v1/invoiceitems</code></div>
               <div class="col-md-auto">
@@ -273,9 +279,10 @@
               <div class="col-md-auto">
                 <p class="mb-0">2019/02/01 12:29:34</p>
               </div>
-            </div>
+            </div> -->
+
           </div>
-          <div class="card-footer bg-light p-0"><a class="btn btn-link btn-block" href="#!">View more logs<span class="fas fa-chevron-right fs--2 ml-1"></span></a></div>
+          <div class="card-footer bg-light p-0"><a class="btn btn-link btn-block" href="#!">View more<span class="fas fa-chevron-right fs--2 ml-1"></span></a></div>
         </div>
 
 
