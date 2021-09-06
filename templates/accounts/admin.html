@@ -48,17 +48,17 @@
                 <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Recent Students</h5>
               </div>
               <div class="col-6 col-sm-auto ml-auto text-right pl-0">
-                <div class="d-none" id="purchases-actions">
+                <!-- <div class="d-none" id="purchases-actions">
                   <div class="input-group input-group-sm">
                     <select class="custom-select cus" aria-label="Bulk actions">
                       <option selected="">Bulk actions</option>
-                      <!-- <option value="Refund">Refund</option> -->
+                      <option value="Refund">Refund</option>
                       <option value="Delete">Delete</option>
-                      <!-- <option value="Archive">Archive</option> -->
+                      <option value="Archive">Archive</option>
                     </select>
                     <button class="btn btn-falcon-default btn-sm ml-2" type="button">Apply</button>
                   </div>
-                </div>
+                </div> -->
                 <div id="dashboard-actions">
                   <a href="{% url 'new-student' %}" class="btn btn-falcon-default btn-sm" type="button"><span class="fas fa-plus" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ml-1">New</span></a>
                   <!-- <button class="btn btn-falcon-default btn-sm mx-2" type="button"><span class="fas fa-filter" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ml-1">Filter</span></button>
@@ -72,15 +72,16 @@
               <table class="table table-sm table-dashboard fs--1 data-table border-bottom" data-options='{"responsive":false,"pagingType":"simple","lengthChange":false,"searching":false,"pageLength":8,"columnDefs":[{"targets":[0,6],"orderable":false}],"language":{"info":"_START_ to _END_ Items of _TOTAL_ — <a href=\"#!\" class=\"font-weight-semi-bold\"> view all <span class=\"fas fa-angle-right\" data-fa-transform=\"down-1\"></span> </a>"},"buttons":["copy","excel"]}'>
                 <thead class="bg-200 text-900">
                   <tr>
-                    <th class="no-sort pr-1 align-middle data-table-row-bulk-select">
+                    <!-- <th class="no-sort pr-1 align-middle data-table-row-bulk-select">
                       <div class="custom-control custom-checkbox">
                         <input class="custom-control-input checkbox-bulk-select" id="checkbox-bulk-purchases-select" type="checkbox" data-checkbox-body="#purchases" data-checkbox-actions="#purchases-actions" data-checkbox-replaced-element="#dashboard-actions" />
                         <label class="custom-control-label" for="checkbox-bulk-purchases-select"></label>
                       </div>
-                    </th>
+                    </th> -->
                     <th class="sort pr-1 align-middle">Name</th>
                     <th class="sort pr-1 align-middle">Class</th>
                     <th class="sort pr-1 align-middle">Sex</th>
+                    <th class="sort pr-1 align-middle">Admission Number</th>
                     <th class="sort pr-1 align-middle text-center">Status</th>
                     <!-- <th class="sort pr-1 align-middle text-right">Amount</th> -->
                     <th class="no-sort pr-1 align-middle data-table-row-action"></th>
@@ -89,15 +90,16 @@
                 <tbody id="purchases">
                   {% for student in students %}
                   <tr class="btn-reveal-trigger">
-                    <td class="align-middle">
+                    <!-- <td class="align-middle">
                       <div class="custom-control custom-checkbox">
                         <input class="custom-control-input checkbox-bulk-select-target" type="checkbox" id="checkbox-0" />
                         <label class="custom-control-label" for="checkbox-0"></label>
                       </div>
-                    </td>
+                    </td> -->
                     <th class="align-middle"><a href="pages/customer-details.html">{{ student.sur_name}}  {{student.first_name}}</a></th>
                     <td class="align-middle">{{student.class_admitted}}</td>
                     <td class="align-middle">{{student.sex}}</td>
+                    <td class="align-middle">{{student.full_reg_no}}</td>
                     <td class="align-middle text-center fs-0"><span class="badge badge rounded-capsule badge-soft-success">{{student.user.is_active}}<span class="ml-1 fas fa-check" data-fa-transform="shrink-2"></span></span>
                     </td>
                     <!-- <td class="align-middle text-right">$99</td> -->
@@ -105,7 +107,7 @@
                       <div class="dropdown text-sans-serif">
                         <button class="btn btn-link text-600 btn-sm dropdown-toggle btn-reveal mr-3" type="button" id="dropdown0" data-toggle="dropdown" data-boundary="html" aria-haspopup="true" aria-expanded="false"><span class="fas fa-ellipsis-h fs--1"></span></button>
                         <div class="dropdown-menu dropdown-menu-right border py-0" aria-labelledby="dropdown0">
-                          <div class="bg-white py-2"><a class="dropdown-item" href="{% url 'view-student' student.user_id %}">View</a><a class="dropdown-item" href="{% url 'update-student' student.user_id %}">Edit</a><a class="dropdown-item" href="#!">Add Parent</a>
+                          <div class="bg-white py-2"><a class="dropdown-item" href="{% url 'view-student' student.pk %}">View</a><a class="dropdown-item" href="{% url 'update-student' student.pk %}">Edit</a><a class="dropdown-item" href="#!">Add Parent</a>
                             <!-- <div class="dropdown-divider"></div><a class="dropdown-item text-warning" href="#!">Archive</a><a class="dropdown-item text-danger" href="#!">Delete</a> -->
                           </div>
                         </div>
