@@ -23,5 +23,8 @@ urlpatterns = [
   
   path('result-pdf', views.render_pdf_view, name='result-pdf'),
   path('print-result', views.printResultHtml, name='print-result'),
+  
+  path('teacher-profile', views.teacherProfile, name='teacher-profile'),
+  path('teacher-avatar', views.teacherAvatar, name='teacher-avatar'),
 
 ]
