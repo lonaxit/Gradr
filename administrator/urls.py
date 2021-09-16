@@ -64,6 +64,12 @@ urlpatterns = [
   path('add-rating', views.addRating, name='add-rating'),
   path('list-rating', views.listRating, name='list-rating'),
   path('update-rating/<str:pk>', views.updateRating, name='update-rating'),
-  path('generate-numbers', views.generateAdmissionNumber, name='generate-numbers')
+  path('generate-numbers', views.generateAdmissionNumber, name='generate-numbers'),
+
+  # filter scores
+  path('scores-summary', views.scoresFilter, name='scores-summary'),
+  path('comment-result', views.resultFilter, name='comment-result'),
+  path('result-analysis', views.resultAnalysis, name='result-analysis'),
+  path('approve-result/<str:classroom>/<str:term>/<str:session>', views.approveResult, name='approve-result'),
 
 ]
