@@ -28,8 +28,6 @@
                       <form  action="" method="POST">
                         {% csrf_token %}
 
-
-
                         <div class="form-row">
 
                           <div class="form-group col-4">
@@ -72,7 +70,7 @@
                 <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Filtered Result </h5>
               </div>
           </div>
-            
+
           <!-- datatable -->
 
           <table class="table table-sm table-dashboard data-table no-wrap mb-0 fs--1 w-100" id="comment-table">
@@ -87,7 +85,7 @@
                 <th class="sort">Comment</th>
                 <th class="sort">Psycho</th>
                 <th class="sort">Affective</th>
-                
+
                 <th>Action</th>
               </tr>
             </thead>
@@ -107,7 +105,7 @@
                 {% else %}
                 <td><button class="btn btn-primary btn-sm comment-btn" id="comment-id" type="button" data-toggle="modal" data-target="#exampleModal" data-id="{{ result.id }}" data-term="{{result.term}} " data-session="{{result.session}}" data-classroom="{{result.studentclass}}">Add </button></td>
                 {% endif %}
-                
+
                 {% psycho_domain result.term.pk result.session.pk result.student.pk as psychodomain %}
                 {% if psychodomain %}
                   <td class="align-middle text-center fs-0"><span class="badge badge rounded-capsule badge-soft-success">Success<span class="ml-1 fas fa-check" data-fa-transform="shrink-2"></span></span>
@@ -127,7 +125,7 @@
                  <td class="align-middle text-center fs-0"><span class="badge badge rounded-capsule badge-soft-warning">Pending<span class="ml-1 fas fa-stream" data-fa-transform="shrink-2"></span></span>
                   </td>
                 {% endif %}
-               
+
 
                 <td class="align-middle white-space-nowrap">
                   <div class="dropdown text-sans-serif">
@@ -199,7 +197,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        
+
       </div>
     </div>
   </div>
