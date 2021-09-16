@@ -7,6 +7,7 @@ from  django.contrib.auth.forms import UserCreationForm
 from accounts.forms import *
 # from administrator.forms import TermForm,SessionForm
 from administrator.forms import *
+from teacher.forms import *
 from django.contrib import messages
 #import for restricting access to pages
 from django.contrib.auth.decorators import login_required
@@ -23,8 +24,202 @@ from django.db.models import Q
 #custom decorator
 from accounts.decorators import unauthenticated_user,allowed_users,admin_only
 
+# academics routine
+# Filter Scores
+@allowed_users(allowed_roles=['admin'])
+def scoresFilter(request):
+
+    # loggedin = request.user.teacher
+    
+    # try:
+    #     pass
+    # except Exception as e:
+    #     print(e)
+    
+        
+    form = ScoresFilterForm()
 
 
+    if request.method =='POST':
+
+        classroom = request.POST['classroom']
+        subject = request.POST['subject']
+        session = request.POST['session']
+        term = request.POST['term']
+
+        # check if record for the subject exist
+        scores = Scores.objects.filter(Q(term=term) & Q(studentclass=classroom)
+        & Q(session=session) & Q(subject=subject))
+
+        #
+        if not scores:
+            messages.error(request, 'No record exist')
+            return redirect('scores-summary')
+        else:
+            context ={ 'form':form,'scores':scores}
+            return render(request,'admin/scores_summary.html',context)
+    context = {'form':form}
+    return render(request,'admin/scores_summary.html',context)
+
+
+# filter result for head teacher comments
+@allowed_users(allowed_roles=['admin'])
+def resultFilter(request):
+
+    # loggedin = request.user.tutor.pk
+
+    form = ResultFilterForm()
+    # entry = ClassTeacher.objects.filter(teacher=loggedin)
+
+    if request.method =='POST':
+
+        if request.POST.get('result-id'):
+
+            resultObj = Result.objects.get(pk=request.POST['result-id'])
+            # select all result that fit criteria
+            # the result is used to send back to the page
+            result = Result.objects.filter(Q(term=resultObj.term) & Q(studentclass=resultObj.studentclass)
+            & Q(session=resultObj.session)).order_by('termposition')
+
+            # save/update comment here
+            comment = request.POST['comment']
+
+            resultObj.headteachercomment=comment
+            resultObj.save()
+
+            messages.success(request, 'Comment added')
+            context ={ 'form':form,'result':result}
+            return render(request,'admin/comment_result.html',context)
+        else:
+            classroom = request.POST['classroom']
+            session = request.POST['session']
+            term = request.POST['term']
+
+            # if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
+
+                # select reesult
+            result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).order_by('termposition')
+
+                #check for availability of result
+            if not result:
+
+                messages.error(request, 'No record exist')
+                return redirect('comment-result')
+            else:
+
+                context ={ 'form':form,'result':result}
+                return render(request,'admin/comment_result.html',context)
+
+    context = {'form':form}
+    return render(request,'admin/comment_result.html',context)
+
+
+# result summary
+@allowed_users(allowed_roles=['admin'])
+def resultAnalysis(request):
+
+    # loggedin = request.user.tutor.pk
+
+    form = ResultFilterForm()
+    # entry = ClassTeacher.objects.filter(teacher=loggedin)
+
+
+
+    if request.method =='POST':
+
+
+        classroom = request.POST['classroom']
+        session = request.POST['session']
+        term = request.POST['term']
+
+        # if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
+
+            # select reesult
+        result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).order_by('termposition')
+        resultObj = result.first()
+
+
+        nocommentsCount = result.filter(classteachercomment__isnull=True).count()
+        yescommentsCount = result.filter(classteachercomment__isnull=False).count()
+
+        no_headcommentsCount = result.filter(headteachercomment__isnull=True).count()
+        yes_headcommentsCount = result.filter(headteachercomment__isnull=False).count()
+
+        affective = Studentaffective.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).values('student').distinct('student')
+
+
+        yesaffective = result.filter(student__in=affective).count()
+        noaffective = result.exclude(student__in=affective).count()
+
+
+        psychomotor = Studentpsychomotor.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).values('student').distinct('student')
+
+
+        yespsycho = result.filter(student__in=psychomotor).count()
+        nopsycho = result.exclude(student__in=psychomotor).count()
+
+        noattendance = result.filter(attendance__isnull=True).count()
+        yesattendance = result.filter(attendance__isnull=False).count()
+
+
+        # find pass rate
+        totalStudents = result.count()
+
+        passedStudents = result.filter(termaverage__gte=40).count()
+
+        passRate = passedStudents/totalStudents*100
+
+
+        #check for availability of result
+        if not result:
+
+            messages.error(request, 'No record exist')
+            return redirect('result-analysis')
+        else:
+                context ={ 'form':form,
+                          'result':result,
+                          'yescomment':yescommentsCount,
+                          'nocomment':nocommentsCount,
+                          'head_yescomment':yes_headcommentsCount,
+                          'head_nocomment':no_headcommentsCount,
+                          'yesaffective':yesaffective,
+                          'noaffective':noaffective,
+                          'yespsycho':yespsycho,
+                          'nopsycho':nopsycho,
+                          'yesattendance':yesattendance,
+                          'noattendance':noattendance,
+                          'resultObj':resultObj,
+                          'passRate':passRate,
+                          'totalStudents':totalStudents
+                          }
+                return render(request,'admin/resultAnalysis.html',context)
+    context = {'form':form}
+    return render(request,'admin/resultAnalysis.html',context)
+
+
+# Approve result
+@allowed_users(allowed_roles=['admin'])
+def approveResult(request,classroom,term,session):
+    
+    # select reesult
+    result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+        & Q(session=session))
+        
+    # Update the status of the result
+    result.update(status='approved')
+    submitCount = result.filter(status__isnull=False).count()
+    messages.success(request, 'Result Approved Successfully!')
+    # context={ 'result':result,'published':submitCount}
+    # return render(request, 'admin/resultAnalysis.html',context)
+
+    return redirect('result-analysis')
+
+
+# create client
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def createClient(request):
@@ -54,19 +249,19 @@ def createClient(request):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def generateAdmissionNumber(request):
-    
+
     user = request.user
     ClientProfile  = Client.objects.get(user_id=user.id)
     if request.method == 'POST':
-        
+
         start = request.POST['start']
         end = request.POST['end']
-        
+
         if not start or not end:
             messages.success(request, 'All fields are required')
             return redirect('generate-numbers')
         else:
-            
+
         # # create range and save in the database
             for i in range(int(start),int(end)):
                 obj = AdmissionNumber.objects.create(
@@ -74,17 +269,17 @@ def generateAdmissionNumber(request):
                     serial_no = i
                 )
                 obj.save()
-                
+
         messages.success(request, 'Admission numbers generated successfully')
         return redirect('generate-numbers')
-    
+
     return render(request, 'admin/generateNumbers.html')
 
 # update student with admission number
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def updateNumber(request,pk):
-    
+
     user = request.user
     student  = Student.objects.get(pk=pk)
     no_item = AdmissionNumber.objects.filter(status='No').first()
@@ -94,24 +289,24 @@ def updateNumber(request,pk):
     }
     ClientProfile  = Client.objects.get(user_id=user.id)
     if request.method == 'POST':
-        
+
         reg_no = request.POST['reg_no']
-        
+
         if not reg_no:
-            
+
             messages.success(request, 'Please provide a value')
             return redirect('update-numbers',pk=pk)
         else:
             # select the first reg number
-           
-            
+
+
              # Get prefix
             sch_prefix = RegPrefix.objects.filter(client=ClientProfile).first()
-            
-            # casting int to str 
+
+            # casting int to str
             full_adm_string = sch_prefix.reg_prefix + student.session_admitted.session + str(no_)
-            
-            
+
+
             # update student with the serial reg number
             student.reg_no = no_
             student.full_reg_no = full_adm_string
@@ -121,7 +316,7 @@ def updateNumber(request,pk):
             messages.success(request, 'Admission number updated successfully')
             # return to list students
             return redirect('list-students')
-    
+
     return render(request, 'admin/update_number.html',context)
 
 
@@ -129,21 +324,21 @@ def updateNumber(request,pk):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def definePrefix(request):
-    
+
     user = request.user
     ClientProfile  = Client.objects.get(user_id=user.id)
-  
+
     if request.method == 'POST':
-        
+
         prefix = request.POST['prefix']
-        
+
         if not prefix:
-            
+
             messages.success(request, 'Please provide a string')
             return redirect('define-prefix')
         else:
             # save the record
-           
+
             obj = RegPrefix.objects.create(
                 reg_prefix = prefix,
                 client = ClientProfile
@@ -152,7 +347,7 @@ def definePrefix(request):
             messages.success(request, 'Admission prefix created  successfully')
             # return to list students
             return redirect('list-prefix')
-    
+
     return render(request, 'admin/definePrefix.html')
 
 
@@ -171,30 +366,30 @@ def listPrefix(request):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def updatePrefix(request,pk):
-    
+
     user = request.user
     prefixObj  = RegPrefix.objects.get(pk=pk)
-    
+
     context = {
         'prefix': prefixObj
     }
-    
+
     if request.method == 'POST':
-        
+
         prefix = request.POST['prefix']
-        
+
         if not prefix:
-            
+
             messages.success(request, 'Please provide a string')
             return redirect('update-prefix',pk=pk)
         else:
-          
+
             prefixObj.reg_prefix=prefix
             prefixObj.save()
             messages.success(request, 'Updated successful!')
             # return to list students
             return redirect('list-prefix')
-    
+
     return render(request, 'admin/update_prefix.html',context)
 
 
@@ -223,7 +418,7 @@ def updateClient(request,pk):
 # sign up new a student user
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
-def newStudent(request): 
+def newStudent(request):
     # redirect authenticated user to the dashboard
     form = StudentRegisterForm()
     logged_inuser = request.user
@@ -239,7 +434,7 @@ def newStudent(request):
             # associate user with admin
             group = Group.objects.get(name='student')
             user.groups.add(group)
-            
+
 
 
             # attach a profile to a client
@@ -249,7 +444,7 @@ def newStudent(request):
                 client = clientProfile,
             )
             StudObj.save()
-          
+
             messages.success(request, 'Student account creation successful for ' + username + ',  please update the profile')
             return redirect('update-student',pk=StudObj.pk)
 
@@ -264,7 +459,7 @@ def updateStudentProfile(request,pk):
     user = request.user
     student  = Student.objects.get(pk=pk)
     ClientProfile  = Client.objects.get(user_id=user.id)
-    
+
     form = StudentProfileForm(instance=student)
     # form = StudentProfileForm()
     context = {'form':form}
@@ -276,7 +471,7 @@ def updateStudentProfile(request,pk):
             messages.success(request, 'Student profile  modification/creation was  successful')
             return redirect('view-student',pk=student.pk)
         else:
-            
+
 
             messages.success(request, 'Something went wrong')
             return redirect('update-student',pk=pk)
@@ -289,9 +484,9 @@ def updateStudentProfile(request,pk):
 def studentPhoto(request,pk):
     user = request.user
     student  = Student.objects.get(pk=pk)
-    
+
     form = StudentImageUpdateForm(instance=student)
-    
+
     context = {'form':form}
     if request.method == 'POST':
         form = StudentImageUpdateForm(request.POST,request.FILES,instance=student)
@@ -302,7 +497,7 @@ def studentPhoto(request,pk):
         else:
              messages.success(request, 'Photo update failed')
              return redirect('student-photo',pk=pk)
-            
+
     return render(request, 'admin/changeProfilePicture.html',context)
 
 # list all students
@@ -339,7 +534,7 @@ def newTeacher(request):
                 client = clientProfile,
             )
             TeacherObj.save()
-            
+
 
             messages.success(request, 'Account creation successful for ' + username + ',  please update the profile')
             return redirect('update-teacher',pk=TeacherObj.pk)
@@ -400,9 +595,9 @@ def listTeacher(request):
 def teacherPhoto(request,pk):
     user = request.user
     teacher  = Teacher.objects.get(pk=pk)
-    
+
     form = TeacherImageUpdateForm(instance=teacher)
-    
+
     context = {'form':form}
     if request.method == 'POST':
         form = TeacherImageUpdateForm(request.POST,request.FILES,instance=teacher)
@@ -413,7 +608,7 @@ def teacherPhoto(request,pk):
         else:
              messages.success(request, 'Photo update failed')
              return redirect('teacher-photo',pk=pk)
-            
+
     return render(request, 'admin/changeTeacherPicture.html',context)
 
 
@@ -1059,7 +1254,7 @@ def admissionList(request):
             # print('shhhh')
             messages.error(request, 'oops! something went wrong')
             return redirect('admission-list')
-        
+
     context ={'form':form}
 
     return render(request, 'admin/filter_admission_list.html',context)
@@ -1125,7 +1320,7 @@ def addAffective(request):
 @allowed_users(allowed_roles=['admin'])
 def listAffective(request):
     affective = Affective.objects.all()
-    
+
     if affective:
         context = { 'affective': affective}
         return render(request, "admin/listAffective.html", context)
@@ -1188,7 +1383,7 @@ def addPsychomotor(request):
 @allowed_users(allowed_roles=['admin'])
 def listPsychomotor(request):
     skills = Psychomotor.objects.all()
-    
+
     if skills:
         context = { 'skills': skills}
         return render(request, "admin/listPsychomotor.html", context)
@@ -1224,17 +1419,17 @@ def updatePsychomotor(request,pk):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def addRating(request):
-   
+
     form = RatingForm()
     context = {}
     if request.method == "POST":
 
         form = RatingForm(request.POST)
         if form.is_valid():
-            
+
             description = form.cleaned_data.get("description")
             score = form.cleaned_data.get("scores")
-            
+
             obj = Rating.objects.create(
                                  description = description,
                                  scores=score
@@ -1243,7 +1438,7 @@ def addRating(request):
             messages.success(request, 'Record added')
             return redirect('add-rating')
         else:
-            
+
             messages.error(request, 'Something went wrong')
             return redirect('add-rating')
     context={'form':form}
@@ -1255,7 +1450,7 @@ def addRating(request):
 @allowed_users(allowed_roles=['admin'])
 def listRating(request):
     ratings = Rating.objects.all()
-    
+
     if ratings:
         context = { 'ratings': ratings}
         return render(request, "admin/listRating.html", context)
