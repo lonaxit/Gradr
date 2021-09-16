@@ -2,7 +2,7 @@
 {% load my_tags %}
 {% load static %}
 {% load humanize %}
-{% block title %} | Filter Result {% endblock %}
+{% block title %} Filter Result {% endblock %}
 
 {% block content %}
 {% if result %}
@@ -310,7 +310,7 @@
                       <div class="bg-white py-2">
                       {% comment %} <a class="dropdown-item" href="{% url 'delete-scores' result.id %}">Delete</a> {% endcomment %}
                       <a class="dropdown-item" href="{% url 'delete-scores' result.id %}">View</a>
-                      <a class="dropdown-item" href="{% url 'delete-scores' result.id %}">Print</a>
+                      <a class="dropdown-item" href="{% url 'print-result' result.pk %}" target="_blank">Print</a>
                       {% comment %} <a class="dropdown-item" href="{% url 'delete-scores' result.id %}">Delete</a>
                       
                       <a class="dropdown-item" href="{% url 'add-student-affective' result.id %}">Affective</a>
