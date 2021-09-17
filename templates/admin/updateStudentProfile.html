@@ -27,10 +27,10 @@
                       <form  action="" method="POST"  id="student-profile-form">
                         {% csrf_token %}
 
-                        <div class="custom-file col-5">
+                        {% comment %} <div class="custom-file col-5">
                         <input class="custom-file-input" id="customFile" type="file" name="profile_image">
                         <label class="custom-file-label" for="profile_image">Choose Profile Picture</label>
-                        </div>
+                        </div> {% endcomment %}
 
                         <div class="form-row">
                           <div class="form-group col-4">

@@ -1,0 +1,105 @@
+/* styles for terminal result */
+
+.national-emblem {
+   
+    margin-bottom: 10px;
+    text-align: center;
+    margin-top: 10px;
+    vertical-align: top;
+}
+.national-emblem p {
+      
+      line-height: 1.3;
+      margin-bottom: 0px; }
+.logo-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 2px 2px 2px 2px;
+        border: 1px solid #fff;
+        margin-bottom: 4px;
+}
+
+.examtable-print {
+    border: 0.7px solid #000;
+    border-collapse: collapse;
+    width: 100%;
+    font-family: "Open Sans";
+}
+    .examtable-print td {
+      border: 1px solid #000;
+      
+      font-size: .54em;
+      white-space: nowrap;
+    }
+    .examtable-print th {
+      border: 0.5px solid #000;
+      text-align: left;
+      font-size: .6em;
+    }
+
+
+
+        .grading-items {
+            display: inline-block;
+            width: 20%;
+            padding-left: 3px;
+            margin-right: -5px; }
+            .grading-items span {
+              margin-top: .6px;
+              color: #000; }
+
+
+.custom-comment{
+                display: inline-block;
+                width: 30%;
+                padding: 2px 2px 2px 2px;
+                margin-right: -5px;
+      }
+      
+  .class-teacher-comments {
+        display: inline-block;
+        width: 40%;
+        padding: 2px 2px 2px 2px;
+        margin-right: -5px; }
+.staff-comments-header {
+                display: block;
+                font-family: "Open Sans";
+                font-size: .6em;
+                color: #000; }
+              
+.staff-comments-item {
+                display: block;
+                font-family: "Open Sans";
+                font-size: 10px;
+                color: #96a1ac;
+               }
+.class-teacher-sign {
+                display: inline-block;
+                width: 30%;
+                padding: 2px 2px 2px 2px; 
+    }
+
+    .principal-name {
+      display: inline-block;
+      width: 30%;
+      padding: 2px 2px 2px 2px;
+      margin-right: -5px; }
+    
+    .principal-comments {
+      display: inline-block;
+      width: 40%;
+      padding: 2px 2px 2px 2px;
+      margin-right: -5px; }
+    
+    .principal-sign {
+      display: inline-block;
+      width: 30%;
+      padding: 2px 2px 2px 2px; }
+    
+  .align-right{
+    text-align: right;
+  }
+
+  .align-left{
+    text-align: left;
+  }

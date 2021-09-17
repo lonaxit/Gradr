@@ -1,8 +1,8 @@
-{% extends 'layout/Dashboard/Teachers/Teacher_Layout.html' %}
+{% extends 'layout/base_layout.html' %}
 {% load my_tags %}
 {% load static %}
 {% load humanize %}
-{% block title %} | Filter Result {% endblock %}
+{% block title %} Filter Result {% endblock %}
 
 {% block content %}
 <div class="row no-gutters" id="block-content">
@@ -80,13 +80,12 @@
                 <th class="sort">Class</th>
                 <th class="sort">Term</th>
                 <th class="sort">Sess</th>
+                <th class="sort">Total</th>
                 <th class="sort">Avg</th>
-                {% comment %} <th class="sort">Position</th> {% endcomment %}
+                <th class="sort">Position</th>
                 <th class="sort">Comment</th>
-                <th class="sort">Psycho</th>
-                <th class="sort">Affective</th>
-
-                <th>Action</th>
+                <th class="sort">H/Comment</th>
+                <!-- <th>Action</th> -->
               </tr>
             </thead>
             <tbody class="bg-white">
@@ -94,29 +93,31 @@
               <tr>
                 <td>{{result.student.sur_name |capfirst}} {{result.student.first_name |capfirst}}</td>
                 <td>{{result.studentclass}}</td>
-                {% comment %} <td>{{result.subject|truncatechars:5}}</td> {% endcomment %}
                 <td>{{result.term|truncatewords:1}}</td>
                 <td>{{result.session}}</td>
-                {% comment %} <td>{{result.termtotal}}</td> {% endcomment %}
+                <td>{{result.termtotal}}</td>
                 <td>{{result.termaverage}}</td>
-                {% comment %} <td>{{result.termposition|ordinal}}</td> {% endcomment %}
-                {% if result.classteachercomment %}
+                <td>{{result.termposition|ordinal}}</td>
+
                 <td>{{result.classteachercomment|truncatewords:1}}</td>
+
+                {% if result.headteachercomment %}
+                <td>{{result.headteachercomment|truncatewords:1}}</td>
                 {% else %}
                 <td><button class="btn btn-primary btn-sm comment-btn" id="comment-id" type="button" data-toggle="modal" data-target="#exampleModal" data-id="{{ result.id }}" data-term="{{result.term}} " data-session="{{result.session}}" data-classroom="{{result.studentclass}}">Add </button></td>
                 {% endif %}
 
-                {% psycho_domain result.term.pk result.session.pk result.student.pk as psychodomain %}
+                <!-- {% psycho_domain result.term.pk result.session.pk result.student.pk as psychodomain %}
                 {% if psychodomain %}
                   <td class="align-middle text-center fs-0"><span class="badge badge rounded-capsule badge-soft-success">Success<span class="ml-1 fas fa-check" data-fa-transform="shrink-2"></span></span>
                   </td>
                 {% else %}
                  <td class="align-middle text-center fs-0"><span class="badge badge rounded-capsule badge-soft-warning">Pending<span class="ml-1 fas fa-stream" data-fa-transform="shrink-2"></span></span>
                   </td>
-                {% endif %}
+                {% endif %} -->
 
 
-                   {% affective_domain result.term.pk result.session.pk result.student.pk as affectivedomain %}
+                   <!-- {% affective_domain result.term.pk result.session.pk result.student.pk as affectivedomain %}
                 {% if affectivedomain %}
                   <td class="align-middle text-center fs-0">
                   <span class="badge badge rounded-capsule badge-soft-success">Success<span class="ml-1 fas fa-check" data-fa-transform="shrink-2"></span></span>
@@ -124,10 +125,10 @@
                 {% else %}
                  <td class="align-middle text-center fs-0"><span class="badge badge rounded-capsule badge-soft-warning">Pending<span class="ml-1 fas fa-stream" data-fa-transform="shrink-2"></span></span>
                   </td>
-                {% endif %}
+                {% endif %} -->
 
 
-                <td class="align-middle white-space-nowrap">
+                <!-- <td class="align-middle white-space-nowrap">
                   <div class="dropdown text-sans-serif">
                     <button class="btn btn-link text-600 btn-sm dropdown-toggle btn-reveal mr-3" type="button" id="dropdown0" data-toggle="dropdown" data-boundary="html" aria-haspopup="true" aria-expanded="false"><span class="fas fa-ellipsis-h fs--1"></span></button>
                     <div class="dropdown-menu dropdown-menu-right border py-0" aria-labelledby="dropdown0">
@@ -135,13 +136,13 @@
                       <a class="dropdown-item" href="{% url 'delete-scores' result.id %}">Delete</a>
                       <a class="dropdown-item" href="{% url 'add-student-affective' result.id %}">Affective</a>
                       <a class="dropdown-item" href="{% url 'add-student-psycho' result.id %}">Psychomotor</a>
-                       {% comment %} <a class="dropdown-item" id="trait-id" data-toggle="modal" data-id="{{ result.id }}" data-target="#exampleModal2" href="#">Add Traits</a> {% endcomment %}
-                      {% comment %} <a class="dropdown-item" href="{% url 'update-scores' result.id %}">Print</a> {% endcomment %}
-                        <!-- <div class="dropdown-divider"></div><a class="dropdown-item text-warning" href="#!">Archive</a><a class="dropdown-item text-danger" href="#!">Delete</a> -->
+                       <a class="dropdown-item" id="trait-id" data-toggle="modal" data-id="{{ result.id }}" data-target="#exampleModal2" href="#">Add Traits</a>
+                      <a class="dropdown-item" href="{% url 'update-scores' result.id %}">Print</a>
+                        <div class="dropdown-divider"></div><a class="dropdown-item text-warning" href="#!">Archive</a><a class="dropdown-item text-danger" href="#!">Delete</a>
                       </div>
                     </div>
                   </div>
-                </td>
+                </td> -->
               </tr>
               {% endfor %}
             </tbody>
@@ -151,12 +152,12 @@
                 <th class="sort">Class</th>
                 <th class="sort">Term</th>
                 <th class="sort">Sess</th>
+                <th class="sort">Total</th>
                 <th class="sort">Avg</th>
-                {% comment %} <th class="sort">Position</th> {% endcomment %}
+                <th class="sort">Position</th>
                 <th class="sort">Comment</th>
-                <th class="sort">Psycho</th>
-                <th class="sort">Affective</th>
-                <th>Action</th>
+                <th class="sort">H/Comment</th>
+                <!-- <th>Action</th> -->
               </tr>
             </tfoot>
           </table>
@@ -173,7 +174,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Class Teacher Comment</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Head Teacher Comment</h5>
         <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span class="font-weight-light" aria-hidden="true">&times;</span></button>
       </div>
       <div class="modal-body">

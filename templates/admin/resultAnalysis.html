@@ -1,8 +1,8 @@
-{% extends 'layout/Dashboard/Teachers/Teacher_Layout.html' %}
+{% extends 'layout/base_layout.html' %}
 {% load my_tags %}
 {% load static %}
 {% load humanize %}
-{% block title %} Filter Result {% endblock %}
+{% block title %} | Filter Result {% endblock %}
 
 {% block content %}
 {% if result %}
@@ -21,7 +21,7 @@
                 <div class="mb-2">
                 <span class="badge badge rounded-capsule badge-soft-success">Good<span class="ml-1 far fa-thumbs-up" data-fa-transform="shrink-2"></span></span>
                 </div>
-               
+
                 {% else %}
                  <div class="mb-2">
                 <span class="badge badge rounded-capsule badge-soft-success">Success<span class="ml-1 fas fa-check" data-fa-transform="shrink-2"></span></span> <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">{{ yescomment }}<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a>
@@ -30,15 +30,28 @@
                   <span class="badge badge rounded-capsule badge-soft-warning">Remaining<span class="ml-1 fas fa-times" data-fa-transform="shrink-2"></span></span> <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">{{ nocomment }}<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a>
                 {% endif %}
 
+                {% if not head_nocomment%}
+                <div class="mb-2">
+                <span class="badge badge rounded-capsule badge-soft-success">Good<span class="ml-1 far fa-thumbs-up" data-fa-transform="shrink-2"></span></span>
+                </div>
+
+                {% else %}
+                 <!-- <div class="mb-2">
+                <span class="badge badge rounded-capsule badge-soft-success">Success<span class="ml-1 fas fa-check" data-fa-transform="shrink-2"></span></span> <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">{{ head_yescomment }}<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a>
+                </div> -->
+
+                  <span class="badge badge rounded-capsule badge-soft-warning">Remaining<span class="ml-1 fas fa-times" data-fa-transform="shrink-2"></span></span> <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">{{ head_nocomment }}<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a>
+                {% endif %}
+
                 {% comment %} <div class="display-4 fs-4 mb-2 font-weight-normal text-sans-serif text-warning">580</div> {% endcomment %}
                 <div class="mt-2">
-                 <a class="font-weight-semi-bold fs--1 text-nowrap" href="{% url 'filter-result' %}">Go There <span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a>
+                 <a class="font-weight-semi-bold fs--1 text-nowrap" href="{% url 'comment-result' %}">Go There <span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a>
                  </div>
-                
+
               </div>
             </div>
 
-            
+
             <div class="card mb-3 overflow-hidden" style="min-width: 12rem">
               <div class="bg-holder bg-card" style="background-image:url({% static 'img/illustrations/corner-2.png' %});">
               </div>
@@ -55,9 +68,9 @@
                 <div class="mb-2">
                 <span class="badge badge rounded-capsule badge-soft-success">Success<span class="ml-1 fas fa-check" data-fa-transform="shrink-2"></span></span> <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">{{ yesaffective}}<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a>
                 </div>
-                
+
                 <span class="badge badge rounded-capsule badge-soft-warning">Remaining<span class="ml-1 fas fa-times" data-fa-transform="shrink-2"></span></span> <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">{{noaffective}}<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a>
-              
+
                 {% endif %}
 
                 {% comment %} <div class="display-4 fs-4 mb-2 font-weight-normal text-sans-serif text-warning">580</div>
@@ -131,7 +144,7 @@
               <div class="bg-holder bg-card" style="background-image:url({% static 'img/illustrations/corner-2.png' %});">
               </div>
               <!--/.bg-holder-->
-                
+
              <div class="card-body position-relative">
                 <h6>Roll Call</h6>
                 {% comment %} <h6>Roll Call<span class="badge badge-soft-warning rounded-capsule ml-2">-90%</span></h6> {% endcomment %}
@@ -143,11 +156,11 @@
 
                 <div class="display-4 fs-4 mb-2 font-weight-normal text-sans-serif text-info">{{ totalStudents }}</div>
 
-              
+
             </div>
             </div>
 
-            
+
             <div class="card mb-3 overflow-hidden" style="min-width: 12rem">
               <div class="bg-holder bg-card" style="background-image:url({% static 'img/illustrations/corner-3.png' %});">
               </div>
@@ -159,11 +172,11 @@
                 <div class="display-4 fs-4 mb-2 font-weight-normal text-sans-serif text-info">{{passRate}}%</div>
                 {% comment %} <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">Statistics<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a> {% endcomment %}
 
-                {% if nocomment or noaffective or nopsycho or noattendance %}
-              
+                {% if nocomment or noaffective or nopsycho or noattendance or head_nocomment %}
+
                 {% else %}
                   <div class="mt-2">
-                 <a class="font-weight-semi-bold fs--1 text-nowrap" href="{% url 'submit-result' resultObj.studentclass.pk resultObj.term.pk resultObj.session.pk %}">Submit Result <span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a>
+                 <a class="font-weight-semi-bold fs--1 text-nowrap" href="{% url 'approve-result' resultObj.studentclass.pk resultObj.term.pk resultObj.session.pk %}">Approve Result <span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a>
                 </div>
                 {% endif %}
 
@@ -244,7 +257,7 @@
                 <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Result Summary </h5>
               </div>
           </div>
-            
+
           <!-- datatable -->
 
           <table class="table table-sm table-dashboard data-table no-wrap mb-0 fs--1 w-100" id="comment-table">
@@ -260,7 +273,7 @@
                 {% comment %} <th class="sort">Comment</th>
                 <th class="sort">Psycho</th>
                 <th class="sort">Affective</th> {% endcomment %}
-                
+
                 <th>Action</th>
               </tr>
             </thead>
@@ -276,13 +289,13 @@
                 <td>{{result.termaverage}}</td>
                 <td>{{result.termposition|ordinal}}</td>
 
-                {% comment %}                 
+                {% comment %}
                 {% if result.classteachercomment %}
                 <td>{{result.classteachercomment|truncatewords:1}}</td>
                 {% else %}
                 <td><button class="btn btn-primary btn-sm comment-btn" id="comment-id" type="button" data-toggle="modal" data-target="#exampleModal" data-id="{{ result.id }}" data-term="{{result.term}} " data-session="{{result.session}}" data-classroom="{{result.studentclass}}">Add </button></td>
                 {% endif %}
-                
+
                 {% psycho_domain result.term.pk result.session.pk result.student.pk as psychodomain %}
                 {% if psychodomain %}
                   <td class="align-middle text-center fs-0"><span class="badge badge rounded-capsule badge-soft-success">Success<span class="ml-1 fas fa-check" data-fa-transform="shrink-2"></span></span>
@@ -301,7 +314,7 @@
                  <td class="align-middle text-center fs-0"><span class="badge badge rounded-capsule badge-soft-warning">Pending<span class="ml-1 fas fa-stream" data-fa-transform="shrink-2"></span></span>
                   </td>
                 {% endif %} {% endcomment %}
-               
+
 
                 <td class="align-middle white-space-nowrap">
                   <div class="dropdown text-sans-serif">
@@ -310,9 +323,9 @@
                       <div class="bg-white py-2">
                       {% comment %} <a class="dropdown-item" href="{% url 'delete-scores' result.id %}">Delete</a> {% endcomment %}
                       <a class="dropdown-item" href="{% url 'delete-scores' result.id %}">View</a>
-                      <a class="dropdown-item" href="{% url 'print-result' result.pk %}" target="_blank">Print</a>
+                      <a class="dropdown-item" href="{% url 'delete-scores' result.id %}">Print</a>
                       {% comment %} <a class="dropdown-item" href="{% url 'delete-scores' result.id %}">Delete</a>
-                      
+
                       <a class="dropdown-item" href="{% url 'add-student-affective' result.id %}">Affective</a>
                       <a class="dropdown-item" href="{% url 'add-student-psycho' result.id %}">Psychomotor</a> {% endcomment %}
                        {% comment %} <a class="dropdown-item" id="trait-id" data-toggle="modal" data-id="{{ result.id }}" data-target="#exampleModal2" href="#">Add Traits</a> {% endcomment %}
@@ -379,7 +392,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        
+
       </div>
     </div>
   </div>

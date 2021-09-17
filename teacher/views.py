@@ -30,6 +30,84 @@ from django.contrib.auth.models import Group
 from accounts.decorators import unauthenticated_user,allowed_users,admin_only
 # Create your views here.
 
+# xhtml2pdf imports
+# import os
+# from django.conf import settings
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+# from django.contrib.staticfiles import finder
+
+# import transactions
+from django.db import transaction
+
+def printResultHtml(request,pk):
+    teacher_loggedin = request.user.tutor
+    result = Result.objects.get(pk=pk)
+    academic_scores = Scores.objects.filter(student=result.student,studentclass=result.studentclass,term=result.term,session=result.session)
+    student_count = Scores.objects.filter(studentclass=result.studentclass,term=result.term,session=result.session).distinct('student').count()
+    affective = Studentaffective.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
+    
+    psychomotor = Studentpsychomotor.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
+    
+
+    
+    # academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
+    context={
+        'scores':academic_scores,
+        'result':result,
+        'student_count':student_count,
+        'affective':affective,
+        'psychomotor':psychomotor
+    }
+    return render(request,'teacher/print.html',context)
+
+
+def render_pdf_view(request):
+    teacher_loggedin = request.user.teacher
+    result = Result.objects.get(pk=3)
+    academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
+    student_count = Scores.objects.filter(studentclass=result.studentclass,term=result.term,session=result.session).distinct('student').count()
+    affective = Studentaffective.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
+    
+    psychomotor = Studentpsychomotor.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
+    
+    template_path = 'teacher/print.html'
+    # academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
+    context={
+        'scores':academic_scores,
+        'result':result,
+        'student_count':student_count,
+        'affective':affective,
+        'psychomotor':psychomotor
+    }
+    # context = {'myvar': 'this is your template context'}
+    # Create a Django response object, and specify content_type as pdf
+    response = HttpResponse(content_type='application/pdf')
+    # if download: run this line of code below
+    response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+    
+    # if display: run this line of code
+    # response['Content-Disposition'] = 'filename="report.pdf"'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # create a pdf
+    # removed link call back
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    #    html, dest=response, link_callback=link_callback)
+    # if error then show some funy view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
+
+
+
+
+
+
 @login_required(login_url='login')
 # @admin_only
 @allowed_users(allowed_roles=['teacher'])
@@ -38,9 +116,40 @@ def teacherHome(request):
     context = {'students':students}
     return render(request,'teacher/teacher_home.html',context)
 
+
+
+# teacher profile
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['teacher'])
+def teacherProfile(request):
+
+    return render(request, 'teacher/teacher_profile.html')
+
+# change avatar
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['teacher'])
+def teacherAvatar(request):
+    teacher = request.user.tutor
+    # teacher  = Teacher.objects.get(pk=pk)
+    
+    form = TeacherImageUpdateForm(instance=teacher)
+    
+    context = {'form':form}
+    if request.method == 'POST':
+        form = TeacherImageUpdateForm(request.POST,request.FILES,instance=teacher)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Photo changed')
+            return redirect('teacher-profile')
+        else:
+             messages.success(request, 'Photo update failed')
+             return redirect('teacher-avatar')
+            
+    return render(request, 'teacher/changeTeacherAvatar.html',context)
+
 # list all my subjects
 def mySubjects(request):
-    loggedin = request.user.teacher
+    loggedin = request.user.tutor
     my_subjects = SubjectTeacher.objects.filter(teacher=loggedin.pk)
     context = {'mysubjects':my_subjects}
     return render(request,'teacher/my_subjects.html',context)
@@ -50,7 +159,7 @@ def mySubjects(request):
 @allowed_users(allowed_roles=['teacher'])
 def addScores(request):
 
-    loggedin = request.user.teacher
+    loggedin = request.user.tutor
 
     form = ScoresForm()
 
@@ -70,7 +179,7 @@ def addScores(request):
         activeTerm = Term.objects.get(status='True')
         activeSession = Session.objects.get(status='True')
 
-        teacherObj = SubjectTeacher.objects.get(pk=loggedin.id)
+        teacherObj = SubjectTeacher.objects.get(pk=loggedin.pk)
         subjectObj = Subject.objects.get(pk=subj)
         classroomObj = StudentClass.objects.get(pk=studclass)
         studObj = Student.objects.get(pk=studid)
@@ -84,7 +193,9 @@ def addScores(request):
             messages.error(request, 'Record exist')
             return redirect('new-scores')
         else:
-            obj = Scores.objects.create(
+            with transaction.atomic():
+                
+                obj = Scores.objects.create(
                                  firstscore = ca1,
                                  secondscore = ca2,
                                  thirdscore = ca3,
@@ -99,16 +210,20 @@ def addScores(request):
                                  client = loggedin.client,
                                  student = studObj,
                                      )
-            obj.save()
+                obj.save()
             
-            # process Scores
-            processScores(subjectObj,classroomObj)
+                # process Scores
+                processScores(subjectObj,classroomObj)
             
-            # process terminal result
-            processTerminalResult(obj)
+                # process terminal result
+                processTerminalResult(obj)
+                
+                
+                # Add auto comment
+                autoAddComment(classroomObj,activeSession,activeTerm)
              
-            messages.success(request, 'Scores created')
-            # return redirect('assign-subject')
+                messages.success(request, 'Scores created')
+                # return redirect('assign-subject')
     # context = {'form':form}
     return render(request,'teacher/new_scores.html',context)
 
@@ -117,7 +232,7 @@ def addScores(request):
 @allowed_users(allowed_roles=['teacher'])
 def editScores(request,id):
 
-    loggedin = request.user.teacher
+    loggedin = request.user.tutor
     scores = Scores.objects.get(pk=id)
     form = ScoresForm(instance=scores)
     # student = Student.objects.get(id=scores.student.id)
@@ -142,38 +257,43 @@ def editScores(request,id):
         activeTerm = Term.objects.get(status='True')
         activeSession = Session.objects.get(status='True')
 
-        teacherObj = SubjectTeacher.objects.get(pk=loggedin.id)
+        teacherObj = SubjectTeacher.objects.get(pk=loggedin.pk)
         subjectObj = Subject.objects.get(pk=subj)
         classroomObj = StudentClass.objects.get(pk=studclass)
         studObj = Student.objects.get(pk=studid)
         
+        # use transaction
+        with transaction.atomic():
+            scores_Obj = Scores.objects.select_for_update().get(pk=id)
+            
+            scores_Obj.firstscore = ca1
+            scores_Obj.secondscore = ca2
+            scores_Obj.thirdscore = ca3
+            scores_Obj.totalca = totalass
+            scores_Obj.examscore = exam
+            scores_Obj.session = activeSession
+            scores_Obj.studentclass = classroomObj
+            scores_Obj.subject = subjectObj
+            scores_Obj.subjectteacher = teacherObj
+            scores_Obj.term = activeTerm
+            scores_Obj.subjecttotal = total
+            scores_Obj.client = loggedin.client
+            scores_Obj.student = studObj
+            scores_Obj.save()
         
-        scores.firstscore = ca1
-        scores.secondscore = ca2
-        scores.thirdscore = ca3
-        scores.totalca = totalass
-        scores.examscore = exam
-        scores.session = activeSession
-        scores.studentclass = classroomObj
-        scores.subject = subjectObj
-        scores.subjectteacher = teacherObj
-        scores.term = activeTerm
-        scores.subjecttotal = total
-        scores.client = loggedin.client
-        scores.student = studObj
-        scores.save()
+            # process Scores
+            processScores(subjectObj,classroomObj)
         
-        # print(scores.firstscore)
+            # process terminal result
+            processTerminalResult(scores_Obj)
+            
+            # auto add comments
+            
+            autoAddComment(classroomObj,activeSession,activeTerm)
         
-        # process Scores
-        processScores(subjectObj,classroomObj)
-        
-        # process terminal result
-        processTerminalResult(scores)
-        
-        # Scores.objects.filter(id=data['id']).update(email=data['email'], phone=data['phone'])
-        messages.success(request, 'Scores edited successfully')
-        return redirect('filter-scores')
+            # Scores.objects.filter(id=data['id']).update(email=data['email'], phone=data['phone'])
+            messages.success(request, 'Scores edited successfully')
+            return redirect('filter-scores')
     # context = {'form':form}
     return render(request,'teacher/edit_scores.html',context)
 
@@ -183,29 +303,36 @@ def editScores(request,id):
 def deleteScores(request,id):
 
     loggedin = request.user.teacher
-    scores = Scores.objects.get(pk=id)
+    scores = Scores.objects.select_for_update().get(pk=id)
     
     # get sctive term and session
     activeTerm = Term.objects.get(status='True')
     activeSession = Session.objects.get(status='True')
     
-    subject = scores.subject
-    classroom = scores.studentclass
-    studentid = scores.student
-    
-    scores.delete()
-    
-    # delete terminal result
-    deleteResult(studentid,classroom)
-    scores_filter = Scores.objects.filter(subject=subject,studentclass=classroom,term=activeTerm,session=activeSession).first()
-    
-    if scores_filter:
-        # process Scores
-        processScores(subject,classroom)
-        # process terminal result
-        processTerminalResult(scores_filter)
+    with transaction.atomic():
         
-        # TODO: MAKE SURE TO DELETE CORRESPONDING STUDENT RECORD IN THE RESULT TABLE
+        scores = Scores.objects.select_for_update().get(pk=id)
+        subject = scores.subject
+        classroom = scores.studentclass
+        studentid = scores.student
+    
+        scores.delete()
+    
+        # delete terminal result
+        deleteResult(studentid,classroom)
+        scores_filter = Scores.objects.filter(subject=subject,studentclass=classroom,term=activeTerm,session=activeSession).first()
+    
+        if scores_filter:
+            # process Scores
+            processScores(subject,classroom)
+            # process terminal result
+            processTerminalResult(scores_filter)
+        
+            # add auto comment
+        
+            autoAddComment(classroom,activeSession,activeTerm)
+        
+            # TODO: MAKE SURE TO DELETE CORRESPONDING STUDENT RECORD IN THE RESULT TABLE
         
     messages.success(request, 'Scores deleted successfully')
     return redirect('filter-scores')
@@ -217,7 +344,7 @@ def deleteScores(request,id):
 @allowed_users(allowed_roles=['teacher'])
 def scoresFilter(request):
 
-    loggedin = request.user.teacher
+    loggedin = request.user.tutor.pk
 
     form = ScoresFilterForm()
 
@@ -254,11 +381,14 @@ def scoresFilter(request):
     return render(request,'teacher/filterScores.html',context)
 
 
+
+
+
 # Result Filter
 @allowed_users(allowed_roles=['teacher'])
 def resultFilter(request):
 
-    loggedin = request.user.teacher.pk
+    loggedin = request.user.tutor.pk
 
     form = ResultFilterForm()
     # entry = ClassTeacher.objects.filter(teacher=loggedin)
@@ -312,7 +442,7 @@ def resultFilter(request):
 @allowed_users(allowed_roles=['teacher'])
 def addAttendance(request):
 
-    loggedin = request.user.teacher.pk
+    loggedin = request.user.tutor.pk
 
     form = ResultFilterForm()
     # entry = ClassTeacher.objects.filter(teacher=loggedin)
@@ -369,7 +499,7 @@ def addAttendance(request):
 @allowed_users(allowed_roles=['teacher'])
 def resultComments(request,classroom,term,session):
 
-    loggedin = request.user.teacher.pk
+    loggedin = request.user.tutor.pk
 
     form = ResultFilterForm()
     # entry = ClassTeacher.objects.filter(teacher=loggedin)
@@ -423,7 +553,7 @@ def resultComments(request,classroom,term,session):
 @allowed_users(allowed_roles=['teacher'])
 def resultSummary(request):
 
-    loggedin = request.user.teacher.pk
+    loggedin = request.user.tutor.pk
 
     form = ResultFilterForm()
     # entry = ClassTeacher.objects.filter(teacher=loggedin)
@@ -499,12 +629,14 @@ def resultSummary(request):
     context = {'form':form}
     return render(request,'teacher/resultSummary.html',context)
 
+
+
 # submit result
 @allowed_users(allowed_roles=['teacher'])
 def submitResult(request,classroom,term,session):
     
 
-    loggedin = request.user.teacher.pk
+    loggedin = request.user.tutor.pk
 
     if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():     
                 # select reesult
@@ -526,9 +658,9 @@ def submitResult(request,classroom,term,session):
 @allowed_users(allowed_roles=['teacher'])
 def addStudentAffective(request,pk):
 
-    loggedin = request.user.teacher.pk
+    loggedin = request.user.tutor.pk
     
-    client = Client.objects.get(pk=request.user.teacher.client.pk)
+    client = Client.objects.get(pk=request.user.tutor.client.pk)
     
     resultObj = Result.objects.get(pk=pk)
     student = Student.objects.get(pk=resultObj.student.pk)
@@ -592,9 +724,9 @@ def addStudentAffective(request,pk):
 @allowed_users(allowed_roles=['teacher'])
 def addStudentPsycho(request,pk):
 
-    loggedin = request.user.teacher.pk
+    loggedin = request.user.tutor.pk
     
-    client = Client.objects.get(pk=request.user.teacher.client.pk)
+    client = Client.objects.get(pk=request.user.tutor.client.pk)
     
     resultObj = Result.objects.get(pk=pk)
     student = Student.objects.get(pk=resultObj.student.pk)
@@ -656,9 +788,9 @@ def addStudentPsycho(request,pk):
 
 # get subjects on class change
 def get_subjects(request,pk):
-    loggedin = request.user.teacher
+    loggedin = request.user.tutor.pk
 
-    result = list(Subject.objects.filter(subjectteacher__classroom_id=pk).filter(subjectteacher__teacher_id=loggedin.id).values())
+    result = list(Subject.objects.filter(subjectteacher__classroom_id=pk).filter(subjectteacher__teacher_id=loggedin).values())
     #lg_data = list(Lga.objects.filter(state_id=pk).values())
 
 
@@ -853,6 +985,7 @@ def scoresRating(subject,classroom):
     
     minMax = minMaxScores(subject,classroom)
     
+    # TODO: Use select for update because of transaction
     scores = Scores.objects.filter(subject=subject,studentclass=classroom,term=activeTerm,session=activeSession)
     
     for scoresObj in scores:
@@ -933,6 +1066,7 @@ def processTerminalResult(scoresObj):
     
 
     # Find record in the result table
+    # 
     result = Result.objects.filter(student=scoresObj.student, studentclass=scoresObj.studentclass, term=scoresObj.term,session=scoresObj.session)
     
     scores = Scores.objects.filter(student=scoresObj.student,studentclass=scoresObj.studentclass,term=scoresObj.term,session=scoresObj.session).aggregate(subject_total=Sum('subjecttotal'))
@@ -972,6 +1106,22 @@ def processTerminalResult(scoresObj):
         
         # update  term position
         terminalPosition(scoresObj.studentclass)
+        
+
+
+# auto add comments
+def autoAddComment(classroom,session,term):
+    
+    # select result
+    resultFilter = Result.objects.select_for_update().filter(studentclass=classroom,session=session,term=term)
+    
+
+    passed = resultFilter.filter(termaverage__gte=40).update(classteachercomment='Passed',headteachercomment='Passed')
+    
+    failed = resultFilter.filter(termaverage__lte=39.9).update(classteachercomment='Failed',headteachercomment='Failed')
+
+
+    
         
         
 #   TODO: REMOVE DELETE RESULT METHOD

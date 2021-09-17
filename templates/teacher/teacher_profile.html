@@ -1,9 +1,8 @@
-{% extends 'layout/base_layout.html' %}
-
-{% load humanize %}
-
+{% extends 'layout/Dashboard/Teachers/Teacher_Layout.html' %}
+{% load my_tags %}
 {% load static %}
-{% block title %} View Teacher Profile {% endblock %}
+{% load humanize %}
+{% block title %} My  Profile {% endblock %}
 
 {% block content %}
 <div class="card mb-3">
@@ -19,7 +18,7 @@
               </div>
               <!--/.bg-holder-->
 
-              <div class="avatar avatar-5xl avatar-profile"><img class="rounded-circle img-thumbnail shadow-sm" src="{{ teacher.profile_image.url }}" width="200" alt="" /></div>
+              <div class="avatar avatar-5xl avatar-profile"><img class="rounded-circle img-thumbnail shadow-sm" src="{{ request.user.tutor.profile_image.url }}" width="200" alt="" /></div>
             </div>
             <div class="card-body">
               <!-- <div class="row">
@@ -44,12 +43,12 @@
         <div class="card-header">
           <div class="row">
             <div class="col">
-              <h5 class="mb-2">{{teacher.surname}}, {{teacher.firstname}} {{teacher.othername}}</h5>
+              <h5 class="mb-2">{{request.user.tutor.surname}}, {{request.user.tutor.firstname}} {{request.user.tutor.othername}}</h5>
               <!-- <a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-plus fs--2 mr-1"></span>Add note</a> -->
               <button class="btn btn-falcon-default btn-sm dropdown-toggle ml-2 dropdown-caret-none" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-ellipsis-h"></span></button>
               <div class="dropdown-menu">
-              <a class="dropdown-item" href="{% url 'update-teacher' teacher.pk %}">Edit</a>
-              <a class="dropdown-item" href="{% url 'teacher-photo' teacher.pk %}">Change Photo</a>
+              <a class="dropdown-item" href="">Edit</a>
+              <a class="dropdown-item" href="{% url 'teacher-avatar'%}">Change Photo</a>
                 <!-- <a class="dropdown-item" href="#">Report</a><a class="dropdown-item" href="#">Archive</a> -->
                 <!-- <div class="dropdown-divider"></div><a class="dropdown-item text-danger" href="#">Delete user</a> -->
               </div>
@@ -63,7 +62,7 @@
           <div class="media"><span class="fas fa-user text-success mr-2" data-fa-transform="down-5"></span>
             <div class="media-body">
               <p class="mb-0">Teacher was created</p>
-              <p class="fs--1 mb-0 text-600">{{teacher.date_created}}</p>
+              <p class="fs--1 mb-0 text-600">{{request.user.tutor.date_created}}</p>
             </div>
           </div>
         </div>
@@ -88,13 +87,13 @@
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">Username</p>
                   </div>
-                  <div class="col">{{teacher.user.username}}</div>
+                  <div class="col">{{request.user.username}}</div>
                 </div>
                 <div class="row">
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">Email</p>
                   </div>
-                  <div class="col">{{teacher.email}}</div>
+                  <div class="col">{{request.user.email}}</div>
                 </div>
                 <!-- <div class="row">
                   <div class="col-5 col-sm-4">
@@ -136,39 +135,39 @@
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">Sex</p>
                   </div>
-                  <div class="col">{{teacher.sex}}</div>
+                  <div class="col">{{request.user.tutor.sex}}</div>
                 </div>
                 <div class="row">
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">Phone</p>
                   </div>
-                  <div class="col">{{teacher.phone}}</div>
+                  <div class="col">{{request.user.tutor.phone}}</div>
                 </div>
-                <div class="row">
+                <!-- <div class="row">
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">Blood Group</p>
                   </div>
-                  <div class="col">{{teacher.blood_group}}</div>
+                  <div class="col">{{request.user.tutor.blood_group}}</div>
                 </div>
                 <div class="row">
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">Religion</p>
                   </div>
-                  <div class="col">{{teacher.religion}}</div>
-                </div>
+                  <div class="col">{{request.user.tutor.religion}}</div>
+                </div> -->
 
                 <div class="row">
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">Country</p>
                   </div>
-                  <div class="col">{{teacher.country}}</div>
+                  <div class="col">{{request.user.tutor.country}}</div>
                 </div>
 
                 <div class="row">
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">State</p>
                   </div>
-                  <div class="col">{{teacher.state}}</div>
+                  <div class="col">{{request.user.tutor.state}}</div>
                 </div>
               </div>
 
@@ -178,28 +177,23 @@
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">Lga</p>
                   </div>
-                  <div class="col">{{teacher.lga}}</div>
+                  <div class="col">{{request.user.tutor.lga}}</div>
                 </div>
                 <div class="row">
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">City</p>
                   </div>
-                  <div class="col">{{teacher.city}}</div>
+                  <div class="col">{{request.user.tutor.city}}</div>
                 </div>
                 <div class="row">
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">Address</p>
                   </div>
                   <div class="col">
-                    <p class="mb-1">{{teacher.address}}</p>
+                    <p class="mb-1">{{request.user.tutor.address}}</p>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-5 col-sm-4">
-                    <p class="font-weight-semi-bold mb-1">Phone</p>
-                  </div>
-                  <div class="col">{{teacher.phone}}</div>
-                </div>
+
 
               </div>
             </div>
@@ -209,6 +203,40 @@
           <!-- <div class="card-footer border-top text-right"><a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-dollar-sign fs--2 mr-1"></span>Refund</a><a class="btn btn-falcon-default btn-sm ml-2" href="#!"><span class="fas fa-check fs--2 mr-1"></span>Save changes</a></div> -->
         </div>
 
+        <div class="card mb-3">
+            <div class="card-header">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h5 class="mb-0">Academics</h5>
+                </div>
+                <!-- <div class="col-auto"><a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-pencil-alt fs--2 mr-1"></span>Update details</a></div> -->
+              </div>
+            </div>
+            <div class="card-body bg-light border-top">
+              <div class="row">
+                <div class="col-lg col-xxl-5">
+                  <!-- <h6 class="font-weight-semi-bold ls mb-3 text-uppercase">Account Information</h6> -->
+                  <div class="row">
+                    <div class="col-5 col-sm-4">
+                      <p class="font-weight-semi-bold mb-1">Certificate</p>
+                    </div>
+                    <div class="col">{{request.user.tutor.certificate}}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-5 col-sm-4">
+                      <p class="font-weight-semi-bold mb-1">Discipline</p>
+                    </div>
+                    <div class="col">{{request.user.tutor.discipline}}</div>
+                  </div>
+                </div>
+
+
+              </div>
+
+
+            </div>
+            <!-- <div class="card-footer border-top text-right"><a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-dollar-sign fs--2 mr-1"></span>Refund</a><a class="btn btn-falcon-default btn-sm ml-2" href="#!"><span class="fas fa-check fs--2 mr-1"></span>Save changes</a></div> -->
+          </div>
         <!-- logs -->
         <!-- <div class="card">
           <div class="card-header">

@@ -27,7 +27,14 @@ urlpatterns = [
   path('new-student', views.newStudent, name='new-student'),
   path('update-student/<str:pk>', views.updateStudentProfile, name='update-student'),
   path('view-student/<str:pk>', views.viewStudent, name='view-student'),
+  path('student-photo/<str:pk>', views.studentPhoto, name='student-photo'),
   path('list-students', views.listStudents, name='list-students'),
+  path('update-number/<str:pk>', views.updateNumber, name='update-number'),
+  path('define-prefix', views.definePrefix, name='define-prefix'),
+  path('list-prefix', views.listPrefix, name='list-prefix'),
+  path('update-prefix/<str:pk>', views.updatePrefix, name='update-prefix'),
+
+
   # path('country-json', views.get_json_country_data, name='country-json'),
   path('state-json/<str:pk>', views.get_json_state_data, name='state-json'),
   path('lg-json/<str:pk>', views.get_json_lg_data, name='lg-json'),
@@ -36,6 +43,7 @@ urlpatterns = [
   path('update-teacher/<str:pk>', views.updateTeacherProfile, name='update-teacher'),
   path('view-teacher/<str:pk>', views.viewTeacher, name='view-teacher'),
   path('list-teacher', views.listTeacher, name='list-teacher'),
+  path('teacher-photo/<str:pk>', views.teacherPhoto, name='teacher-photo'),
   path('assign-subject', views.assignSubject, name='assign-subject'),
   path('update-subject-teacher/<str:pk>', views.updateSubjectTeacher, name='update-subject-teacher'),
 
@@ -44,16 +52,24 @@ urlpatterns = [
   path('list-class-teacher', views.listClassTeacher, name='list-class-teacher'),
   path('update-class-teacher/<str:pk>', views.updateClassTeacher, name='update-class-teacher'),
   path('admission-list', views.admissionList, name='admission-list'),
-  
+
   path('add-affective', views.addAffective, name='add-affective'),
   path('list-affective', views.listAffective, name='list-affective'),
   path('update-affective/<str:pk>', views.updateAffective, name='update-affective'),
-  
+
   path('add-psychomotor', views.addPsychomotor, name='add-psychomotor'),
   path('list-psychomotor', views.listPsychomotor, name='list-psychomotor'),
   path('update-psychomotor/<str:pk>', views.updatePsychomotor, name='update-psychomotor'),
-  
+
   path('add-rating', views.addRating, name='add-rating'),
   path('list-rating', views.listRating, name='list-rating'),
   path('update-rating/<str:pk>', views.updateRating, name='update-rating'),
+  path('generate-numbers', views.generateAdmissionNumber, name='generate-numbers'),
+
+  # filter scores
+  path('scores-summary', views.scoresFilter, name='scores-summary'),
+  path('comment-result', views.resultFilter, name='comment-result'),
+  path('result-analysis', views.resultAnalysis, name='result-analysis'),
+  path('approve-result/<str:classroom>/<str:term>/<str:session>', views.approveResult, name='approve-result'),
+
 ]
