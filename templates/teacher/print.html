@@ -81,16 +81,22 @@
               <!-- <div class="bg-holder rounded-soft rounded-bottom-0" style="background-image:url({% static 'img/generic/4.jpg' %});">
               </div> -->
               <!--/.bg-holder-->
-              <div class="avatar avatar-3xl avatar-profile"><img class="rounded-circle img-thumbnail shadow-sm" src="{% static '/img/team/2.jpg' %}" width="200" alt="" /></div>
-            </div>
+              {% comment %} {% if result.student.profile_image %} {% endcomment %}
+
+              <div class="avatar avatar-3xl avatar-profile"><img class="rounded-circle img-thumbnail shadow-sm" src="{{ result.student.profile_image.url }}" width="200" alt="" /></div>
+              </div>
+              {% comment %} {% else %}
+                <div class="avatar avatar-3xl avatar-profile"><img class="rounded-circle img-thumbnail shadow-sm" src="{% static '/img/logos/skybadge.jpg' %}" width="200" alt="" /></div>
+              </div>
+              {% endif %} {% endcomment %}
 
             <div class="card-body pt-0">
               <div class="row">
                 <div class="col-lg-12">
                   <div>
-                    <h4 class="mb-1 mr-4"> Anthony Hopkins </h4>
+                    <h4 class="mb-1 mr-4"> {{ result.student.sur_name}} {{ result.student.first_name}} </h4>
                   </div>
-                  <h5 class="text-500 fs--2">SKY/2016/2017/0067</h5>
+                  <h5 class="text-500 fs--2">{{ result.student.full_reg_no}}</h5>
                   <h5 class="fs--1 font-weight-normal">{{result.termposition |ordinal}} Position</h5>
                   <button class="btn btn-outline-dark btn-sm px-3" type="button"><span class="fs--2"> {{result.studentclass}} </span></button>
                   <button class="btn btn-outline-dark btn-sm px-3" type="button">Scores <span class="fs--2"> {{result.termtotal}} </span></button>
