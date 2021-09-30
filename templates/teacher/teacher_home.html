@@ -6,10 +6,10 @@
 {% block content %}
 <!-- card section  -->
           <div class="card-deck">
-            <div class="card mb-3 overflow-hidden" style="min-width: 12rem">
+            <!-- <div class="card mb-3 overflow-hidden" style="min-width: 12rem">
               <div class="bg-holder bg-card" style="background-image:url(assets/img/illustrations/corner-1.png);">
               </div>
-              <!--/.bg-holder-->
+
 
               <div class="card-body position-relative">
                 <h6>Students</h6>
@@ -17,11 +17,12 @@
                 <div class="display-4 fs-4 mb-2 font-weight-normal text-sans-serif text-warning">580</div>
                 {% comment %} <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">See all<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a> {% endcomment %}
               </div>
-            </div>
-            <div class="card mb-3 overflow-hidden" style="min-width: 12rem">
+            </div> -->
+
+            <!-- <div class="card mb-3 overflow-hidden" style="min-width: 12rem">
               <div class="bg-holder bg-card" style="background-image:url(assets/img/illustrations/corner-2.png);">
               </div>
-              <!--/.bg-holder-->
+
 
               <div class="card-body position-relative">
               {% comment %} <h6>Teachers<span class="badge badge-soft-info rounded-capsule ml-2">0.0%</span></h6> {% endcomment %}
@@ -29,11 +30,12 @@
                 <div class="display-4 fs-4 mb-2 font-weight-normal text-sans-serif text-info">23</div>
                 {% comment %} <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">All orders<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a> {% endcomment %}
               </div>
-            </div>
-            <div class="card mb-3 overflow-hidden" style="min-width: 12rem">
+            </div> -->
+
+            <!-- <div class="card mb-3 overflow-hidden" style="min-width: 12rem">
               <div class="bg-holder bg-card" style="background-image:url(assets/img/illustrations/corner-3.png);">
               </div>
-              <!--/.bg-holder-->
+
 
               <div class="card-body position-relative">
                 <h6>Current Term</h6>
@@ -41,7 +43,7 @@
                 {% comment %} <div class="display-4 fs-4 mb-2 font-weight-normal text-sans-serif" data-countup='{"count":43594,"format":"comma","prefix":"$"}'>0</div>
                 <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">Statistics<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a> {% endcomment %}
               </div>
-            </div>
+            </div> -->
           </div>
           <!-- end card seecion -->
 
@@ -50,22 +52,25 @@
           <div class="card-header">
             <div class="row align-items-center justify-content-between">
               <div class="col-6 col-sm-auto d-flex align-items-center pr-0">
-                <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Recent Students</h5>
+                <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">My Class room</h5>
               </div>
+
               <div class="col-6 col-sm-auto ml-auto text-right pl-0">
-                <div class="d-none" id="purchases-actions">
+
+                <!-- <div class="d-none" id="purchases-actions">
                   <div class="input-group input-group-sm">
                     <select class="custom-select cus" aria-label="Bulk actions">
                       <option selected="">Bulk actions</option>
-                      <!-- <option value="Refund">Refund</option> -->
+                      <!-- <option value="Refund">Refund</option> --
                       <option value="Delete">Delete</option>
-                      <!-- <option value="Archive">Archive</option> -->
+                      <!-- <option value="Archive">Archive</option> -
                     </select>
                     <button class="btn btn-falcon-default btn-sm ml-2" type="button">Apply</button>
                   </div>
-                </div>
+                </div> -->
+
                 <div id="dashboard-actions">
-                  <a href="{% url 'new-student' %}" class="btn btn-falcon-default btn-sm" type="button"><span class="fas fa-plus" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ml-1">New</span></a>
+                  <a href="{% url 'enroll' %}" class="btn btn-falcon-default btn-sm" type="button"><span class="fas fa-plus" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ml-1">Enroll</span></a>
                   <!-- <button class="btn btn-falcon-default btn-sm mx-2" type="button"><span class="fas fa-filter" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ml-1">Filter</span></button>
                   <button class="btn btn-falcon-default btn-sm" type="button"><span class="fas fa-external-link-alt" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ml-1">Export</span></button>
                 </div> -->
@@ -77,12 +82,12 @@
               <table class="table table-sm table-dashboard fs--1 data-table border-bottom" data-options='{"responsive":false,"pagingType":"simple","lengthChange":false,"searching":false,"pageLength":8,"columnDefs":[{"targets":[0,6],"orderable":false}],"language":{"info":"_START_ to _END_ Items of _TOTAL_ — <a href=\"#!\" class=\"font-weight-semi-bold\"> view all <span class=\"fas fa-angle-right\" data-fa-transform=\"down-1\"></span> </a>"},"buttons":["copy","excel"]}'>
                 <thead class="bg-200 text-900">
                   <tr>
-                    <th class="no-sort pr-1 align-middle data-table-row-bulk-select">
+                    <!-- <th class="no-sort pr-1 align-middle data-table-row-bulk-select">
                       <div class="custom-control custom-checkbox">
                         <input class="custom-control-input checkbox-bulk-select" id="checkbox-bulk-purchases-select" type="checkbox" data-checkbox-body="#purchases" data-checkbox-actions="#purchases-actions" data-checkbox-replaced-element="#dashboard-actions" />
                         <label class="custom-control-label" for="checkbox-bulk-purchases-select"></label>
                       </div>
-                    </th>
+                    </th> -->
                     <th class="sort pr-1 align-middle">Name</th>
                     <th class="sort pr-1 align-middle">Class</th>
                     <th class="sort pr-1 align-middle">Sex</th>
@@ -94,12 +99,12 @@
                 <tbody id="purchases">
                   {% for student in students %}
                   <tr class="btn-reveal-trigger">
-                    <td class="align-middle">
+                    <!-- <td class="align-middle">
                       <div class="custom-control custom-checkbox">
                         <input class="custom-control-input checkbox-bulk-select-target" type="checkbox" id="checkbox-0" />
                         <label class="custom-control-label" for="checkbox-0"></label>
                       </div>
-                    </td>
+                    </td> -->
                     <th class="align-middle"><a href="pages/customer-details.html">{{ student.sur_name}}  {{student.first_name}}</a></th>
                     <td class="align-middle">{{student.class_admitted}}</td>
                     <td class="align-middle">{{student.sex}}</td>
