@@ -16,16 +16,17 @@ urlpatterns = [
   path('add-student-affective/<str:pk>', views.addStudentAffective, name='add-student-affective'),
   path('add-student-psycho/<str:pk>', views.addStudentPsycho, name='add-student-psycho'),
   path('back-to-result/<str:classroom>/<str:term>/<str:session>', views.resultComments, name='back-to-result'),
-  
+  path('enroll', views.enrollStudent, name='enroll'),
+
 
   path('result-summary', views.resultSummary, name='result-summary'),
   path('submit-result/<str:classroom>/<str:term>/<str:session>', views.submitResult, name='submit-result'),
   # path('lg-json/<str:pk>', views.get_json_lg_data, name='lg-json'),
   # path('update-profile/<str:pk>', views.updateClient, name='update-profile'),
-  
+
   path('result-pdf', views.render_pdf_view, name='result-pdf'),
   path('print-result/<str:pk>/', views.printResultHtml, name='print-result'),
-  
+
   path('teacher-profile', views.teacherProfile, name='teacher-profile'),
   path('teacher-avatar', views.teacherAvatar, name='teacher-avatar'),
 
