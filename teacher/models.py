@@ -35,7 +35,7 @@ class Scores(models.Model):
 
 
 class Result(models.Model):
-    
+
     client = models.ForeignKey("accounts.Client",on_delete=models.DO_NOTHING)
     student = models.ForeignKey("accounts.Student",on_delete=models.DO_NOTHING)
     term = models.ForeignKey("administrator.Term",on_delete=models.DO_NOTHING)
@@ -55,6 +55,24 @@ class Result(models.Model):
         return self.student.sur_name
 
 
+# Annual result table/model
+# class AnnualResult(models.Model):
+#
+#     client = models.ForeignKey("accounts.Client",on_delete=models.DO_NOTHING)
+#     student = models.ForeignKey("accounts.Student",on_delete=models.DO_NOTHING)
+#     term = models.ForeignKey("administrator.Term",on_delete=models.DO_NOTHING)
+#     session = models.ForeignKey("administrator.Session",on_delete=models.DO_NOTHING)
+#     studentclass = models.ForeignKey("administrator.StudentClass",on_delete=models.DO_NOTHING)
+#     annualtotal = models.DecimalField(max_digits=5, decimal_places=2,null=True,blank=True)
+#     annualaverage = models.DecimalField(max_digits=5, decimal_places=2,null=True,blank=True)
+#     annualposition = models.IntegerField(null=True)
+#     status = models.CharField(max_length=20,null=True,blank=True)
+#     owing_status = models.CharField(default='open', max_length=20,null=True,blank=True)
+#     date_created = models.DateTimeField(auto_now_add=True,null=True)
+#     def __str__(self):
+#         return self.student.sur_name
+
+
 class Rating(models.Model):
     description = models.CharField(max_length=100,null=True)
     scores = models.IntegerField(null=True)
@@ -62,29 +80,29 @@ class Rating(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.description
-    
-    
+
+
 class Psychomotor(models.Model):
-    
+
     skill = models.CharField(max_length=200,null=True,blank=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True)
     date_modified = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.skill
-    
+
 
 class Affective(models.Model):
-    
+
     domain = models.CharField(max_length=200,null=True,blank=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True)
     date_modified = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.domain
-    
+
 
 
 class Studentaffective(models.Model):
-    
+
     client = models.ForeignKey("accounts.Client",on_delete=models.DO_NOTHING)
     student = models.ForeignKey("accounts.Student",on_delete=models.DO_NOTHING)
     term = models.ForeignKey("administrator.Term",on_delete=models.DO_NOTHING)
@@ -100,7 +118,7 @@ class Studentaffective(models.Model):
 
 
 class Studentpsychomotor(models.Model):
-    
+
     client = models.ForeignKey("accounts.Client",on_delete=models.DO_NOTHING)
     student = models.ForeignKey("accounts.Student",on_delete=models.DO_NOTHING)
     term = models.ForeignKey("administrator.Term",on_delete=models.DO_NOTHING)
@@ -113,7 +131,7 @@ class Studentpsychomotor(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.student.sur_name
-    
+
 # Admission Number Table
 class AdmissionNumber(models.Model):
     client = models.ForeignKey("accounts.Client",on_delete=models.DO_NOTHING)
@@ -123,8 +141,8 @@ class AdmissionNumber(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.serial_no
-    
-    
+
+
 # Registration number prefix
 class RegPrefix(models.Model):
     client = models.ForeignKey("accounts.Client",on_delete=models.DO_NOTHING)
@@ -133,3 +151,19 @@ class RegPrefix(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.reg_prefix
+
+
+# student classroom
+class Classroom(models.Model):
+    # user = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    client = models.ForeignKey("accounts.Client",on_delete=models.DO_NOTHING)
+    session = models.ForeignKey(Session,on_delete=models.DO_NOTHING)
+    term = models.ForeignKey(Term,on_delete=models.DO_NOTHING)
+    class_room = models.ForeignKey(StudentClass,on_delete=models.DO_NOTHING)
+    student = models.ForeignKey("accounts.Student",on_delete=models.DO_NOTHING)
+    # teacher = models.ForeignKey("accounts.Teacher",on_delete=models.DO_NOTHING)
+    # name = models.CharField(max_length=200)
+    date_created = models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.class_room
