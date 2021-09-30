@@ -30,13 +30,13 @@ from accounts.decorators import unauthenticated_user,allowed_users,admin_only
 def scoresFilter(request):
 
     # loggedin = request.user.teacher
-    
+
     # try:
     #     pass
     # except Exception as e:
     #     print(e)
-    
-        
+
+
     form = ScoresFilterForm()
 
 
@@ -204,11 +204,11 @@ def resultAnalysis(request):
 # Approve result
 @allowed_users(allowed_roles=['admin'])
 def approveResult(request,classroom,term,session):
-    
+
     # select reesult
     result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
         & Q(session=session))
-        
+
     # Update the status of the result
     result.update(status='approved')
     submitCount = result.filter(status__isnull=False).count()
@@ -284,7 +284,7 @@ def updateNumber(request,pk):
     student  = Student.objects.get(pk=pk)
     no_item = AdmissionNumber.objects.filter(status='No').first()
     no_ = no_item.serial_no
-    context ={
+    context = {
         'serial_no': no_
     }
     ClientProfile  = Client.objects.get(user_id=user.id)
