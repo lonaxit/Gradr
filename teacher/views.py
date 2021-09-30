@@ -47,11 +47,11 @@ def printResultHtml(request,pk):
     academic_scores = Scores.objects.filter(student=result.student,studentclass=result.studentclass,term=result.term,session=result.session)
     student_count = Scores.objects.filter(studentclass=result.studentclass,term=result.term,session=result.session).distinct('student').count()
     affective = Studentaffective.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
-    
-    psychomotor = Studentpsychomotor.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
-    
 
-    
+    psychomotor = Studentpsychomotor.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
+
+
+
     # academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
     context={
         'scores':academic_scores,
@@ -69,9 +69,9 @@ def render_pdf_view(request):
     academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
     student_count = Scores.objects.filter(studentclass=result.studentclass,term=result.term,session=result.session).distinct('student').count()
     affective = Studentaffective.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
-    
+
     psychomotor = Studentpsychomotor.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
-    
+
     template_path = 'teacher/print.html'
     # academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
     context={
@@ -86,7 +86,7 @@ def render_pdf_view(request):
     response = HttpResponse(content_type='application/pdf')
     # if download: run this line of code below
     response['Content-Disposition'] = 'attachment; filename="report.pdf"'
-    
+
     # if display: run this line of code
     # response['Content-Disposition'] = 'filename="report.pdf"'
     # find the template and render it.
@@ -131,9 +131,9 @@ def teacherProfile(request):
 def teacherAvatar(request):
     teacher = request.user.tutor
     # teacher  = Teacher.objects.get(pk=pk)
-    
+
     form = TeacherImageUpdateForm(instance=teacher)
-    
+
     context = {'form':form}
     if request.method == 'POST':
         form = TeacherImageUpdateForm(request.POST,request.FILES,instance=teacher)
@@ -144,7 +144,7 @@ def teacherAvatar(request):
         else:
              messages.success(request, 'Photo update failed')
              return redirect('teacher-avatar')
-            
+
     return render(request, 'teacher/changeTeacherAvatar.html',context)
 
 # list all my subjects
@@ -194,7 +194,7 @@ def addScores(request):
             return redirect('new-scores')
         else:
             with transaction.atomic():
-                
+
                 obj = Scores.objects.create(
                                  firstscore = ca1,
                                  secondscore = ca2,
@@ -211,17 +211,17 @@ def addScores(request):
                                  student = studObj,
                                      )
                 obj.save()
-            
+
                 # process Scores
                 processScores(subjectObj,classroomObj)
-            
+
                 # process terminal result
                 processTerminalResult(obj)
-                
-                
+
+
                 # Add auto comment
                 autoAddComment(classroomObj,activeSession,activeTerm)
-             
+
                 messages.success(request, 'Scores created')
                 # return redirect('assign-subject')
     # context = {'form':form}
@@ -261,11 +261,11 @@ def editScores(request,id):
         subjectObj = Subject.objects.get(pk=subj)
         classroomObj = StudentClass.objects.get(pk=studclass)
         studObj = Student.objects.get(pk=studid)
-        
+
         # use transaction
         with transaction.atomic():
             scores_Obj = Scores.objects.select_for_update().get(pk=id)
-            
+
             scores_Obj.firstscore = ca1
             scores_Obj.secondscore = ca2
             scores_Obj.thirdscore = ca3
@@ -280,17 +280,17 @@ def editScores(request,id):
             scores_Obj.client = loggedin.client
             scores_Obj.student = studObj
             scores_Obj.save()
-        
+
             # process Scores
             processScores(subjectObj,classroomObj)
-        
+
             # process terminal result
             processTerminalResult(scores_Obj)
-            
+
             # auto add comments
-            
+
             autoAddComment(classroomObj,activeSession,activeTerm)
-        
+
             # Scores.objects.filter(id=data['id']).update(email=data['email'], phone=data['phone'])
             messages.success(request, 'Scores edited successfully')
             return redirect('filter-scores')
@@ -304,39 +304,39 @@ def deleteScores(request,id):
 
     loggedin = request.user.teacher
     scores = Scores.objects.select_for_update().get(pk=id)
-    
+
     # get sctive term and session
     activeTerm = Term.objects.get(status='True')
     activeSession = Session.objects.get(status='True')
-    
+
     with transaction.atomic():
-        
+
         scores = Scores.objects.select_for_update().get(pk=id)
         subject = scores.subject
         classroom = scores.studentclass
         studentid = scores.student
-    
+
         scores.delete()
-    
+
         # delete terminal result
         deleteResult(studentid,classroom)
         scores_filter = Scores.objects.filter(subject=subject,studentclass=classroom,term=activeTerm,session=activeSession).first()
-    
+
         if scores_filter:
             # process Scores
             processScores(subject,classroom)
             # process terminal result
             processTerminalResult(scores_filter)
-        
+
             # add auto comment
-        
+
             autoAddComment(classroom,activeSession,activeTerm)
-        
+
             # TODO: MAKE SURE TO DELETE CORRESPONDING STUDENT RECORD IN THE RESULT TABLE
-        
+
     messages.success(request, 'Scores deleted successfully')
     return redirect('filter-scores')
-    
+
     # return render(request,'teacher/edit_scores.html')
 
 
@@ -392,35 +392,35 @@ def resultFilter(request):
 
     form = ResultFilterForm()
     # entry = ClassTeacher.objects.filter(teacher=loggedin)
-    
-        
+
+
 
     if request.method =='POST':
-        
+
         if request.POST.get('result-id'):
-            
+
             resultObj = Result.objects.get(pk=request.POST['result-id'])
             # select all result that fit criteria
             # the result is used to send back to the page
             result = Result.objects.filter(Q(term=resultObj.term) & Q(studentclass=resultObj.studentclass)
             & Q(session=resultObj.session)).order_by('termposition')
-            
+
             # save/update comment here
             comment = request.POST['comment']
-            
+
             resultObj.classteachercomment=comment
             resultObj.save()
-            
+
             messages.success(request, 'Comment added')
             context ={ 'form':form,'result':result}
-            return render(request,'teacher/filterResult.html',context)            
+            return render(request,'teacher/filterResult.html',context)
         else:
             classroom = request.POST['classroom']
             session = request.POST['session']
             term = request.POST['term']
 
             if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
-                
+
                 # select reesult
                 result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
                 & Q(session=session)).order_by('termposition')
@@ -430,10 +430,10 @@ def resultFilter(request):
                     messages.error(request, 'No record exist')
                     return redirect('filter-result')
                 else:
-                       
+
                     context ={ 'form':form,'result':result}
                     return render(request,'teacher/filterResult.html',context)
-                
+
     context = {'form':form}
     return render(request,'teacher/filterResult.html',context)
 
@@ -446,37 +446,37 @@ def addAttendance(request):
 
     form = ResultFilterForm()
     # entry = ClassTeacher.objects.filter(teacher=loggedin)
-    
-        
+
+
 
     if request.method =='POST':
-        
+
         if request.POST.get('result-id'):
-            
+
             resultObj = Result.objects.get(pk=request.POST['result-id'])
-            
+
             # select all result that fit criteria
             # the result is used to send back to the page
-            
+
             result = Result.objects.filter(Q(term=resultObj.term) & Q(studentclass=resultObj.studentclass)
             & Q(session=resultObj.session)).order_by('termposition')
-            
+
             # save/update comment here
             attendance = request.POST['attendance']
-            
+
             resultObj.attendance=attendance
             resultObj.save()
-            
+
             messages.success(request, 'Attendance added')
             context ={ 'form':form,'result':result}
-            return render(request,'teacher/addAttendance.html',context)            
+            return render(request,'teacher/addAttendance.html',context)
         else:
             classroom = request.POST['classroom']
             session = request.POST['session']
             term = request.POST['term']
 
             if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
-                
+
                 # select reesult
                 result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
                 & Q(session=session)).order_by('termposition')
@@ -485,13 +485,72 @@ def addAttendance(request):
                 if not result:
                     messages.error(request, 'No record exist')
                     return redirect('filter-result')
-                else:   
+                else:
                     context ={ 'form':form,'result':result}
                     return render(request,'teacher/addAttendance.html',context)
-                
+
     context = {'form':form}
     return render(request,'teacher/addAttendance.html',context)
 
+
+
+# Enroll students in class
+@allowed_users(allowed_roles=['teacher'])
+def enrollStudent(request):
+
+    loggedin = request.user.tutor.pk
+    activeTerm = Term.objects.get(status='True')
+    activeSession = Session.objects.get(status='True')
+
+    # form = ResultFilterForm()
+    # entry = ClassTeacher.objects.filter(teacher=loggedin)
+
+    classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
+
+    # print(classTeacher.classroom.pk)
+
+    if request.method =='POST':
+        
+        try:
+            
+            if classTeacher:
+                
+    
+                enroll = request.POST['enroll']
+                if enroll:
+                    student = Student.objects.get(reg_no=enroll)
+
+                    # check if student is already enrolled
+
+                    studentEnrolled = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q      (class_room=classTeacher.classroom.pk) & Q(student=student.pk))
+                
+                    if studentEnrolled:
+                    
+                        messages.success(request, 'Student alrteady enrolled')
+                        return redirect('enroll')
+                    else:
+                        # enroll student
+                        enrollObj = Classroom.objects.create(
+                        class_room=classTeacher.classroom,
+                        client =classTeacher.client,
+                        session = activeSession,
+                        term = activeTerm,
+                        student = student
+                        )
+                        enrollObj.save()
+                        messages.success(request, 'Student enrolled successfully!')
+                        return redirect('enroll')
+                else:
+                    messages.error(request, 'Enter a student registration/admission please!')
+                    return redirect('enroll')
+            else:
+                messages.error(request, 'You are not a class teacher you can not enroll a student!')
+                return redirect('enroll')
+        except Exception as e: 
+                messages.error(request,  e)
+                return redirect('enroll')
+            
+    return render(request,'teacher/enroll_student.html')
 
 
 
@@ -507,31 +566,31 @@ def resultComments(request,classroom,term,session):
                 & Q(session=session)).order_by('termposition')
 
     if request.method =='POST':
-        
+
         if request.POST.get('result-id'):
-            
+
             resultObj = Result.objects.get(pk=request.POST['result-id'])
             # select all result that fit criteria
             # the result is used to send back to the page
             result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
             & Q(session=session)).order_by('termposition')
-            
+
             # save/update comment here
             comment = request.POST['comment']
-            
+
             resultObj.classteachercomment=comment
             resultObj.save()
-            
+
             messages.success(request, 'Comment added')
             context ={ 'form':form,'result':result}
-            return render(request,'teacher/filterResult.html',context)            
+            return render(request,'teacher/filterResult.html',context)
         else:
             classroom = request.POST['classroom']
             session = request.POST['session']
             term = request.POST['term']
 
             if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
-                
+
                 # select reesult
                 result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
                 & Q(session=session)).order_by('termposition')
@@ -541,10 +600,10 @@ def resultComments(request,classroom,term,session):
                     messages.error(request, 'No record exist')
                     return redirect('filter-result')
                 else:
-                       
+
                     context ={ 'form':form,'result':result}
                     return render(request,'teacher/filterResult.html',context)
-                
+
     context ={'form':form,'result':result}
     return render(request,'teacher/filterResult.html',context)
 
@@ -557,55 +616,55 @@ def resultSummary(request):
 
     form = ResultFilterForm()
     # entry = ClassTeacher.objects.filter(teacher=loggedin)
-    
-        
+
+
 
     if request.method =='POST':
-        
-       
+
+
         classroom = request.POST['classroom']
         session = request.POST['session']
         term = request.POST['term']
 
         if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
-                
+
             # select reesult
             result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
                 & Q(session=session)).order_by('termposition')
             resultObj = result.first()
-           
+
 
             nocommentsCount = result.filter(classteachercomment__isnull=True).count()
             yescommentsCount = result.filter(classteachercomment__isnull=False).count()
-            
+
             affective = Studentaffective.objects.filter(Q(term=term) & Q(studentclass=classroom)
                 & Q(session=session)).values('student').distinct('student')
-            
-            
+
+
             yesaffective = result.filter(student__in=affective).count()
             noaffective = result.exclude(student__in=affective).count()
-            
-            
+
+
             psychomotor = Studentpsychomotor.objects.filter(Q(term=term) & Q(studentclass=classroom)
                 & Q(session=session)).values('student').distinct('student')
-            
-            
+
+
             yespsycho = result.filter(student__in=psychomotor).count()
             nopsycho = result.exclude(student__in=psychomotor).count()
-            
+
             noattendance = result.filter(attendance__isnull=True).count()
             yesattendance = result.filter(attendance__isnull=False).count()
 
-            
+
             # find pass rate
             totalStudents = result.count()
-            
+
             passedStudents = result.filter(termaverage__gte=40).count()
-            
+
             passRate = passedStudents/totalStudents*100
-            
-            
-            
+
+
+
             #check for availability of result
             if not result:
                 messages.error(request, 'No record exist')
@@ -634,15 +693,15 @@ def resultSummary(request):
 # submit result
 @allowed_users(allowed_roles=['teacher'])
 def submitResult(request,classroom,term,session):
-    
+
 
     loggedin = request.user.tutor.pk
 
-    if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():     
+    if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
                 # select reesult
         result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
         & Q(session=session))
-        
+
         # Update the status of the result
         result.update(status='submitted')
         submitCount = result.filter(status__isnull=False).count()
@@ -659,9 +718,9 @@ def submitResult(request,classroom,term,session):
 def addStudentAffective(request,pk):
 
     loggedin = request.user.tutor.pk
-    
+
     client = Client.objects.get(pk=request.user.tutor.client.pk)
-    
+
     resultObj = Result.objects.get(pk=pk)
     student = Student.objects.get(pk=resultObj.student.pk)
     term = Term.objects.get(pk=resultObj.term.pk)
@@ -678,14 +737,14 @@ def addStudentAffective(request,pk):
 
         affective = request.POST['affective']
         rating = request.POST['rating']
-        
+
         affectiveObj = Affective.objects.get(pk=affective)
         ratingObj = Rating.objects.get(pk=rating)
-        
-        
+
+
 
         if ClassTeacher.objects.filter(teacher=loggedin,classroom=resultObj.studentclass.pk,session=resultObj.session.pk,term=resultObj.term.pk).exists():
-            
+
             # select traits
             affective_traits = Studentaffective.objects.filter(Q(term=resultObj.term.pk) & Q(studentclass=resultObj.studentclass.pk) & Q(session=resultObj.session.pk) & Q(affective=affective) & Q(student=student.pk))
 
@@ -693,7 +752,7 @@ def addStudentAffective(request,pk):
             if affective_traits:
                 messages.error(request, 'Selected trait already added!')
                 return redirect('add-student-affective',pk=pk)
-            else:  
+            else:
                 # add the trait to the database
                 obj = Studentaffective.objects.create(
                                      affective = affectiveObj,
@@ -710,11 +769,11 @@ def addStudentAffective(request,pk):
                 context ={ 'form':form,'list_traits':list_traits}
                 return redirect('add-student-affective',pk=pk)
         else:
-            
+
             messages.error(request, 'You are not allowed to add affective traits')
             context = {'form':form,'student':student,'resultObj':resultObj}
             return render(request,'teacher/addStudentAffectiveDomain.html',context)
-            
+
     context = {'form':form,'student':student,'resultObj':resultObj,'list_traits':list_traits}
     return render(request,'teacher/addStudentAffectiveDomain.html',context)
 
@@ -725,9 +784,9 @@ def addStudentAffective(request,pk):
 def addStudentPsycho(request,pk):
 
     loggedin = request.user.tutor.pk
-    
+
     client = Client.objects.get(pk=request.user.tutor.client.pk)
-    
+
     resultObj = Result.objects.get(pk=pk)
     student = Student.objects.get(pk=resultObj.student.pk)
     term = Term.objects.get(pk=resultObj.term.pk)
@@ -744,14 +803,14 @@ def addStudentPsycho(request,pk):
 
         psychomotor = request.POST['psychomotor']
         rating = request.POST['rating']
-        
+
         psychomotorObj = Psychomotor.objects.get(pk=psychomotor)
         ratingObj = Rating.objects.get(pk=rating)
-        
-        
+
+
 
         if ClassTeacher.objects.filter(teacher=loggedin,classroom=resultObj.studentclass.pk,session=resultObj.session.pk,term=resultObj.term.pk).exists():
-            
+
             # select traits
             psycho_traits = Studentpsychomotor.objects.filter(Q(term=resultObj.term.pk) & Q(studentclass=resultObj.studentclass.pk) & Q(session=resultObj.session.pk) & Q(psychomotor=psychomotor) & Q(student=student.pk))
 
@@ -759,7 +818,7 @@ def addStudentPsycho(request,pk):
             if psycho_traits:
                 messages.error(request, 'Selected trait already added!')
                 return redirect('add-student-psycho',pk=pk)
-            else:  
+            else:
                 # add the trait to the database
                 obj = Studentpsychomotor.objects.create(
                                      psychomotor = psychomotorObj,
@@ -776,11 +835,11 @@ def addStudentPsycho(request,pk):
                 context ={ 'form':form,'list_traits':list_traits}
                 return redirect('add-student-psycho',pk=pk)
         else:
-            
+
             messages.error(request, 'You are not allowed to add psychomotor traits')
             context = {'form':form,'student':student,'resultObj':resultObj}
             return render(request,'teacher/addStudentPsychomotorDomain.html',context)
-            
+
     context = {'form':form,'student':student,'resultObj':resultObj,'list_traits':list_traits}
     return render(request,'teacher/addStudentPsychomotorDomain.html',context)
 
@@ -805,47 +864,47 @@ def subjectAverage(subj,classroom):
 
     # get scores based on subject
     # scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).distinct('student').aggregate(Sum('subjAverage'))
-    
+
     scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).aggregate(scoresav=Avg('subjecttotal'))
-    
+
     av = scores['scoresav']
-    
+
     # scoresAv = scores.aggregate(Sum('subjAverage'))
-    
+
     return av
 
 
-# terminal average 
+# terminal average
 def terminalAverage(studentid,classroom):
-    
+
     activeTerm = Term.objects.get(status='True')
     activeSession = Session.objects.get(status='True')
 
     # get scores based on subject
     # scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).distinct('student').aggregate(Sum('subjAverage'))
-    
+
     scores = Scores.objects.filter(student=studentid,studentclass=classroom,term=activeTerm,session=activeSession).aggregate(term_sum=Sum('subjecttotal'))
-    
+
     term_sum = scores['term_sum']
     # get subject per class
     no_subj_per_class = SubjectPerClass.objects.get(sch_class=classroom)
-    
+
     class_av = term_sum/no_subj_per_class.no_subject
-    
+
     # TODO MOVE CODE TO UPDATE TERMINAL AVERAGE HERE
     result = Result.objects.filter(student=studentid,studentclass=classroom,term=activeTerm,session=activeSession).update(termaverage=class_av)
-    
-    
+
+
     # return av
 
 
 #  subject positioning
 def subjectPosition(subject, classroom):
-    
-    
+
+
     activeTerm = Term.objects.get(status='True')
     activeSession = Session.objects.get(status='True')
-    
+
     scores = Scores.objects.filter(subject=subject,studentclass=classroom,term=activeTerm,session=activeSession)
     ordered_scores = []
     counter = 1
@@ -857,54 +916,54 @@ def subjectPosition(subject, classroom):
         if counter == 1:
             # this is the first iteration, just assign the first position
             position = counter
-             # update the database 
+             # update the database
             score_entity = Scores.objects.get(pk=score.pk)
             score_entity.subjectposition = position
             score_entity.save()
             # ordered_scores.append({
-            # "position": position, 
+            # "position": position,
             # "id": score.pk,
             # "subjecttotal": score.subjecttotal
             # })
             previous_score = score
-            counter += 1   
-            
-            
+            counter += 1
+
+
         else:
-            
+
             # check for duplicate
             if score.subjecttotal == previous_score.subjecttotal:
                 # update database
                 score_entity = Scores.objects.get(pk=score.pk)
                 score_entity.subjectposition = position
                 score_entity.save()
-                
+
                 # position = counter
                 # ordered_scores.append({
-                # "position": position, 
+                # "position": position,
                 # "id": score.pk,
                 # "subjecttotal": score.subjecttotal
                 # })
                 # position = previous_score.position
                 repeated_counter +=1
-                
+
             else:
                 position = counter + repeated_counter
                 # update database
                 score_entity = Scores.objects.get(pk=score.pk)
                 score_entity.subjectposition = position
                 score_entity.save()
-                
+
                 # ordered_scores.append({
-                # "position": position, 
+                # "position": position,
                 # "id": score.pk,
                 # "subjecttotal": score.subjecttotal
                 # })
-                
+
                 previous_score = score
                 # previous_position = position
                 # repeated_counter = position
-                
+
                 counter += 1
     # return render(request, "template.html", {"players": ordered_players})
     # return ordered_scores
@@ -912,84 +971,84 @@ def subjectPosition(subject, classroom):
 
 # assign terminal result position
 def terminalPosition(classroom):
-    
-    
+
+
     activeTerm = Term.objects.get(status='True')
     activeSession = Session.objects.get(status='True')
-    
+
     results = Result.objects.filter(studentclass=classroom,term=activeTerm,session=activeSession)
     ordered_scores = []
     counter = 1
     repeated_counter = 0
-    
+
     previous_score = Result.objects.none()
     for result in results.order_by("-termtotal"):
         # repeated_counter = 0
         if counter == 1:
             # this is the first iteration, just assign the first position
             position = counter
-             # update the database 
+             # update the database
             result_entity = Result.objects.get(pk=result.pk)
             result_entity.termposition = position
             result_entity.save()
-            
-          
+
+
             # ordered_scores.append({
-            # "position": position, 
+            # "position": position,
             # "id": score.pk,
             # "subjecttotal": score.subjecttotal
             # })
             previous_score = result
-            counter += 1   
+            counter += 1
         else:
-            
+
             # check for duplicate
             if result.termtotal == previous_score.termtotal:
                 # update database
                 result_entity = Result.objects.get(pk=result.pk)
                 result_entity.termposition = position
                 result_entity.save()
-                
+
                 # position = counter
                 # ordered_scores.append({
-                # "position": position, 
+                # "position": position,
                 # "id": score.pk,
                 # "subjecttotal": score.subjecttotal
                 # })
                 # position = previous_score.position
                 repeated_counter +=1
-                
+
             else:
                 position = counter + repeated_counter
                 # update database
                 result_entity = Result.objects.get(pk=result.pk)
                 result_entity.termposition = position
                 result_entity.save()
-                
+
                 # ordered_scores.append({
-                # "position": position, 
+                # "position": position,
                 # "id": score.pk,
                 # "subjecttotal": score.subjecttotal
                 # })
-                
+
                 previous_score = result
                 # previous_position = position
                 # repeated_counter = position
                 counter += 1
-    
+
 # update ratings
 def scoresRating(subject,classroom):
-    
+
     activeTerm = Term.objects.get(status='True')
     activeSession = Session.objects.get(status='True')
-    
+
     minMax = minMaxScores(subject,classroom)
-    
+
     # TODO: Use select for update because of transaction
     scores = Scores.objects.filter(subject=subject,studentclass=classroom,term=activeTerm,session=activeSession)
-    
+
     for scoresObj in scores:
-        
+
         if scoresObj.subjecttotal <= 39:
             scoresObj.subjectgrade = 'E'
             scoresObj.subjectrating = 'Poor'
@@ -1009,7 +1068,7 @@ def scoresRating(subject,classroom):
             scoresObj.subjectrating = 'Very Good'
             scoresObj.save()
         elif scoresObj.subjecttotal >= 75 and scoresObj.subjecttotal <= 100:
-            
+
             scoresObj.subjectgrade = 'A'
             scoresObj.subjectrating = 'Excellent'
             scoresObj.save()
@@ -1017,67 +1076,67 @@ def scoresRating(subject,classroom):
             scoresObj.subjectgrade = 'NA'
             scoresObj.subjectrating = 'NA'
             scoresObj.save()
-        
+
 
 # Minimum and Maximum scores
 def minMaxScores(subject,classroom):
-    
+
     # min_max = []
-    
+
     activeTerm = Term.objects.get(status='True')
     activeSession = Session.objects.get(status='True')
 
     # get scores based on subject
     # scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).distinct('student').aggregate(Sum('subjAverage'))
-    
+
     min_max = Scores.objects.filter(subject=subject,studentclass=classroom,term=activeTerm,session=activeSession).aggregate(min_scores=Min('subjecttotal'),max_scores=Max('subjecttotal'))
-    
+
     scores = Scores.objects.filter(subject=subject,studentclass=classroom,term=activeTerm,session=activeSession).update(highest_inclass=min_max['max_scores'],lowest_inclass=min_max['min_scores'])
-    
-    
-    
+
+
+
     # return min_max
 
 
 # update subject average
 def processScores(subjectObj,classroomObj):
-    
+
     # get active term and session
     activeTerm = Term.objects.get(status='True')
     activeSession = Session.objects.get(status='True')
-    
+
     subjavg = subjectAverage(subjectObj,classroomObj)
-    
+
     scores = Scores.objects.filter(subject=subjectObj,studentclass=classroomObj,term=activeTerm,session=activeSession).update(subjaverage=subjavg)
-    
-     # update position and grading 
+
+     # update position and grading
     subjectPosition(subjectObj,classroomObj)
-        
+
     # Update  grades
     scoresRating(subjectObj,classroomObj)
-    
+
     # update min and max
     minMaxScores(subjectObj,classroomObj)
-    
-    
+
+
 
 # Process terminal result
 def processTerminalResult(scoresObj):
-    
+
 
     # Find record in the result table
-    # 
+    #
     result = Result.objects.filter(student=scoresObj.student, studentclass=scoresObj.studentclass, term=scoresObj.term,session=scoresObj.session)
-    
+
     scores = Scores.objects.filter(student=scoresObj.student,studentclass=scoresObj.studentclass,term=scoresObj.term,session=scoresObj.session).aggregate(subject_total=Sum('subjecttotal'))
-    
+
     # print(scores['subject_total'])
-    
+
     # check for existence of record
     if result:
         # update the record
         result.update(termtotal=scores['subject_total'])
-        
+
         # update terminal average
         terminalAverage(scoresObj.student,scoresObj.studentclass)
         # update  term position
@@ -1103,36 +1162,36 @@ def processTerminalResult(scoresObj):
 
         # update term average
         terminalAverage(scoresObj.student,scoresObj.studentclass)
-        
+
         # update  term position
         terminalPosition(scoresObj.studentclass)
-        
+
 
 
 # auto add comments
 def autoAddComment(classroom,session,term):
-    
+
     # select result
     resultFilter = Result.objects.select_for_update().filter(studentclass=classroom,session=session,term=term)
-    
+
 
     passed = resultFilter.filter(termaverage__gte=40).update(classteachercomment='Passed',headteachercomment='Passed')
-    
+
     failed = resultFilter.filter(termaverage__lte=39.9).update(classteachercomment='Failed',headteachercomment='Failed')
 
 
-    
-        
-        
+
+
+
 #   TODO: REMOVE DELETE RESULT METHOD
 # delete result object
 def deleteResult(studentid,classroom):
-    
+
      # get sctive term and session
     activeTerm = Term.objects.get(status='True')
     activeSession = Session.objects.get(status='True')
-    
+
     result = Result.objects.filter(student=studentid,studentclass=classroom,term=activeTerm,session=activeSession).first()
-    
+
     if result:
         result.delete()
