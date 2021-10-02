@@ -499,20 +499,13 @@ def addAttendance(request):
 def enrollStudent(request):
 
     loggedin = request.user.tutor.pk
-    activeTerm = Term.objects.get(status='True')
-    activeSession = Session.objects.get(status='True')
-
-    # form = ResultFilterForm()
-    # entry = ClassTeacher.objects.filter(teacher=loggedin)
-
-    classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
-
-    # print(classTeacher.classroom.pk)
 
     if request.method =='POST':
         
         try:
-            
+            activeTerm = Term.objects.get(status='True')
+            activeSession = Session.objects.get(status='True')
+            classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
             if classTeacher:
                 
     
@@ -521,7 +514,6 @@ def enrollStudent(request):
                     student = Student.objects.get(reg_no=enroll)
 
                     # check if student is already enrolled
-
                     studentEnrolled = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q      (class_room=classTeacher.classroom.pk) & Q(student=student.pk))
                 
                     if studentEnrolled:
@@ -551,6 +543,66 @@ def enrollStudent(request):
                 return redirect('enroll')
             
     return render(request,'teacher/enroll_student.html')
+
+# remove student in class
+# Enroll students in class
+@allowed_users(allowed_roles=['teacher'])
+def deleteEnrollment(request,pk):
+
+    loggedin = request.user.tutor.pk
+        
+    try:
+        if request.method == 'POST':
+            
+            activeTerm = Term.objects.get(status='True')
+            activeSession = Session.objects.get(status='True')
+            classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
+            if classTeacher:
+                student = Classroom.objects.get(pk=pk)
+                student.delete() 
+                messages.success(request, 'Student unenrolled in this class')
+                return redirect('classroom')    
+           
+            else:
+                messages.error(request, 'You are not a class teacher you can not perform this action!')
+                return redirect('classroom')
+        return render(request,'teacher/confirm_delete.html')
+    except Exception as e: 
+                messages.error(request,  e)
+                return redirect('classroom')
+
+
+# my classroom enrollees
+@allowed_users(allowed_roles=['teacher'])
+def myClassroom(request):
+    
+
+    loggedin = request.user.tutor.pk
+   
+    try:
+        
+        activeTerm = Term.objects.get(status='True')
+        activeSession = Session.objects.get(status='True')
+
+        classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
+            
+        if classTeacher:
+            
+                students = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q      (class_room=classTeacher.classroom.pk)).order_by('student__sur_name')
+                # ordering using a different table, student field is on classroom table which is related to the student table and sur_name is on the student table
+                
+                if students:
+                    context={
+                        'students':students
+                    }
+                    return render(request,'teacher/classroom.html',context)
+        else:
+             messages.error(request, 'You are not a class teacher you can not enroll a student!')
+             return redirect('teacher')
+        
+    except Exception as e: 
+            messages.error(request,  e)
+            return render(request,'teacher/classroom.html')
 
 
 
