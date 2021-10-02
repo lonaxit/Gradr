@@ -6,7 +6,7 @@
 
       <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle" data-toggle="tooltip" data-placement="left" title="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
 
-    </div><a class="navbar-brand" href="../index.html">
+    </div><a class="navbar-brand" href="{% url 'teacher' %}">
       <div class="d-flex align-items-center py-3"><img class="mr-2" src="../assets/img/illustrations/falcon.png" alt="" width="40" /><span class="text-sans-serif">Gradr</span>
       </div>
     </a>
@@ -39,7 +39,9 @@
             </div>
           </a>
           <ul class="nav collapse" id="mystudent" data-parent="#navbarVerticalCollapse">
-            <li class="nav-item"><a class="nav-link" href="">List Students</a>
+            <li class="nav-item"><a class="nav-link" href="{% url 'enroll' %}">Enrollment</a>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'classroom' %}">Classroom</a>
             </li>
           </ul>
         </li>
@@ -52,8 +54,7 @@
           <ul class="nav collapse" id="academics" data-parent="#navbarVerticalCollapse">
             <li class="nav-item"><a class="nav-link" href="{% url 'my-subjects' %}">My Subjects</a>
             </li>
-            <li class="nav-item"><a class="nav-link" href="">Classroom</a>
-            </li>
+            
             <li class="nav-item"><a class="nav-link" href="{% url 'new-scores' %}">New Scores</a>
             </li>
 
