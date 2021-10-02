@@ -17,6 +17,8 @@ urlpatterns = [
   path('add-student-psycho/<str:pk>', views.addStudentPsycho, name='add-student-psycho'),
   path('back-to-result/<str:classroom>/<str:term>/<str:session>', views.resultComments, name='back-to-result'),
   path('enroll', views.enrollStudent, name='enroll'),
+  path('delete-enrollment/<str:pk>', views.deleteEnrollment, name='delete-enrollment'),
+  path('classroom', views.myClassroom, name='classroom'),
 
 
   path('result-summary', views.resultSummary, name='result-summary'),
