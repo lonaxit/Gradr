@@ -6,7 +6,7 @@ urlpatterns = [
   path('teacher-home', views.teacherHome, name='teacher'),
   path('new-scores', views.addScores, name='new-scores'),
   path('my-subjects', views.mySubjects, name='my-subjects'),
-    # path('country-json', views.get_json_country_data, name='country-json'),
+  # path('country-json', views.get_json_country_data, name='country-json'),
   path('class-subjects/<str:pk>', views.get_subjects, name='class-subjects'),
   path('filter-scores', views.scoresFilter, name='filter-scores'),
   path('update-scores/<int:id>', views.editScores, name='update-scores'),
@@ -19,6 +19,9 @@ urlpatterns = [
   path('enroll', views.enrollStudent, name='enroll'),
   path('delete-enrollment/<str:pk>', views.deleteEnrollment, name='delete-enrollment'),
   path('classroom', views.myClassroom, name='classroom'),
+  path('assessment-sheet', views.assessmentSheet, name='assessment-sheet'),
+  path('export-sheet/<str:classroom>/<str:subject>', views.exportSheet, name='export-sheet'),
+  
 
 
   path('result-summary', views.resultSummary, name='result-summary'),
