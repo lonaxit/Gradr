@@ -3,7 +3,7 @@ from django.shortcuts import render,redirect
 
 from django.http import HttpResponse,JsonResponse
 
-
+import csv
 # import models
 # from accounts.models import *
 # from administrator.models import *
@@ -603,6 +603,82 @@ def myClassroom(request):
     except Exception as e: 
             messages.error(request,  e)
             return render(request,'teacher/classroom.html')
+        
+
+# Get assessment sheet
+@allowed_users(allowed_roles=['teacher'])
+def assessmentSheet(request):
+    
+
+    loggedin = request.user.tutor.pk
+    
+    classes = StudentClass.objects.all()
+    context={
+        'classes': classes
+    }
+    if request.method == 'POST':
+        
+        try:
+            
+            activeTerm = Term.objects.get(status='True')
+            activeSession = Session.objects.get(status='True')
+            classroom = request.POST['studentclass']
+            subject_id = request.POST['subject']
+            if subject_id:
+                
+                students = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q      (class_room=classroom)).order_by('student__sur_name')
+                subject = Subject.objects.get(pk=subject_id)
+                
+                # ordering using a different table, student field is on classroom table which is related to        the student table and sur_name is on the student table
+                context={
+                    'students':students,
+                    'subject':subject,
+                    'classroom':classroom
+                }
+                return render(request, 'teacher/ca_sheet_preview.html',context)
+            else:
+                messages.error(request, 'Choose a subject')
+                return redirect('assessment-sheet')
+        except Exception as e:
+             messages.error(request,  e)
+             return render(request,'teacher/assessment_sheet_find.html')
+    
+    return render(request, 'teacher/assessment_sheet_find.html',context)
+   
+    
+# export assessment sheet 
+
+@allowed_users(allowed_roles=['teacher'])
+def exportSheet(request,classroom,subject):
+    
+
+    loggedin = request.user.tutor.pk
+      
+    try:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=assessmentSheet.csv'
+        writer = csv.writer(response)
+            
+        writer.writerow(['StudentID','Name','Class','Subject','First CA','Second CA','Third CA','CA Total','Exam','Total'])
+            
+        activeTerm = Term.objects.get(status='True')
+        activeSession = Session.objects.get(status='True')
+        
+            
+        students = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q(class_room=classroom)).order_by('student__sur_name')
+        subject = Subject.objects.get(pk=subject)
+                
+            # ordering using a different table, student field is on classroom table which is related to the student table and sur_name is on the student table
+        for student in students:
+            writer.writerow([student.student.pk,student.student.sur_name,student.class_room.class_name,subject.subject,0,0,0,0,0])
+        
+        return response        
+        
+    except Exception as e:
+             messages.error(request,  e)
+             return render(request,'teacher/assessment_sheet_find.html')
+    
+    
 
 
 
