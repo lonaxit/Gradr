@@ -21,10 +21,15 @@ urlpatterns = [
   path('classroom', views.myClassroom, name='classroom'),
   path('assessment-sheet', views.assessmentSheet, name='assessment-sheet'),
   path('export-sheet/<str:classroom>/<str:subject>', views.exportSheet, name='export-sheet'),
+  path('import-assessment-sheet', views.importAssessmentSheet, name='import-assessment-sheet'),
+  
   
 
 
   path('result-summary', views.resultSummary, name='result-summary'),
+  path('annual-result', views.annualResultSummary, name='annual-result'),
+  path('annual-result-detail', views.annualResultDetail, name='annual-result-detail'),
+  
   path('submit-result/<str:classroom>/<str:term>/<str:session>', views.submitResult, name='submit-result'),
   # path('lg-json/<str:pk>', views.get_json_lg_data, name='lg-json'),
   # path('update-profile/<str:pk>', views.updateClient, name='update-profile'),
