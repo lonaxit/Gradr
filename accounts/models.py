@@ -74,7 +74,7 @@ class Student(models.Model):
     ('ISLAM','ISLAM'),
     ('OTHERS','OTHERS')
     )
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='learner')
     sur_name = models.CharField(max_length=200,blank=True,null=True)
     first_name = models.CharField(max_length=200,blank=True,null=True)
     other_name = models.CharField(max_length=200,blank=True,null=True)
