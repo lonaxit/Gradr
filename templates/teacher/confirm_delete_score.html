@@ -1,0 +1,61 @@
+{% extends 'layout/Dashboard/Teachers/Teacher_Layout.html' %}
+
+{% load static %}
+{% block title %} Confirm Delete{% endblock %}
+
+{% block content %}
+<div class="row no-gutters" id="block-content">
+
+
+            <div class="col-lg-12 pl-lg-2 mb-3">
+              <div class="row no-gutters h-100 align-items-stretch">
+                <div class="col-lg-12 mb-3">
+                  <div class="card h-100">
+                    <div class="card-header bg-light">
+                      <h5 class="mb-0">Are you sure you want to delete?</h5>
+                    </div>
+                    <!-- <div class="mb-4">
+                      {% if messages %}
+                      <small class="alert alert-success">
+                        {% for message in messages %}
+                        {{message}}
+                        {% endfor %}
+                      </small>
+                      {% endif %}
+                    </div> -->
+                    <div class="card-body">
+                      <form  action="" method="POST">
+                        {% csrf_token %}
+
+
+                        <div class="form-row">
+                          <!-- <div class="form-group col-12">
+                          <label for="start">Enter Admission Number</label>
+                            <input class="btn btn-danger"  type="submit" value="Yes">
+                          </div> -->
+                          <div class="d-flex justify-content-start">
+                            <input class="btn btn-danger mr-2"  type="submit" value="Yes">
+                            <a href="{% url 'filter-scores' %}">
+                              <div class="btn btn-primary">
+                              Cancel
+                              </div>
+                            </a>
+                          </div>
+                        </div>
+
+                        <!-- <div class="d-flex justify-content-start">
+                          <input type="submit" name="create" class="btn btn-primary" value="Save">
+                        </div> -->
+                      </form>
+                      <!-- <div class="d-flex justify-content-end">
+                        <button class="btn btn-primary">Save</button>
+                      </div> -->
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+{% endblock %}
