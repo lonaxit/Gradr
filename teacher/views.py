@@ -130,6 +130,8 @@ def teacherProfile(request):
 
     return render(request, 'teacher/teacher_profile.html')
 
+
+
 # change avatar
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['teacher'])
@@ -788,7 +790,7 @@ def importAssessmentSheet(request):
                         subjecttotal=dbframe.Total,
                         session=activeSession,
                         term=activeTerm,
-                        student=Student.objects.get(pk=dbframe.StudentID),
+                        student=studentObj,
                         studentclass=classroomObj,
                         subjectteacher= teacherObj,
                         client= myclient.client,
