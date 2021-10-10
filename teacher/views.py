@@ -41,6 +41,11 @@ from xhtml2pdf import pisa
 # import transactions
 from django.db import transaction
 
+import pandas as pd
+import os
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+
 def printResultHtml(request,pk):
     teacher_loggedin = request.user.tutor
     result = Result.objects.get(pk=pk)
@@ -219,6 +224,10 @@ def addScores(request):
                 processTerminalResult(obj)
 
 
+                # process Annual result
+                processAnnualResult(obj)
+
+
                 # Add auto comment
                 autoAddComment(classroomObj,activeSession,activeTerm)
 
@@ -287,8 +296,10 @@ def editScores(request,id):
             # process terminal result
             processTerminalResult(scores_Obj)
 
-            # auto add comments
+            # process Annual result
+            processAnnualResult(scores_Obj)
 
+            # auto add comments
             autoAddComment(classroomObj,activeSession,activeTerm)
 
             # Scores.objects.filter(id=data['id']).update(email=data['email'], phone=data['phone'])
@@ -302,42 +313,75 @@ def editScores(request,id):
 @allowed_users(allowed_roles=['teacher'])
 def deleteScores(request,id):
 
-    loggedin = request.user.teacher
-    scores = Scores.objects.select_for_update().get(pk=id)
+    loggedin = request.user.tutor
 
-    # get sctive term and session
-    activeTerm = Term.objects.get(status='True')
-    activeSession = Session.objects.get(status='True')
 
-    with transaction.atomic():
+    try:
 
-        scores = Scores.objects.select_for_update().get(pk=id)
-        subject = scores.subject
-        classroom = scores.studentclass
-        studentid = scores.student
+        if request.method == 'POST':
+            with transaction.atomic():
 
-        scores.delete()
+                # select score object
+                score = Scores.objects.select_for_update().get(pk=id)
 
-        # delete terminal result
-        deleteResult(studentid,classroom)
-        scores_filter = Scores.objects.filter(subject=subject,studentclass=classroom,term=activeTerm,session=activeSession).first()
+                # check if teacher created the score
+                if score.subjectteacher == loggedin.pk:
+                    # aallow operation
+                    # get sctive term and session
+                    activeTerm = Term.objects.get(status='True')
+                    activeSession = Session.objects.get(status='True')
 
-        if scores_filter:
-            # process Scores
-            processScores(subject,classroom)
-            # process terminal result
-            processTerminalResult(scores_filter)
+                    # get subject, classroom and student id from the score object
+                    subject = score.subject
+                    classroom = score.studentclass
+                    student = score.student
 
-            # add auto comment
+                    # remove Score
+                    score.delete()
 
-            autoAddComment(classroom,activeSession,activeTerm)
+                    # delete terminal result
+                    deleteResult(student,classroom)
 
-            # TODO: MAKE SURE TO DELETE CORRESPONDING STUDENT RECORD IN THE RESULT TABLE
+                    # check if  score for the deleted object still exist
+                    scores_filter = Scores.objects.filter(subject=subject,studentclass=classroom,term=activeTerm,session=activeSession).first()
 
-    messages.success(request, 'Scores deleted successfully')
-    return redirect('filter-scores')
+                    if scores_filter:
+                        # process Scores
+                        processScores(subject,classroom)
+                        # process terminal result
+                        processTerminalResult(scores_filter)
 
-    # return render(request,'teacher/edit_scores.html')
+                        # process Annual result
+                        processAnnualResult(scores_filter)
+
+                        # add auto comment
+
+                        autoAddComment(classroom,activeSession,activeTerm)
+
+                        messages.success(request, 'Scores deleted successfully')
+                        return redirect('filter-scores')
+                    else:
+                        # still process terminal result, annual result and comment
+                        pass
+
+                else:
+                    # refuse delete
+                    messages.success(request, 'Oops! permission denied!')
+                    return redirect('filter-scores')
+
+        return render(request,'teacher/confirm_delete_score.html')
+
+    except Exception as e:
+        messages.success(request, e)
+        return redirect('filter-scores')
+
+
+
+
+
+
+
+
 
 
 # Filter Scores
@@ -501,23 +545,23 @@ def enrollStudent(request):
     loggedin = request.user.tutor.pk
 
     if request.method =='POST':
-        
+
         try:
             activeTerm = Term.objects.get(status='True')
             activeSession = Session.objects.get(status='True')
             classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
             if classTeacher:
-                
-    
+
+
                 enroll = request.POST['enroll']
                 if enroll:
                     student = Student.objects.get(reg_no=enroll)
 
                     # check if student is already enrolled
                     studentEnrolled = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q      (class_room=classTeacher.classroom.pk) & Q(student=student.pk))
-                
+
                     if studentEnrolled:
-                    
+
                         messages.success(request, 'Student alrteady enrolled')
                         return redirect('enroll')
                     else:
@@ -538,36 +582,35 @@ def enrollStudent(request):
             else:
                 messages.error(request, 'You are not a class teacher you can not enroll a student!')
                 return redirect('enroll')
-        except Exception as e: 
+        except Exception as e:
                 messages.error(request,  e)
                 return redirect('enroll')
-            
+
     return render(request,'teacher/enroll_student.html')
 
 # remove student in class
-# Enroll students in class
 @allowed_users(allowed_roles=['teacher'])
 def deleteEnrollment(request,pk):
 
     loggedin = request.user.tutor.pk
-        
+
     try:
         if request.method == 'POST':
-            
+
             activeTerm = Term.objects.get(status='True')
             activeSession = Session.objects.get(status='True')
             classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
             if classTeacher:
                 student = Classroom.objects.get(pk=pk)
-                student.delete() 
+                student.delete()
                 messages.success(request, 'Student unenrolled in this class')
-                return redirect('classroom')    
-           
+                return redirect('classroom')
+
             else:
                 messages.error(request, 'You are not a class teacher you can not perform this action!')
                 return redirect('classroom')
         return render(request,'teacher/confirm_delete.html')
-    except Exception as e: 
+    except Exception as e:
                 messages.error(request,  e)
                 return redirect('classroom')
 
@@ -575,22 +618,22 @@ def deleteEnrollment(request,pk):
 # my classroom enrollees
 @allowed_users(allowed_roles=['teacher'])
 def myClassroom(request):
-    
+
 
     loggedin = request.user.tutor.pk
-   
+
     try:
-        
+
         activeTerm = Term.objects.get(status='True')
         activeSession = Session.objects.get(status='True')
 
         classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
-            
+
         if classTeacher:
-            
+
                 students = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q      (class_room=classTeacher.classroom.pk)).order_by('student__sur_name')
                 # ordering using a different table, student field is on classroom table which is related to the student table and sur_name is on the student table
-                
+
                 if students:
                     context={
                         'students':students
@@ -599,36 +642,36 @@ def myClassroom(request):
         else:
              messages.error(request, 'You are not a class teacher you can not enroll a student!')
              return redirect('teacher')
-        
-    except Exception as e: 
+
+    except Exception as e:
             messages.error(request,  e)
             return render(request,'teacher/classroom.html')
-        
+
 
 # Get assessment sheet
 @allowed_users(allowed_roles=['teacher'])
 def assessmentSheet(request):
-    
+
 
     loggedin = request.user.tutor.pk
-    
+
     classes = StudentClass.objects.all()
     context={
         'classes': classes
     }
     if request.method == 'POST':
-        
+
         try:
-            
+
             activeTerm = Term.objects.get(status='True')
             activeSession = Session.objects.get(status='True')
             classroom = request.POST['studentclass']
             subject_id = request.POST['subject']
             if subject_id:
-                
+
                 students = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q      (class_room=classroom)).order_by('student__sur_name')
                 subject = Subject.objects.get(pk=subject_id)
-                
+
                 # ordering using a different table, student field is on classroom table which is related to        the student table and sur_name is on the student table
                 context={
                     'students':students,
@@ -641,44 +684,143 @@ def assessmentSheet(request):
                 return redirect('assessment-sheet')
         except Exception as e:
              messages.error(request,  e)
-             return render(request,'teacher/assessment_sheet_find.html')
-    
+             return render(request,'teacher/assessment_sheet_find.html',context)
+
     return render(request, 'teacher/assessment_sheet_find.html',context)
-   
-    
-# export assessment sheet 
+
+
+# export assessment sheet
 
 @allowed_users(allowed_roles=['teacher'])
 def exportSheet(request,classroom,subject):
-    
+
 
     loggedin = request.user.tutor.pk
-      
+
     try:
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=assessmentSheet.csv'
-        writer = csv.writer(response)
-            
-        writer.writerow(['StudentID','Name','Class','Subject','First CA','Second CA','Third CA','CA Total','Exam','Total'])
-            
         activeTerm = Term.objects.get(status='True')
         activeSession = Session.objects.get(status='True')
-        
-            
+
+        subjectObj = Subject.objects.get(pk=subject)
+        classroomObj = StudentClass.objects.get(pk=classroom)
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=CA_SHEET_'+subjectObj.subject+'_'+classroomObj.class_name+'_'+activeTerm.term+'_'+activeSession.session+'.csv'
+        writer = csv.writer(response)
+
+        writer.writerow(['StudentID','Name','Class','Subject','FirstCA','SecondCA','ThirdCA','Exam','CATotal','Total'])
+
+        # activeTerm = Term.objects.get(status='True')
+        # activeSession = Session.objects.get(status='True')
+
+
         students = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q(class_room=classroom)).order_by('student__sur_name')
         subject = Subject.objects.get(pk=subject)
-                
+
             # ordering using a different table, student field is on classroom table which is related to the student table and sur_name is on the student table
         for student in students:
-            writer.writerow([student.student.pk,student.student.sur_name,student.class_room.class_name,subject.subject,0,0,0,0,0])
-        
-        return response        
-        
+            writer.writerow([student.student.pk,student.student.sur_name,student.class_room.class_name,subject.subject,0,0,0,0,0,0])
+
+        return response
+
     except Exception as e:
              messages.error(request,  e)
              return render(request,'teacher/assessment_sheet_find.html')
-    
-    
+
+
+
+# import assessment sheet
+
+@allowed_users(allowed_roles=['teacher'])
+def importAssessmentSheet(request):
+
+    loggedin = request.user.tutor.pk
+    myclient = request.user.tutor
+
+    # try:
+    classes = StudentClass.objects.all()
+    context={
+    'classes': classes
+    }
+
+    if request.method=='POST' and request.POST.get('subject'):
+
+        activeTerm = Term.objects.get(status='True')
+        activeSession = Session.objects.get(status='True')
+        # classteacher
+        teacherObj = SubjectTeacher.objects.get(pk=loggedin)
+        classroom = request.POST['studentclass']
+
+        # classroom object
+        classroomObj = StudentClass.objects.get(pk=classroom)
+        subject_id = request.POST['subject']
+        # subject object
+        subjectObj = Subject.objects.get(pk=subject_id)
+
+
+        myfile = request.FILES['csvFile']
+        fs = FileSystemStorage()
+        filename = fs.save(myfile.name, myfile)
+        uploaded_file_url = fs.url(filename)
+        excel_file = uploaded_file_url
+        # print(excel_file)
+        empexceldata = pd.read_csv("media/"+filename,encoding='utf-8')
+        # print(type(empexceldata))
+        dbframe = empexceldata
+
+        with transaction.atomic():
+
+            for dbframe in dbframe.itertuples():
+                studentObj=Student.objects.get(pk=dbframe.StudentID)
+                # check if records of a student exist in that subject, class,term,session
+                scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
+                if scoresExist:
+                    pass
+                else:
+
+                    # fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
+                    obj = Scores.objects.create(
+                        firstscore=dbframe.FirstCA,
+                        secondscore=dbframe.SecondCA,
+                        thirdscore=dbframe.ThirdCA,
+                        totalca=dbframe.CATotal,
+                        examscore=dbframe.Exam,
+                        subjecttotal=dbframe.Total,
+                        session=activeSession,
+                        term=activeTerm,
+                        student=Student.objects.get(pk=dbframe.StudentID),
+                        studentclass=classroomObj,
+                        subjectteacher= teacherObj,
+                        client= myclient.client,
+                        subject=subjectObj,
+                    )
+                        # DOB=fromdate_time_obj,
+                        # qualification=dbframe.qualification)
+                    # print(type(obj))
+                    obj.save()
+                    # process Scores
+                    processScores(subjectObj,classroomObj)
+
+                    # process terminal result
+                    processTerminalResult(obj)
+
+                    # process terminal result
+                    processAnnualResult(obj)
+
+                    # Add auto comment
+                    autoAddComment(classroomObj,activeSession,activeTerm)
+            messages.success(request,  'Successful')
+            return render(request,'teacher/import_assessment_sheet.html',context)
+
+        # return render(request, 'teacher/import_assessment_sheet.html',context)
+
+    messages.error(request,  'Ensure you specify all information and you have a csv file selected!')
+    return render(request,'teacher/import_assessment_sheet.html',context)
+
+    # except Exception as e:
+            #  messages.error(request,  e)
+            #  return render(request,'teacher/import_assessment_sheet.html')
+
 
 
 
@@ -745,76 +887,156 @@ def resultSummary(request):
     form = ResultFilterForm()
     # entry = ClassTeacher.objects.filter(teacher=loggedin)
 
+    try:
+        pass
+
+        if request.method =='POST':
 
 
-    if request.method =='POST':
+            classroom = request.POST['classroom']
+            session = request.POST['session']
+            term = request.POST['term']
+
+            if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
+
+                # select reesult
+                result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                    & Q(session=session)).order_by('termposition')
+                resultObj = result.first()
 
 
-        classroom = request.POST['classroom']
-        session = request.POST['session']
-        term = request.POST['term']
+                nocommentsCount = result.filter(classteachercomment__isnull=True).count()
+                yescommentsCount = result.filter(classteachercomment__isnull=False).count()
 
-        if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
+                affective = Studentaffective.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                    & Q(session=session)).values('student').distinct('student')
+
+
+                yesaffective = result.filter(student__in=affective).count()
+                noaffective = result.exclude(student__in=affective).count()
+
+
+                psychomotor = Studentpsychomotor.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                    & Q(session=session)).values('student').distinct('student')
+
+
+                yespsycho = result.filter(student__in=psychomotor).count()
+                nopsycho = result.exclude(student__in=psychomotor).count()
+
+                noattendance = result.filter(attendance__isnull=True).count()
+                yesattendance = result.filter(attendance__isnull=False).count()
+
+
+                # find pass rate
+                totalStudents = result.count()
+
+                passedStudents = result.filter(termaverage__gte=40).count()
+
+                passRate = passedStudents/totalStudents*100
+
+
+
+                #check for availability of result
+                if not result:
+                    messages.error(request, 'No record exist')
+                    return redirect('result-summary')
+                else:
+                    context ={ 'form':form,
+                            'result':result,
+                            'yescomment':yescommentsCount,
+                            'nocomment':nocommentsCount,
+                            'yesaffective':yesaffective,
+                            'noaffective':noaffective,
+                            'yespsycho':yespsycho,
+                            'nopsycho':nopsycho,
+                            'yesattendance':yesattendance,
+                            'noattendance':noattendance,
+                            'resultObj':resultObj,
+                            'passRate':passRate,
+                            'totalStudents':totalStudents
+                            }
+                    return render(request,'teacher/resultSummary.html',context)
+        context = {'form':form}
+        return render(request,'teacher/resultSummary.html',context)
+
+    except Exception  as e:
+        context = {'form':form}
+        return render(request,'teacher/resultSummary.html',context)
+
+
+
+# Result Summary
+@allowed_users(allowed_roles=['teacher'])
+def annualResultSummary(request):
+
+    loggedin = request.user.tutor.pk
+
+    form = AnnualResultFilterForm()
+
+    try:
+    
+        if request.method =='POST':
+
+
+            classroom = request.POST['classroom']
+            session = request.POST['session']
+            # term = request.POST['term']
+
+
 
             # select reesult
-            result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
-                & Q(session=session)).order_by('termposition')
-            resultObj = result.first()
-
-
-            nocommentsCount = result.filter(classteachercomment__isnull=True).count()
-            yescommentsCount = result.filter(classteachercomment__isnull=False).count()
-
-            affective = Studentaffective.objects.filter(Q(term=term) & Q(studentclass=classroom)
-                & Q(session=session)).values('student').distinct('student')
-
-
-            yesaffective = result.filter(student__in=affective).count()
-            noaffective = result.exclude(student__in=affective).count()
-
-
-            psychomotor = Studentpsychomotor.objects.filter(Q(term=term) & Q(studentclass=classroom)
-                & Q(session=session)).values('student').distinct('student')
-
-
-            yespsycho = result.filter(student__in=psychomotor).count()
-            nopsycho = result.exclude(student__in=psychomotor).count()
-
-            noattendance = result.filter(attendance__isnull=True).count()
-            yesattendance = result.filter(attendance__isnull=False).count()
-
-
-            # find pass rate
-            totalStudents = result.count()
-
-            passedStudents = result.filter(termaverage__gte=40).count()
-
-            passRate = passedStudents/totalStudents*100
-
-
+            result = AnnualResult.objects.filter(Q(studentclass=classroom)
+                & Q(session=session)).order_by('annualposition')
+            # resultObj = result.first()
 
             #check for availability of result
             if not result:
                 messages.error(request, 'No record exist')
-                return redirect('result-summary')
+                return redirect('annual-result')
             else:
                 context ={ 'form':form,
-                          'result':result,
-                          'yescomment':yescommentsCount,
-                          'nocomment':nocommentsCount,
-                          'yesaffective':yesaffective,
-                          'noaffective':noaffective,
-                          'yespsycho':yespsycho,
-                          'nopsycho':nopsycho,
-                          'yesattendance':yesattendance,
-                          'noattendance':noattendance,
-                          'resultObj':resultObj,
-                          'passRate':passRate,
-                          'totalStudents':totalStudents
-                          }
-                return render(request,'teacher/resultSummary.html',context)
-    context = {'form':form}
-    return render(request,'teacher/resultSummary.html',context)
+                        'result':result,
+                        }
+        return render(request,'teacher/annualresult.html',context)
+        # context = {'form':form}
+        # return render(request,'teacher/annualresult.html',context)
+
+    except Exception  as e:
+        context = {'form':form}
+        return render(request,'teacher/annualresult.html',context)
+
+
+# annual result detail
+@allowed_users(allowed_roles=['teacher'])
+def annualResultDetail(request,classroom,session):
+
+    loggedin = request.user.tutor.pk
+
+    try:
+    
+       
+        # select reesult
+        result = AnnualResult.objects.filter(Q(studentclass=classroom)
+            & Q(session=session)).order_by('annualposition')
+        # resultObj = result.first()
+
+        #check for availability of result
+        if not result:
+            messages.error(request, 'No record exist')
+            return redirect('annual-result')
+        else:
+            context ={ 
+                    'result':result,
+                    }
+        return render(request,'teacher/annualresultdetail.html',context)
+    # context = {'form':form}
+    # return render(request,'teacher/annualresult.html',context)
+
+    except Exception  as e:
+    
+        return render(request,'teacher/annualresultdetail.html')
+
+
 
 
 
@@ -1164,6 +1386,100 @@ def terminalPosition(classroom):
                 # repeated_counter = position
                 counter += 1
 
+
+
+
+# Assign annual Postion
+def annualPosition(session,classroom):
+
+
+    # activeTerm = Term.objects.get(status='True')
+    # activeSession = Session.objects.get(status='True')
+
+    results = AnnualResult.objects.filter(studentclass=classroom,session=session)
+    ordered_scores = []
+    counter = 1
+    repeated_counter = 0
+
+    previous_score = AnnualResult.objects.none()
+    for result in results.order_by("-annualtotal"):
+        # repeated_counter = 0
+        if counter == 1:
+            #this is the first iteration, just assign the first position
+            position = counter
+            #update the database
+            result_entity = AnnualResult.objects.get(pk=result.pk)
+            result_entity.annualposition = position
+            result_entity.save()
+
+
+            # ordered_scores.append({
+            # "position": position,
+            # "id": score.pk,
+            # "subjecttotal": score.subjecttotal
+            # })
+            previous_score = result
+            counter += 1
+        else:
+
+            # check for duplicate
+            if result.annualtotal == previous_score.annualtotal:
+                # update database
+                result_entity = AnnualResult.objects.get(pk=result.pk)
+                result_entity.annualposition = position
+                result_entity.save()
+
+                # position = counter
+                # ordered_scores.append({
+                # "position": position,
+                # "id": score.pk,
+                # "subjecttotal": score.subjecttotal
+                # })
+                # position = previous_score.position
+                repeated_counter +=1
+
+            else:
+                position = counter + repeated_counter
+                # update database
+                result_entity = AnnualResult.objects.get(pk=result.pk)
+                result_entity.annualposition = position
+                result_entity.save()
+
+                # ordered_scores.append({
+                # "position": position,
+                # "id": score.pk,
+                # "subjecttotal": score.subjecttotal
+                # })
+
+                previous_score = result
+                # previous_position = position
+                # repeated_counter = position
+                counter += 1
+
+
+
+# annual average
+def annualAverage(studentid,classroom,session):
+
+    activeTerm = Term.objects.get(status='True')
+    activeSession = Session.objects.get(status='True')
+
+    # get scores based on subject
+    # scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).distinct('student').aggregate(Sum('subjAverage'))
+
+    sessionResult = AnnualResult.objects.filter(student=studentid,studentclass=classroom,session=session).aggregate(annual_sum=Sum('annualtotal'))
+
+    session_sum = sessionResult['annual_sum']
+    # get subject per class
+    no_subj_per_class = SubjectPerClass.objects.get(sch_class=classroom)
+    session_subject_total = no_subj_per_class.no_subject*3
+
+    session_av = session_sum/session_subject_total
+
+    # TODO MOVE CODE TO UPDATE TERMINAL AVERAGE HERE
+    result = AnnualResult.objects.filter(student=studentid,studentclass=classroom,session=session).update(annualaverage=session_av)
+
+
 # update ratings
 def scoresRating(subject,classroom):
 
@@ -1178,16 +1494,20 @@ def scoresRating(subject,classroom):
     for scoresObj in scores:
 
         if scoresObj.subjecttotal <= 39:
-            scoresObj.subjectgrade = 'E'
-            scoresObj.subjectrating = 'Poor'
+            scoresObj.subjectgrade = 'F'
+            scoresObj.subjectrating = 'Failed'
             # scoresObj.highest_inclass = minMax['max_scores']
             # scoresObj.lowest_inclass = minMax['min_scores']
             scoresObj.save()
-        elif scoresObj.subjecttotal >= 40 and scoresObj.subjecttotal <= 54.9:
+        elif scoresObj.subjecttotal >= 40 and scoresObj.subjecttotal <= 44.9:
+            scoresObj.subjectgrade = 'E'
+            scoresObj.subjectrating = 'Poor'
+            scoresObj.save()
+        elif scoresObj.subjecttotal >= 45 and scoresObj.subjecttotal <= 54.9:
             scoresObj.subjectgrade = 'D'
             scoresObj.subjectrating = 'Fair'
             scoresObj.save()
-        elif scoresObj.subjecttotal >= 39 and scoresObj.subjecttotal <= 64.9:
+        elif scoresObj.subjecttotal >= 55 and scoresObj.subjecttotal <= 64.9:
             scoresObj.subjectgrade = 'C'
             scoresObj.subjectrating = 'Good'
             scoresObj.save()
@@ -1223,7 +1543,6 @@ def minMaxScores(subject,classroom):
 
 
 
-    # return min_max
 
 
 # update subject average
@@ -1272,21 +1591,22 @@ def processTerminalResult(scoresObj):
     else:
         # get class teacher
         # TODO: Add class teacher when creating comments
-        class_teacher = ClassTeacher.objects.filter(classroom=scoresObj.studentclass,term=scoresObj.term,session=scoresObj.session)
-        for i in class_teacher:
-            teacher = i.teacher
+        class_teacher = ClassTeacher.objects.get(classroom=scoresObj.studentclass,term=scoresObj.term,session=scoresObj.session)
+        # for i in class_teacher:
+        #     teacher = i.teacher
 
         # create a new record
         resultObj = Result.objects.create(
                                  termtotal = scores['subject_total'],
-                                 classteacher = ClassTeacher.objects.get(pk=teacher.id),
+                                 classteacher = class_teacher,
+                                #  classteacher = ClassTeacher.objects.get(pk=teacher.id),
                                  session = scoresObj.session,
                                  studentclass = scoresObj.studentclass,
                                  term = scoresObj.term,
                                  client = scoresObj.client,
                                  student = scoresObj.student
                                      )
-        new_Result = resultObj.save()
+        resultObj.save()
 
         # update term average
         terminalAverage(scoresObj.student,scoresObj.studentclass)
@@ -1296,16 +1616,96 @@ def processTerminalResult(scoresObj):
 
 
 
+# Process Annual Result
+
+def processAnnualResult(scoresObj):
+
+
+    # Find record in the annual result table
+    Annualresult = AnnualResult.objects.filter(student=scoresObj.student,studentclass=scoresObj.studentclass,session=scoresObj.session)
+
+    result = Result.objects.filter(student=scoresObj.student,studentclass=scoresObj.studentclass,session=scoresObj.session).aggregate(annual_total=Sum('termtotal'))
+
+    # print(scores['subject_total'])
+
+    # check for existence of record
+    if Annualresult:
+
+        # update the record
+        Annualresult.update(annualtotal=result['annual_total'])
+
+        # update annual average
+        annualAverage(scoresObj.student,scoresObj.studentclass,scoresObj.session)
+        # update  annual position
+        annualPosition(scoresObj.session,scoresObj.studentclass)
+    else:
+
+        # create a new anual result record
+        newAnnualresultObj = AnnualResult.objects.create(
+                                 annualtotal = result['annual_total'],
+                                 session = scoresObj.session,
+                                 studentclass = scoresObj.studentclass,
+                                 client = scoresObj.client,
+                                 student = scoresObj.student
+                                     )
+        newAnnualresultObj.save()
+
+
+
+        # update term average
+        annualAverage(scoresObj.student,scoresObj.studentclass,scoresObj.session)
+
+        # update  term position
+        annualPosition(scoresObj.session,scoresObj.studentclass)
+
+
+
 # auto add comments
 def autoAddComment(classroom,session,term):
 
     # select result
     resultFilter = Result.objects.select_for_update().filter(studentclass=classroom,session=session,term=term)
 
+    for resultObj in resultFilter:
+
+        if resultObj.termaverage <= 39:
+            resultObj.classteachercomment = 'Failed'
+            resultObj.headteachercomment = 'Failed'
+
+            resultObj.save()
+        elif resultObj.termaverage >= 40 and resultObj.termaverage <= 44.9:
+            resultObj.classteachercomment = 'A Fair Result'
+            resultObj.headteachercomment = 'A Fair Result'
+            resultObj.save()
+        elif resultObj.termaverage >= 45 and resultObj.termaverage <= 54.9:
+            resultObj.classteachercomment = 'A Passed Result'
+            resultObj.headteachercomment = 'A Passed Result'
+            resultObj.save()
+        elif resultObj.termaverage >= 55 and resultObj.termaverage <= 64.9:
+            resultObj.classteachercomment = 'A Good Result'
+            resultObj.headteachercomment = 'A Good Result'
+            resultObj.save()
+        elif resultObj.termaverage >= 65 and resultObj.termaverage <= 74.9:
+            resultObj.classteachercomment = 'A Very Good Result'
+            resultObj.headteachercomment = 'A Very Good Result'
+            resultObj.save()
+        elif resultObj.termaverage >= 75 and resultObj.termaverage <= 100:
+
+            resultObj.classteachercomment = 'An Excellent Result '
+            resultObj.headteachercomment = 'An Excellent Result'
+            resultObj.save()
+        else:
+            resultObj.classteachercomment = 'NA'
+            resultObj.headteachercomment = 'NA'
+            resultObj.save()
+
+
+
 
     passed = resultFilter.filter(termaverage__gte=40).update(classteachercomment='Passed',headteachercomment='Passed')
 
     failed = resultFilter.filter(termaverage__lte=39.9).update(classteachercomment='Failed',headteachercomment='Failed')
+
 
 
 
