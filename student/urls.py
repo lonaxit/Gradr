@@ -3,7 +3,7 @@ from . import views
 
 
 urlpatterns = [
-  path('teacher-home', views.teacherHome, name='teacher'),
+  path('student-home', views.studentHome, name='student'),
 #   path('new-scores', views.addScores, name='new-scores'),
 #   path('my-subjects', views.mySubjects, name='my-subjects'),
 
@@ -37,7 +37,7 @@ urlpatterns = [
 #   path('result-pdf', views.render_pdf_view, name='result-pdf'),
 #   path('print-result/<str:pk>/', views.printResultHtml, name='print-result'),
 
-#   path('teacher-profile', views.teacherProfile, name='teacher-profile'),
+path('student-profile', views.studentProfile, name='student-profile'),
 #   path('teacher-avatar', views.teacherAvatar, name='teacher-avatar'),
 
 ]
