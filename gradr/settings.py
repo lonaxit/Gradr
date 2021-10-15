@@ -8,7 +8,9 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
+
 """
+
 
 from pathlib import Path
 import os
@@ -20,18 +22,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-&ikxv*q$)0=5-lgw!=wm9durn358d^)673r3!4f%5%#ct0pirg'
+
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+# commented out
 ALLOWED_HOSTS = []
+
 # AUTH_USER_MODEL = 'accounts.User'
 # AUTH_USER_MODEL = 'auth.User'
 
-# Application definition
 
+# Application definition
 INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'administrator.apps.AdministratorConfig',
@@ -78,6 +87,8 @@ WSGI_APPLICATION = 'gradr.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+
+
 
 
 DATABASES = {
