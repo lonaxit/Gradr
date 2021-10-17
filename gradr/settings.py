@@ -71,6 +71,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     # configure white noise for deployment
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 ROOT_URLCONF = 'gradr.urls'
@@ -185,6 +187,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = Path(BASE_DIR).joinpath('staticfiles')
 STATICFILES_DIRS = (Path(BASE_DIR).joinpath('static'),)
+
+# configure static files for digital ocean app platform deployment
+
+STATICFILES_STORAGE ='whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # configure media root for storing images
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
