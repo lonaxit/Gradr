@@ -25,16 +25,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&ikxv*q$)0=5-lgw!=wm9durn358d^)673r3!4f%5%#ct0pirg'
+
+# SECRET_KEY = 'django-insecure-&ikxv*q$)0=5-lgw!=wm9durn358d^)673r3!4f%5%#ct0pirg'
 
 
+# setting for digital ocean deployment
+# code to generate secret key 
+# python -c 'from django.core.management import utils; print(utils.get_random_secret_key())'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','django-insecure-&ikxv*q$)0=5-lgw!=wm9durn358d^)673r3!4f%5%#ct0pirg')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+# 1 means in DEBUG MODE
+DEBUG = str(os.environ.get('DEBUG')) == "1" 
 
 
-# commented out
+# FOR APP PLATFORM DEPLOYMENT
 ALLOWED_HOSTS = []
+if not DEBUG:
+    ALLOWED_HOSTS +=[os.environ.get('DJANGO_ALLOWED_HOST')]
 
 # AUTH_USER_MODEL = 'accounts.User'
 # AUTH_USER_MODEL = 'auth.User'
@@ -101,6 +110,33 @@ DATABASES = {
     }
 }
 
+# settings for database deployment on app platform
+# These will be used only in production
+POSTGRES_DB = os.environ.get("POSTGRES_DB")
+POSTGRES_PASSWORD= os.environ.get("POSTGRES_PASSWORD")
+POSTGRES_USER= os.environ.get("POSTGRES_USER")
+POSTGRES_HOST= os.environ.get("POSTGRES_HOST")
+POSTGRES_PORT= os.environ.get("POSTGRES_PORT")
+
+POSTGRES_READY=(
+    POSTGRES_DB is not None
+    and POSTGRES_PASSWORD is not None
+    and POSTGRES_USER is not None
+    and POSTGRES_HOST is not None
+    and POSTGRES_PORT is not None
+)
+
+if POSTGRES_READY:
+    DATABASES={
+        "default":{
+         'ENGINE':'django.db.backends.postgresql',
+         'NAME':POSTGRES_DB,
+         'USER': POSTGRES_DB,
+         'PASSWORD':POSTGRES_PASSWORD,
+         'HOST':POSTGRES_HOST,
+         'PORT':POSTGRES_PORT,
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
