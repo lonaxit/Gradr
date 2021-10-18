@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -183,10 +184,21 @@ USE_TZ = True
 #     os.path.join(BASE_DIR,'gradr/static')
 # ]
 
-# updated settings
+
 STATIC_URL = '/static/'
-STATIC_ROOT = Path(BASE_DIR).joinpath('staticfiles')
-STATICFILES_DIRS = (Path(BASE_DIR).joinpath('static'),)
+STATICFILES_DIRS=[
+    BASE_DIR / "static",
+]
+STATIC_ROOT= BASE_DIR / "staticfiles-cdn"
+
+from .cdn.conf import *  # noqa
+
+
+# https://gradr-static.fra1.digitaloceanspaces.com
+# commented settings
+# STATIC_URL = '/static/'
+# STATIC_ROOT = Path(BASE_DIR).joinpath('staticfiles')
+# STATICFILES_DIRS = (Path(BASE_DIR).joinpath('static'),)
 
 # configure static files for digital ocean app platform deployment
 
