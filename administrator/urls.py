@@ -72,7 +72,7 @@ urlpatterns = [
   path('result-analysis', views.resultAnalysis, name='result-analysis'),
   path('approve-result/<str:classroom>/<str:term>/<str:session>', views.approveResult, name='approve-result'),
   
-  # injstitution
+  # institution
    path('logo/<str:pk>', views.logo, name='logo'),
 
 ]
