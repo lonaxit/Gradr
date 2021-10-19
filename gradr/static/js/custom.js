@@ -46,7 +46,7 @@ $('#stud-class').on('change',function(event){
 
     $.ajax({
         type:'GET',
-        url: "/Teacher/class-subjects/" + class_id,
+        url: "/teacher/class-subjects/" + class_id,
         success: function(response){
           console.log(response)
 
