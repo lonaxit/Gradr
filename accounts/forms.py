@@ -3,7 +3,8 @@ from  django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import *
 from django import forms
-
+from teacher.models import *
+from accounts.models import *
 
 class TeacherForm(ModelForm):
     class Meta:
@@ -16,7 +17,10 @@ class TeacherForm(ModelForm):
 class ClientForm(ModelForm):
     school_name = forms.CharField(label='school name',
         max_length=200,
-        widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Institution name','id':'username'}))
+        widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Institution name','id':'sch_name'}))
+    school_type = forms.CharField(label='School Type',
+        max_length=200,
+        widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Secondary','id':'sch_type'}))
     email = forms.EmailField(label='E-Mail',
                             max_length=100,
                             widget=forms.EmailInput(attrs={'class': 'form-control','placeholder':'Enter your email','id':'email'}))
@@ -26,13 +30,34 @@ class ClientForm(ModelForm):
     address = forms.CharField(label='Address',
                             max_length=100,
                             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter Address','id':'address'}))
+    
+    country = forms.ModelChoiceField(
+              queryset=Country.objects.all(),
+              empty_label=None,
+              required=True,
+              to_field_name='id',
+              label='Country',
+              widget=forms.Select(attrs={'class': 'form-control','id':'country'}))
+    state = forms.ModelChoiceField(
+              queryset=State.objects.all(),
+              label='State',
+              to_field_name='id',
+              widget=forms.Select(attrs={'class': 'form-control','id':'state'}))
+
+    lga = forms.CharField(
+              label='Lga',
+              widget=forms.TextInput(attrs={'class': 'form-control','id':'lga'}))
+    city = forms.CharField(
+              label='City',
+              widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter city','id':'city'}))
+    
     # profile_image = forms.ImageField(label='Upload Your logo',
     #                         max_length=100,
     #                         widget=forms.FileInput(attrs={'class': 'form-control'}))
     class Meta:
         model = Client
         fields = '__all__'
-        exclude = ['user']
+        exclude = ['user','profile_image']
 
 
 
