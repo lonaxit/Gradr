@@ -71,5 +71,8 @@ urlpatterns = [
   path('comment-result', views.resultFilter, name='comment-result'),
   path('result-analysis', views.resultAnalysis, name='result-analysis'),
   path('approve-result/<str:classroom>/<str:term>/<str:session>', views.approveResult, name='approve-result'),
+  
+  # injstitution
+   path('logo/<str:pk>', views.logo, name='logo'),
 
 ]
