@@ -410,7 +410,7 @@ def updateClient(request,pk):
             return redirect('admin-profile')
         else:
             messages.success(request, 'Something went wrong')
-            return redirect('update-profile')
+            return redirect('admin-profile')
     context = {'form':form}
     return render(request, 'admin/updateClient.html',context)
 
@@ -499,6 +499,29 @@ def studentPhoto(request,pk):
              return redirect('student-photo',pk=pk)
 
     return render(request, 'admin/changeProfilePicture.html',context)
+
+
+# update institution logo
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def logo(request,pk):
+    user = request.user
+    client  = Client.objects.get(pk=pk)
+
+    form = LogoUpdateForm(instance=client)
+
+    context = {'form':form}
+    if request.method == 'POST':
+        form = LogoUpdateForm(request.POST,request.FILES,instance=client)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Logo updated')
+            return redirect('admin-profile')
+        else:
+             messages.success(request, 'Photo update failed')
+             return redirect('logo',pk=pk)
+
+    return render(request, 'admin/updateLogo.html',context)
 
 # list all students
 @login_required(login_url='login')
