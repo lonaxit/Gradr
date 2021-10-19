@@ -17,3 +17,36 @@ def psycho_domain(term,session,student):
     psycho_list = Studentpsychomotor.objects.filter(student=student,term=term,session=session).count()
     return psycho_list
 
+@register.simple_tag
+def totalStudents():
+    students = Student.objects.all().count()
+    return students
+
+@register.simple_tag
+def activeStudents():
+    students = Student.objects.all()
+    i =0
+    for student in students:
+        if student.user.is_active == True:
+            i =i+1 
+        else:
+            pass
+    return i
+
+@register.simple_tag
+def inActiveStudents():
+    students = Student.objects.all()
+    i =0
+    for student in students:
+        
+        if student.user.is_active == False:
+            i =i+1 
+        else:
+            pass
+    return i
+   
+# total Teachers
+@register.simple_tag
+def totalStaff():
+    students = Teacher.objects.all().count()
+    return students
