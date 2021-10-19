@@ -17,7 +17,17 @@ class StudentImageUpdateForm(forms.ModelForm):
         fields=['profile_image']
         exclude = ['client','user','reg_no','full_reg_no','sur_name','first_name','other_name','sex','dob','country']
        
-       
+# Institution logo form
+
+class LogoUpdateForm(forms.ModelForm):
+    profile_image = forms.ImageField(label='Upload Your logo',
+                            max_length=100,
+                            widget=forms.FileInput(attrs={'class': ''}))
+    class Meta:
+        model=Client
+        fields=['profile_image']
+        exclude = ['user','school_name','school_type','phone','address','email','city','lga','country','state']
+ 
 # teacher photo form
 class TeacherImageUpdateForm(forms.ModelForm):
     profile_image = forms.ImageField(label='Upload Your logo',
