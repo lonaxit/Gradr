@@ -45,26 +45,26 @@ def register(request):
 
     context={'form': form}
 
-    return render (request,'accounts/register.html',{'form':form})
+    return render (request,'accounts/register.html',context)
 
 
 # register user with out group
-@unauthenticated_user
-def registerPage(request):
-    #redirect authenticated user to the dashboard
-    form = ClientRegisterForm()
-    if request.method == 'POST':
-        form  = ClientRegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            #getting username from form
-            user = form.cleaned_data.get('username')
-            messages.success(request, 'Account creation successful for ' + user)
-            return redirect('login')
+# @unauthenticated_user
+# def registerPage(request):
+#     #redirect authenticated user to the dashboard
+#     form = ClientRegisterForm()
+#     if request.method == 'POST':
+#         form  = ClientRegisterForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             #getting username from form
+#             user = form.cleaned_data.get('username')
+#             messages.success(request, 'Account creation successful for ' + user)
+#             return redirect('login')
 
-    context={'form': form}
+#     context={'form': form}
 
-    return render (request,'accounts/register.html',{'form':form})
+#     return render (request,'accounts/register.html',{'form':form})
 
 @unauthenticated_user
 def loginPage(request):
@@ -87,18 +87,6 @@ def logoutUser(request):
     logout(request)
     return redirect('login')
 
-def profile(request):
-    return HttpResponse('profile')
-
-def staff(request):
-     return render(request,'accounts/staff.html')
-
-def student(request):
-    return HttpResponse('profile')
-
-def studentList(request):
-    return render(request,'accounts/student_list.html')
-
 
 @login_required(login_url='login')
 @admin_only
@@ -107,22 +95,3 @@ def admin(request):
     context = {'students':students}
     return render(request,'accounts/admin.html',context)
 
-@login_required(login_url='login')
-@allowed_users(['teacher'])
-def users(request):
-    return render(request,'Dashboard/Users/users.html')
-
-@allowed_users(['student'])
-def users(request):
-    return render(request,'Dashboard/Users/users.html')
-
-def contact(request):
-    form = contactForm()
-    context ={
-    'form':form
-    }
-    # form = contactForm(request.POST)
-    # if form.is_valid():
-    #     print('Hello')
-    #     return redirect('contact')
-    return render(request,'accounts/contact.html',context)
