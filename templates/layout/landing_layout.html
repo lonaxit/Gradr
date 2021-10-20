@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!-- ===============================================-->
+    <!--    Document Title-->
+    <!-- ===============================================-->
+  <title>{% block title %}{% endblock title %}</title>
+
+    <!-- inclde header links here -->
+
+    {% include 'partials/landing_layout_header.html' %} 
+
+  </head>
+
+
+  <body>
+
+    <!-- ===============================================-->
+    <!--    Main Content-->
+    <!-- ===============================================-->
+<main class="main" id="top">
+
+  <!-- Menu -->
+   {% comment %} {% include 'partials/landing_layout_menu.html'%} {% endcomment %}
+
+<!-- banner  -->
+{% comment %} {% include 'partials/landing_layout_banner.html'%} {% endcomment %}
+
+
+
+
+  <!-- content area -->
+  <!-- ============================================-->
+  <!-- <section> begin ============================-->
+  <section>
+
+    {% block content %}
+
+    {% endblock content %}
+
+  </section>
+  <!-- <section> close ============================-->
+  <!-- ============================================-->
+
+
+
+<!-- feature section  -->
+{% comment %} {% include 'partials/landing_layout_features.html'%} {% endcomment %}
+
+
+
+<!-- testimonials section -->
+{% comment %} {% include 'partials/landing_layout_testimonials.html'%} {% endcomment %}
+
+
+
+
+<!-- call to action section  -->
+{% comment %} {% include 'partials/landing_layout_call_action.html'%} {% endcomment %}
+
+
+
+
+<!-- footer menu -->
+{% comment %} {% include 'partials/landing_layout_footer_menu.html' %} {% endcomment %}
+
+
+
+<!-- credit section here below -->
+  {% comment %} {% include 'partials/landing_layout_credit.html' %} {% endcomment %}
+
+
+</main>
+    <!-- ===============================================-->
+    <!--    End of Main Content-->
+    <!-- ===============================================-->
+
+
+
+
+  <!-- footer here  -->
+  {% include 'partials/landing_layout_footer.html' %}
+
+  </body>
+
+</html>
