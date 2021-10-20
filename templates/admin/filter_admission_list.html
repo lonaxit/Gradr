@@ -24,46 +24,39 @@
                       {% endif %}
                     </div>
                     <div class="card-body">
-                      <form  action="" method="POST"  id="student-profile-form">
+                      <form  action="" method="POST">
                         {% csrf_token %}
-
-
-
+{% comment %} 
                         <div class="form-row">
-                          <!-- <div class="form-group col-4">
-                            {{ form.subject.label_tag }}
-                            {{form.subject}}
-                          </div> -->
+                       
 
                           <div class="form-group col-6">
                             {{ form.classroom.label_tag }}
                             {{form.classroom}}
                           </div>
 
-                          <div class="form-group col-6">
-                            {{ form.teacher.label_tag }}
-                            {{form.teacher}}
-                          </div>
 
-                        </div>
+                        </div> {% endcomment %}
+
                         <div class="form-row">
-                          <!-- <div class="form-group col-4">
-                            {{ form.subject.label_tag }}
-                            {{form.subject}}
-                          </div> -->
-
-                          <div class="form-group col-6">
+                         
+                          <div class="form-group col-4">
                             {{ form.session.label_tag }}
                             {{form.session}}
                           </div>
 
-                          <div class="form-group col-6">
+                          <div class="form-group col-4">
                             {{ form.term.label_tag }}
                             {{form.term}}
                           </div>
 
+                           <div class="form-group col-4">
+                            {{ form.classroom.label_tag }}
+                            {{form.classroom}}
+                          </div>
+
                         </div>
-                        <div class="d-flex justify-content-end">
+                        <div class="d-flex justify-content-start">
                           <input type="submit" name="create" class="btn btn-primary" value="Filter">
                         </div>
                       </form>
@@ -86,6 +79,8 @@
               <div class="col-6 col-sm-auto d-flex align-items-center pr-0">
                 <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Filtered admission List</h5>
               </div>
+
+              <a href="{% url 'export-admission' session.pk classroom.pk term.pk %}" class="btn btn-falcon-default btn-sm mb-3" type="button"><span class="fas fa-external-link-alt" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ml-1">Export CSV</span></a>
           </div>
 
           <!-- datatable -->

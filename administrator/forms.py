@@ -501,7 +501,13 @@ class AdmissionListForm(forms.Form):
                   to_field_name='id',
                   label='Select Session',
                   widget=forms.Select(attrs={'class': 'form-control','id':'session'}))
-
+    classroom = forms.ModelChoiceField(
+                  queryset=StudentClass.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Select Class',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'classroom'}))
 
 class AffectiveForm(ModelForm):
     class Meta:

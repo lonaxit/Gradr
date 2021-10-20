@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-
+import csv
 from django.http import HttpResponse,JsonResponse
 # import for user registration form
 from  django.contrib.auth.forms import UserCreationForm
@@ -23,6 +23,14 @@ from django.db.models import Q
 
 #custom decorator
 from accounts.decorators import unauthenticated_user,allowed_users,admin_only
+
+# import transactions
+from django.db import transaction
+
+import pandas as pd
+import os
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 
 # academics routine
 # Filter Scores
@@ -1253,7 +1261,7 @@ def viewStudent(request,pk):
 
 
 # admission list
-# student profile
+
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def admissionList(request):
@@ -1262,25 +1270,62 @@ def admissionList(request):
     if request.method == 'POST':
         form = AdmissionListForm(request.POST)
         if form.is_valid():
-            term = Term.objects.get(id=request.POST['term'])
-            session = Session.objects.get(id=request.POST['session'])
-
+            term = Term.objects.get(pk=request.POST['term'])
+            session = Session.objects.get(pk=request.POST['session'])
+            classroom = Term.objects.get(pk=request.POST['classroom'])
+            # term_id = request.POST['term']
+            # session_id = request.POST['session']
+            # class_id = request.POST['classroom']
+            # term = Term.objects.get(pk=term_id)
+            
+            
             # select students based on search parameter
-            result = Student.objects.filter(Q(session_admitted=session) & Q(term_admitted=term))
+            result = Student.objects.filter(Q(session_admitted=session.pk)  & Q(class_admitted=classroom.pk) & Q(term_admitted=term.pk))
             if not result:
                 messages.error(request, 'No record exist')
                 return redirect('admission-list')
             else:
-                context = { 'form':form,'result':result}
+                context = { 'form':form,
+                           'result':result,
+                           'term':term,
+                           'session':session,
+                           'classroom':classroom
+                           }
                 return render(request,'admin/filter_admission_list.html',context)
         else:
-            # print('shhhh')
             messages.error(request, 'oops! something went wrong')
             return redirect('admission-list')
 
     context ={'form':form}
-
     return render(request, 'admin/filter_admission_list.html',context)
+
+# export admission List
+@allowed_users(allowed_roles=['admin'])
+def exportAdmissionList(request,session,classroom,term):
+
+
+    try:
+        termObj = Term.objects.get(pk=term)
+        sessObj = Session.objects.get(pk=session)
+        classroomObj = StudentClass.objects.get(pk=classroom)
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=Admission_List_'+classroomObj.class_name+'_'+termObj.term+'_'+sessObj.session+'.csv'
+        writer = csv.writer(response)
+
+        writer.writerow(['Name','Class','Sex','Session','RegNumber'])
+
+        students = Student.objects.filter(Q(session_admitted=sessObj) & Q(term_admitted=termObj.pk) & Q(class_admitted=classroomObj.pk)).order_by('sur_name')
+         
+        for student in students:
+            writer.writerow([student.sur_name+ ' ' +student.first_name,student.class_admitted.class_name,student.sex,student.session_admitted.session,student.full_reg_no])
+
+        return response
+
+    except Exception as e:
+             messages.error(request,  e)
+             return render(request,'admin/filter_admission_list.html')
+
 
 # register user with group
 @unauthenticated_user
