@@ -91,7 +91,8 @@ def logoutUser(request):
 @login_required(login_url='login')
 @admin_only
 def admin(request):
-    students = Student.objects.all()
+    #  nocommentsCount = result.filter(classteachercomment__isnull=True).count()
+    students = Student.objects.filter(reg_no__isnull=True)
     context = {'students':students}
     return render(request,'accounts/admin.html',context)
 
