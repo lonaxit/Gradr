@@ -301,11 +301,10 @@ def updateNumber(request,pk):
         reg_no = request.POST['reg_no']
 
         if not reg_no:
-
             messages.success(request, 'Please provide a value')
             return redirect('update-numbers',pk=pk)
         else:
-            # select the first reg number
+           
 
 
              # Get prefix
