@@ -108,7 +108,7 @@ class City(models.Model):
 
 # assign subject to teachers model
 class SubjectTeacher(models.Model):
-    # user = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    created_by = models.ForeignKey(User,on_delete=models.DO_NOTHING,default=1)
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
     subject = models.ForeignKey(Subject,on_delete=models.DO_NOTHING)
     classroom = models.ForeignKey(StudentClass,on_delete=models.DO_NOTHING)
@@ -116,6 +116,7 @@ class SubjectTeacher(models.Model):
     teacher = models.ForeignKey("accounts.Teacher",on_delete=models.DO_NOTHING)
     status = models.CharField(max_length=50, default='Active')
     date_created = models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    date_modified = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.teacher.surname
 
