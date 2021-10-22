@@ -113,8 +113,10 @@ class Lga(models.Model):
 
 # city
 class City(models.Model):
+    created_by = models.ForeignKey(User,on_delete=models.DO_NOTHING)
     city = models.CharField(max_length=200,blank=True,null=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    date_modified = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.lga
 
