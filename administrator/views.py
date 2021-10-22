@@ -31,7 +31,7 @@ import pandas as pd
 import os
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
-
+from teacher.views import *
 # academics routine
 # Filter Scores
 @allowed_users(allowed_roles=['admin'])
@@ -1582,3 +1582,158 @@ def get_json_lg_data(request,pk):
     lg_data = list(Lga.objects.filter(state_id=pk).values())
     # counrty_data = list(Country.objects.values())
     return JsonResponse({'data':lg_data})
+
+
+# code below for datamigration purposes only, remove afterwards
+# not complete
+
+@allowed_users(allowed_roles=['admin'])
+def migrateAss(request):
+
+    loggedin = request.user.tutor.pk
+    myclient = request.user.tutor
+
+    # try:
+    classes = StudentClass.objects.all()
+    context={
+    'classes': classes
+    }
+
+    if request.method=='POST' and request.POST.get('subject'):
+
+        activeTerm = Term.objects.get(status='True')
+        activeSession = Session.objects.get(status='True')
+        # classteacher
+        teacherObj = SubjectTeacher.objects.get(pk=loggedin)
+        classroom = request.POST['studentclass']
+
+        # classroom object
+        classroomObj = StudentClass.objects.get(pk=classroom)
+        subject_id = request.POST['subject']
+        # subject object
+        subjectObj = Subject.objects.get(pk=subject_id)
+
+
+        myfile = request.FILES['csvFile']
+        fs = FileSystemStorage()
+        filename = fs.save(myfile.name, myfile)
+        uploaded_file_url = fs.url(filename)
+        excel_file = uploaded_file_url
+        # print(excel_file)
+        empexceldata = pd.read_csv("media/"+filename,encoding='utf-8')
+        # print(type(empexceldata))
+        dbframe = empexceldata
+
+        with transaction.atomic():
+
+            for dbframe in dbframe.itertuples():
+                studentObj=Student.objects.get(pk=dbframe.StudentID)
+                # check if records of a student exist in that subject, class,term,session
+                scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
+                if scoresExist:
+                    pass
+                else:
+
+                    # fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
+                    obj = Scores.objects.create(
+                        firstscore=dbframe.FirstCA,
+                        secondscore=dbframe.SecondCA,
+                        thirdscore=dbframe.ThirdCA,
+                        totalca=dbframe.CATotal,
+                        examscore=dbframe.Exam,
+                        subjecttotal=dbframe.Total,
+                        session=activeSession,
+                        term=activeTerm,
+                        student=studentObj,
+                        studentclass=classroomObj,
+                        subjectteacher= teacherObj,
+                        client= myclient.client,
+                        subject=subjectObj,
+                    )
+                    # DOB=fromdate_time_obj,
+                    # qualification=dbframe.qualification)
+                    # print(type(obj))
+                    obj.save()
+                    # process Scores
+                    processScores(subjectObj,classroomObj)
+
+                    # process terminal result
+                    processTerminalResult(obj)
+
+                    # process terminal result
+                    processAnnualResult(obj)
+
+                    # Add auto comment
+                    autoAddComment(classroomObj,activeSession,activeTerm)
+            messages.success(request,  'Successful')
+            return render(request,'admin/import_assessment_sheet.html',context)
+
+        # return render(request, 'teacher/import_assessment_sheet.html',context)
+
+    messages.error(request,  'Ensure you specify all information and you have a csv file selected!')
+    return render(request,'teacher/import_assessment_sheet.html',context)
+
+
+# bulk create students
+# sign up new a student user
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def bulkStudent(request):
+    
+    logged_inuser = request.user
+    clientProfile  = Client.objects.get(user_id=logged_inuser.id)
+    
+    if request.method == 'POST':
+        
+        myfile = request.FILES['csvFile']
+        fs = FileSystemStorage()
+        filename = fs.save(myfile.name, myfile)
+        uploaded_file_url = fs.url(filename)
+        excel_file = uploaded_file_url
+        # print(excel_file)
+        empexceldata = pd.read_csv("media/"+filename,encoding='utf-8')
+        # print(type(empexceldata))
+        dbframe = empexceldata
+
+        with transaction.atomic():
+
+            for dbframe in dbframe.itertuples():
+                studentObj=Student.objects.get(pk=dbframe.StudentID)
+                # check if records of a student exist in that subject, class,term,session
+                # scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
+                # if scoresExist:
+                    # pass
+                # else:
+
+                # fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
+                obj = Scores.objects.create(
+                        firstscore=dbframe.FirstCA,
+                        secondscore=dbframe.SecondCA,
+                        thirdscore=dbframe.ThirdCA,
+                        totalca=dbframe.CATotal,
+                       
+                    )
+                    # DOB=fromdate_time_obj,
+                    # qualification=dbframe.qualification)
+                    # print(type(obj))
+                obj.save()
+            
+            #getting username from form
+            # username = form.cleaned_data.get('username')
+            # email = form.cleaned_data.get('email')
+            # # associate user with student
+            group = Group.objects.get(name='student')
+            obj.groups.add(group)
+
+            # attach a profile to a client
+            StudObj = Student.objects.create(
+                user = obj,
+                # email=email,
+                client = clientProfile,
+            )
+            StudObj.save()
+
+            messages.success(request, 'Student account creation successful')
+            return redirect('create-students')
+
+    return render (request,'admin/create_bulk_users.html')

@@ -732,7 +732,6 @@ def exportSheet(request,classroom,subject):
 
 
 # import assessment sheet
-
 @allowed_users(allowed_roles=['teacher'])
 def importAssessmentSheet(request):
 
@@ -796,8 +795,8 @@ def importAssessmentSheet(request):
                         client= myclient.client,
                         subject=subjectObj,
                     )
-                        # DOB=fromdate_time_obj,
-                        # qualification=dbframe.qualification)
+                    # DOB=fromdate_time_obj,
+                    # qualification=dbframe.qualification)
                     # print(type(obj))
                     obj.save()
                     # process Scores
@@ -888,7 +887,6 @@ def resultSummary(request):
 
     form = ResultFilterForm()
     # entry = ClassTeacher.objects.filter(teacher=loggedin)
-
     try:
         pass
 

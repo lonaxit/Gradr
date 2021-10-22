@@ -19,6 +19,15 @@ from .models import Client
 
 #custom decorator
 from .decorators import unauthenticated_user, allowed_users,admin_only
+# import transactions
+from django.db import transaction
+
+# for migration
+import pandas as pd
+import os
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+
 
 # register a client with group
 @unauthenticated_user
@@ -95,4 +104,3 @@ def admin(request):
     students = Student.objects.filter(reg_no__isnull=True)
     context = {'students':students}
     return render(request,'accounts/admin.html',context)
-

@@ -75,5 +75,10 @@ urlpatterns = [
   
   # institution
    path('logo/<str:pk>', views.logo, name='logo'),
+   
+  #  for migration purposes
+  path('migrate-ca', views.migrateAss, name='migrate-ca'),
+  path('bulk-create-student', views.bulkStudent, name='create-students'),
+  
 
 ]

@@ -24,13 +24,15 @@
             <!-- <li class="nav-item"><a class="nav-link" href="../home/landing.html">Landing</a>
             </li> -->
 
-            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#student" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="student">Students/Pupils</a>
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#student" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="student">Students</a>
               <ul class="nav collapse" id="student" data-parent="#user">
                 <li class="nav-item"><a class="nav-link" href="{% url 'new-student' %}">New</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'list-students' %}">List</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'admission-list' %}">Admission List</a>
+                </li>
+                 <li class="nav-item"><a class="nav-link" href="{% url 'create-students' %}">bulk Students</a>
                 </li>
               </ul>
             </li>
