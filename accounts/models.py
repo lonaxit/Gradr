@@ -35,9 +35,10 @@ class Teacher(models.Model):
                 ('MSC','MSC'),
                 ('PHD','PHD'),
                 )
+    createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='tutor')
     surname = models.CharField(max_length=200,blank=True,null=True)
-    firstname = models.CharField(max_length=200,blank=True,null=True)
+    lastname = models.CharField(max_length=200,blank=True,null=True)
     othername = models.CharField(max_length=200,blank=True,null=True)
     sex = models.CharField(max_length=20)
     phone = models.CharField(max_length=20)
@@ -52,6 +53,7 @@ class Teacher(models.Model):
     lga = models.CharField(max_length=200,null=True,blank=True)
     city = models.CharField(max_length=200,null=True,blank=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.surname
@@ -74,9 +76,10 @@ class Student(models.Model):
     ('ISLAM','ISLAM'),
     ('OTHERS','OTHERS')
     )
+    createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='learner')
     sur_name = models.CharField(max_length=200,blank=True,null=True)
-    first_name = models.CharField(max_length=200,blank=True,null=True)
+    last_name = models.CharField(max_length=200,blank=True,null=True)
     other_name = models.CharField(max_length=200,blank=True,null=True)
     sex = models.CharField(max_length=20,blank=True,null=True,choices=GENDER)
     dob = models.DateField(blank=True,null=True)
@@ -97,7 +100,7 @@ class Student(models.Model):
     term_admitted = models.ForeignKey("administrator.Term",on_delete=models.DO_NOTHING,null=True)
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING,null=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True)
-
+    date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.sur_name

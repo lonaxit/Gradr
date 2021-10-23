@@ -9,7 +9,7 @@ from datetime import datetime
 # Model to hold terms
 
 class Term(models.Model):
-    # created_by = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
     term = models.CharField(max_length=100,null=True,blank=True)
     status = models.BooleanField(default=False,blank=True,null=True)
@@ -20,7 +20,7 @@ class Term(models.Model):
 
 
 class Session(models.Model):
-    # created_by = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
     session = models.CharField(max_length=100,null=True,blank=True)
     status = models.BooleanField(default=False,blank=True,null=True)
@@ -31,7 +31,7 @@ class Session(models.Model):
 
 
 class StudentClass(models.Model):
-    # created_by = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
     class_name = models.CharField(max_length=100,null=True,blank=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True)
@@ -42,7 +42,7 @@ class StudentClass(models.Model):
 
 # subject model
 class Subject(models.Model):
-    # created_by = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
     subject = models.CharField(max_length=100,null=True,blank=True)
     subject_code = models.CharField(max_length=6)
@@ -53,7 +53,7 @@ class Subject(models.Model):
 
 # subject per class
 class SubjectPerClass(models.Model):
-    # created_by = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
     sch_class = models.ForeignKey(StudentClass,on_delete=models.CASCADE)
     no_subject = models.IntegerField(null=True,blank=True)
@@ -63,7 +63,7 @@ class SubjectPerClass(models.Model):
         return self.sch_class.class_name
 
 class AttendanceSetting(models.Model):
-    # created_by = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
     session = models.ForeignKey(Session,on_delete=models.DO_NOTHING)
     term = models.ForeignKey(Term,on_delete=models.DO_NOTHING)
@@ -76,7 +76,7 @@ class AttendanceSetting(models.Model):
 
 
 class ResumptionSetting(models.Model):
-    # created_by = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
     session = models.ForeignKey(Session,on_delete=models.DO_NOTHING)
     term = models.ForeignKey(Term,on_delete=models.DO_NOTHING)
@@ -88,14 +88,12 @@ class ResumptionSetting(models.Model):
         return self.term_begins
 
 class Country(models.Model):
-
     country = models.CharField(max_length=200,blank=True,null=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True,blank=True)
     def __str__(self):
         return self.country
 
 class State(models.Model):
-
     country = models.ForeignKey(Country,on_delete=models.CASCADE)
     state = models.CharField(max_length=200,blank=True,null=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True,blank=True)
@@ -113,16 +111,14 @@ class Lga(models.Model):
 
 # city
 class City(models.Model):
-    created_by = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     city = models.CharField(max_length=200,blank=True,null=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True,blank=True)
-    date_modified = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.lga
 
 # assign subject to teachers model
 class SubjectTeacher(models.Model):
-    # created_by = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
     subject = models.ForeignKey(Subject,on_delete=models.DO_NOTHING)
     classroom = models.ForeignKey(StudentClass,on_delete=models.DO_NOTHING)
@@ -137,7 +133,7 @@ class SubjectTeacher(models.Model):
 
 # assign class teacher
 class ClassTeacher(models.Model):
-    # created_by = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     client = models.ForeignKey("accounts.Client",on_delete=models.DO_NOTHING)
     session = models.ForeignKey(Session,on_delete=models.DO_NOTHING)
     term = models.ForeignKey(Term,on_delete=models.DO_NOTHING)

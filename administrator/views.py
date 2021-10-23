@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect
+from django.contrib.auth.models import User
 import csv
 from django.http import HttpResponse,JsonResponse
 # import for user registration form
@@ -11,6 +12,8 @@ from teacher.forms import *
 from django.contrib import messages
 #import for restricting access to pages
 from django.contrib.auth.decorators import login_required
+# import make password for bulk creation
+from django.contrib.auth.hashers import make_password
 
 # import for creating a group
 from django.contrib.auth.models import Group
@@ -32,6 +35,7 @@ import os
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from teacher.views import *
+
 # academics routine
 # Filter Scores
 @allowed_users(allowed_roles=['admin'])
@@ -1691,47 +1695,54 @@ def bulkStudent(request):
         uploaded_file_url = fs.url(filename)
         excel_file = uploaded_file_url
         # print(excel_file)
-        empexceldata = pd.read_csv("media/"+filename,encoding='utf-8')
+        exceldata = pd.read_csv("media/"+filename,encoding='utf-8')
         # print(type(empexceldata))
-        dbframe = empexceldata
+        dbframe = exceldata
 
         with transaction.atomic():
 
             for dbframe in dbframe.itertuples():
-                studentObj=Student.objects.get(pk=dbframe.StudentID)
+                
+                # studentObj=Student.objects.get(pk=dbframe.StudentID)
                 # check if records of a student exist in that subject, class,term,session
                 # scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
                 # if scoresExist:
                     # pass
                 # else:
-
+                # print(dbframe.USERNAME)
                 # fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
-                obj = Scores.objects.create(
-                        firstscore=dbframe.FirstCA,
-                        secondscore=dbframe.SecondCA,
-                        thirdscore=dbframe.ThirdCA,
-                        totalca=dbframe.CATotal,
-                       
-                    )
-                    # DOB=fromdate_time_obj,
-                    # qualification=dbframe.qualification)
-                    # print(type(obj))
+                # user = User.objects.create_user('myusername', 'myemail@crazymail.com', 'mypassword')
+                
+                obj = User.objects.create(
+                    username=dbframe.UNAME, 
+                    password=make_password(dbframe.PWD),
+                    email=dbframe.EMAIL,           
+                    )     
                 obj.save()
             
-            #getting username from form
-            # username = form.cleaned_data.get('username')
-            # email = form.cleaned_data.get('email')
-            # # associate user with student
-            group = Group.objects.get(name='student')
-            obj.groups.add(group)
+                #getting username from form
+                # username = form.cleaned_data.get('username')
+                # email = form.cleaned_data.get('email')
+                # # associate user with student
+                group = Group.objects.get(name='student')
+                obj.groups.add(group)
 
-            # attach a profile to a client
-            StudObj = Student.objects.create(
+                # attach a profile to a client
+                StudObj = Student.objects.create(
                 user = obj,
-                # email=email,
-                client = clientProfile,
-            )
-            StudObj.save()
+                sex=dbframe.GENDER,
+                lga=dbframe.LGA,
+                # STATE=dbframe.STATE,
+                blood_group=dbframe.BLOODGROUP,
+                address=dbframe.CONTADD,
+                # class_admitted=StudentClass.objects.get(pk=dbframe.CLASS),
+                # session_admitted=Session.objects.get(pk=dbframe.SESSION),
+                first_name=dbframe.NAME,
+                reg_no=dbframe.ADMNUMBER,
+                # sur_name=dbframe.USERNAME,
+                client =clientProfile,
+                )
+                StudObj.save()
 
             messages.success(request, 'Student account creation successful')
             return redirect('create-students')
