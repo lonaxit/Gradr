@@ -1751,13 +1751,16 @@ def bulkStudent(request):
                 # fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
                 # user = User.objects.create_user('myusername', 'myemail@crazymail.com', 'mypassword')
                 
-                obj = User.objects.create(
-                    username=dbframe.UNAME, 
-                    password=make_password(dbframe.PWD),
-                    email=dbframe.EMAIL,           
-                    )     
-                obj.save()
+                # comment out
+                
+                # obj = User.objects.create(
+                #     username=dbframe.UNAME, 
+                #     password=make_password(dbframe.PWD),
+                #     email=dbframe.EMAIL,           
+                #     )     
+                # obj.save()
             
+                obj = User.objects.get(pk=1)
                 #getting username from form
                 # username = form.cleaned_data.get('username')
                 # email = form.cleaned_data.get('email')
