@@ -10,7 +10,7 @@ from datetime import datetime
 
 class Term(models.Model):
     createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
-    client = models.ForeignKey(Client,on_delete=models.DO_NOTHING)
+    client = models.ForeignKey(Client,null=True,on_delete=models.DO_NOTHING)
     term = models.CharField(max_length=100,null=True,blank=True)
     status = models.BooleanField(default=False,blank=True,null=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True)
@@ -88,12 +88,14 @@ class ResumptionSetting(models.Model):
         return self.term_begins
 
 class Country(models.Model):
+
     country = models.CharField(max_length=200,blank=True,null=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True,blank=True)
     def __str__(self):
         return self.country
 
 class State(models.Model):
+
     country = models.ForeignKey(Country,on_delete=models.CASCADE)
     state = models.CharField(max_length=200,blank=True,null=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True,blank=True)
@@ -111,8 +113,10 @@ class Lga(models.Model):
 
 # city
 class City(models.Model):
+    # created_by = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     city = models.CharField(max_length=200,blank=True,null=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    # date_modified = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.lga
 
