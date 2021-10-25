@@ -50,7 +50,7 @@ class TermForm(ModelForm):
     class Meta:
         model = Term
         fields = '__all__'
-        exclude = ['client']
+        exclude = ['client','createdby']
         widgets= {'term': forms.TextInput(attrs={'class':'form-control','placeholder':'Enter new term','id':'term'}),
                 # 'venuetypes' : forms.Select(queryset=Venuetypes.objects.all,
                 #                                     attrs={'class' : 'venue_type_select'}
@@ -73,7 +73,7 @@ class SessionForm(ModelForm):
     class Meta:
         model = Session
         fields = '__all__'
-        exclude = ['client']
+        exclude = ['client','createdby']
         # widgets= {'session': forms.TextInput(attrs={'class':'form-control','placeholder':'Enter New term','id':'term'}),
                   # 'status' : forms.ChoiceField(queryset=Session.objects.values_list('status'),
                   #                                      attrs={'class' : 'form-ocontrol'}
@@ -98,7 +98,7 @@ class ClassForm(forms.ModelForm):
     class Meta:
         model = StudentClass
         fields = '__all__'
-        exclude = ['client']
+        exclude = ['client','createdby']
 
 
 class SubjectForm(forms.ModelForm):
@@ -121,7 +121,7 @@ class SubjectForm(forms.ModelForm):
     class Meta:
         model = Subject
         fields = '__all__'
-        exclude = ['client']
+        exclude = ['client','createdby']
 
 # subject per class form
 class SubjectPerClassForm(forms.ModelForm):
@@ -142,7 +142,7 @@ class SubjectPerClassForm(forms.ModelForm):
     class Meta:
         model = SubjectPerClass
         fields = '__all__'
-        exclude = ['client']
+        exclude = ['client','createdby']
 
 
 class AttendanceSettingForm(forms.ModelForm):
@@ -173,7 +173,7 @@ class AttendanceSettingForm(forms.ModelForm):
     class Meta:
         model = AttendanceSetting
         fields = '__all__'
-        exclude = ['client']
+        exclude = ['client','createdby']
         # widgets= {
         #         'term': forms.TextInput(attrs={'class':'form-control','id':'term'}),
         #         'days_open' : forms.NumberInput(attrs={'class' : 'form-control','id':'days_open'}),
@@ -216,7 +216,7 @@ class ResumptionSettingForm(forms.ModelForm):
     class Meta:
         model = ResumptionSetting
         fields = '__all__'
-        exclude = ['client']
+        exclude = ['client','createdby']
 
 
 # student profile form
@@ -326,7 +326,7 @@ class StudentProfileForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = '__all__'
-        exclude = ['client','user','reg_no','full_reg_no','profile_image']
+        exclude = ['client','user','reg_no','full_reg_no','profile_image','createdby']
 
 
 # teacher profile form
@@ -413,7 +413,7 @@ class TeacherProfileForm(forms.ModelForm):
     class Meta:
         model = Teacher
         fields = '__all__'
-        exclude = ['client','user']
+        exclude = ['client','user','createdby']
 
 # assign subject
 class AssignSubjectForm(forms.ModelForm):
@@ -446,7 +446,7 @@ class AssignSubjectForm(forms.ModelForm):
     class Meta:
         model = SubjectTeacher
         fields = '__all__'
-        exclude = ['client']
+        exclude = ['client','createdby']
 
 # class teacher form
 class AssignClassTeacherForm(forms.ModelForm):
@@ -483,7 +483,7 @@ class AssignClassTeacherForm(forms.ModelForm):
     class Meta:
         model = ClassTeacher
         fields = '__all__'
-        exclude = ['client']
+        exclude = ['client','createdby']
 
 class AdmissionListForm(forms.Form):
 
