@@ -432,32 +432,40 @@ def updateClient(request,pk):
 def newStudent(request):
     # redirect authenticated user to the dashboard
     form = StudentRegisterForm()
+    # loggedin = request.user.tutor.pk
+    # myclient = request.user.tutor
     logged_inuser = request.user
     clientProfile  = Client.objects.get(user_id=logged_inuser.id)
-    context={'form': form}
+    # context={'form': form}
     if request.method == 'POST':
-        form  = StudentRegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            #getting username from form
-            username = form.cleaned_data.get('username')
-            email = form.cleaned_data.get('email')
-            # associate user with admin
-            group = Group.objects.get(name='student')
-            user.groups.add(group)
+        try:
+            
+            # transaction
+            with transaction.atomic():
+                form  = StudentRegisterForm(request.POST)
+                if form.is_valid():
+                    user = form.save()
+                    #getting username from form
+                    username = form.cleaned_data.get('username')
+                    email = form.cleaned_data.get('email')
+                    # associate user with admin
+                    group = Group.objects.get(name='student')
+                    user.groups.add(group)
 
+                    # attach a profile to a client
+                    StudObj = Student.objects.create(
+                    user = user,
+                    email=email,
+                    client = clientProfile,
+                    createdby=User.objects.get(pk=logged_inuser.pk)
+                    )
+                    StudObj.save()
 
-
-            # attach a profile to a client
-            StudObj = Student.objects.create(
-                user = user,
-                email=email,
-                client = clientProfile,
-            )
-            StudObj.save()
-
-            messages.success(request, 'Student account creation successful for ' + username + ',  please update the profile')
-            return redirect('update-student',pk=StudObj.pk)
+                messages.success(request, 'Student account creation successful for ' + username + ',  please update the profile')
+                return redirect('update-student',pk=StudObj.pk)
+        except Exception as e:
+            messages.error(request, e)
+            return render (request,'admin/newStudent.html',{'form':form})
 
     return render (request,'admin/newStudent.html',{'form':form})
 
@@ -553,25 +561,28 @@ def newTeacher(request):
     clientProfile  = Client.objects.get(user_id=logged_inuser.id)
     context={'form': form}
     if request.method == 'POST':
-        form  = StaffRegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            #getting username from form
-            username = form.cleaned_data.get('username')
-            # associate user with admin
-            group = Group.objects.get(name='teacher')
-            user.groups.add(group)
+        # transaction
+        with transaction.atomic():
+            form  = StaffRegisterForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                #getting username from form
+                username = form.cleaned_data.get('username')
+                # associate user with admin
+                group = Group.objects.get(name='teacher')
+                user.groups.add(group)
 
-            # attach a profile to a client
-            TeacherObj = Teacher.objects.create(
-                user = user,
-                client = clientProfile,
-            )
-            TeacherObj.save()
+                # attach a profile to a client
+                TeacherObj = Teacher.objects.create(
+                    user = user,
+                    client = clientProfile,
+                    createdby=User.objects.get(pk=logged_inuser.pk),
+                )
+                TeacherObj.save()
 
 
-            messages.success(request, 'Account creation successful for ' + username + ',  please update the profile')
-            return redirect('update-teacher',pk=TeacherObj.pk)
+                messages.success(request, 'Account creation successful for ' + username + ',  please update the profile')
+                return redirect('update-teacher',pk=TeacherObj.pk)
 
     return render (request,'admin/newTeacher.html',{'form':form})
 
@@ -679,7 +690,8 @@ def assignSubject(request):
                                      teacher = teacherObj,
                                      classroom = classroomObj,
                                      subject = subjectObj,
-                                     client = client
+                                     client = client,
+                                     createdby= User.objects.get(pk=request.user.pk)
                                          )
                 obj.save()
                 messages.success(request, 'Subject successfully assigned')
@@ -765,7 +777,8 @@ def assignClassTeacher(request):
                                      classroom = classroomObj,
                                      session =sessionObj,
                                      term = termObj,
-                                     client = client
+                                     client = client,
+                                     createdby=User.objects.get(pk=request.user.pk)
                                          )
                 obj.save()
                 messages.success(request, 'Class teacher  successfully assigned')
@@ -828,27 +841,38 @@ def listClassTeacher(request):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def addTerm(request):
-    client = Client.objects.get(user_id=request.user.id)
+    
     form = TermForm()
     context = {}
     if request.method == "POST":
-
-        form = TermForm(request.POST)
-        if form.is_valid():
-            term = form.cleaned_data.get("term")
-            client = client
-            obj = Term.objects.create(
+        try:
+            
+            client = Client.objects.get(user_id=request.user.pk)
+            form = TermForm(request.POST)
+            if form.is_valid():
+                term = form.cleaned_data.get("term")
+                client = client
+                obj = Term.objects.create(
                                  term = term,
-                                 client = client
+                                 client = client,
+                                 createdby=User.objects.get(pk=request.user.pk)
                                      )
-            obj.save()
-            messages.success(request, 'Record added')
-            return redirect('create-term')
-        else:
-            messages.success(request, 'Something went wrong')
-            return redirect('create-term')
-    context={'form':form}
+                obj.save()
+                messages.success(request, 'Record added')
+                return redirect('create-term')
+            else:
+                messages.success(request, 'Something went wrong')
+                return redirect('create-term')
+        except Exception as e:
+            messages.error(request,  e)
+            context={'form':form}
+            return render(request, "admin/addTerm.html", context)
+    context={'form':form}    
     return render(request, "admin/addTerm.html", context)
+        
+        
+    
+    
 
 
 # add subject per class
@@ -869,7 +893,8 @@ def subjectPerClass(request):
             obj = SubjectPerClass.objects.create(
                                  sch_class = sch_class,
                                  no_subject = no_subject,
-                                 client = client
+                                 client = client,
+                                 createdby=User.objects.get(pk=request.user.pk)
                                      )
             obj.save()
             messages.success(request, 'Record added')
@@ -958,7 +983,8 @@ def addSession(request):
             client = client
             obj = Session.objects.create(
                                  session = session,
-                                 client = client
+                                 client = client,
+                                 createdby=User.objects.get(pk=request.user.pk)
                                      )
             obj.save()
             messages.success(request, 'Record added')
@@ -1001,27 +1027,35 @@ def updateSession(request,pk):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def addClass(request):
-    client = Client.objects.get(user_id=request.user.id)
+    
     form = ClassForm()
     context = {}
     if request.method == 'POST':
-        form = ClassForm(request.POST)
-        if form.is_valid():
+        try:
+            
+            client = Client.objects.get(user_id=request.user.id)
+            form = ClassForm(request.POST)
+            if form.is_valid():
 
-            classname = form.cleaned_data.get("class_name")
-            client = client
-            obj = StudentClass.objects.create(
+                classname = form.cleaned_data.get("class_name")
+                client = client
+                obj = StudentClass.objects.create(
                                  class_name = classname,
-                                 client = client
+                                 client = client,
+                                 createdby= User.objects.get(pk=request.user.pk)
                                      )
-            obj.save()
+                obj.save()
+                
 
-            messages.success(request, 'Record added')
-            return redirect('add-class')
-        else:
+                messages.success(request, 'Record added')
+                return redirect('add-class')
+            else:
 
-            messages.success(request, 'oops! something went wrong')
-            return redirect('add-class')
+                messages.success(request, 'oops! something went wrong')
+                return redirect('add-class')
+        except Exception as e:
+            messages.error(request,  e)
+            return render(request, "admin/addClass.html", context)
     context={'form':form}
     return render(request, "admin/addClass.html", context)
 
@@ -1073,7 +1107,8 @@ def addSubject(request):
             obj = Subject.objects.create(
                                  subject = subject,
                                  client = client,
-                                 subject_code=subject_code
+                                 subject_code=subject_code,
+                                 createdby=User.objects.get(pk=request.user.pk)
                                      )
             obj.save()
             messages.success(request, 'Record added')
@@ -1136,7 +1171,8 @@ def attendance_settings(request):
                                  days_closed =daysclosed,
                                  term_id=term,
                                  session_id=session,
-                                 client = client
+                                 client = client,
+                                 createdby= User.objects.get(pk=request.user.pk)
                                      )
             obj.save()
             messages.success(request, 'Record added')
@@ -1173,7 +1209,8 @@ def resumption_settings(request):
                                  term_ends =term_ends,
                                  term_id=term,
                                  session_id=session,
-                                 client = client
+                                 client = client,
+                                 createdby=User.objects.get(pk=request.pk)
                                      )
             obj.save()
             messages.success(request, 'Record added')
