@@ -1740,7 +1740,8 @@ def bulkStudent(request):
 
             for dbframe in dbframe.itertuples():
                 
-                # studentObj=Student.objects.get(pk=dbframe.StudentID)
+                sessObj=Session.objects.get(pk=dbframe.SESSID)
+                regString= "SKY/STD/"+sessObj.session+"/"+str(dbframe.REGNUM)
                 # check if records of a student exist in that subject, class,term,session
                 # scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
                 # if scoresExist:
@@ -1774,10 +1775,14 @@ def bulkStudent(request):
                 address=dbframe.CONTADD,
                 # class_admitted=StudentClass.objects.get(pk=dbframe.CLASS),
                 # session_admitted=Session.objects.get(pk=dbframe.SESSION),
-                first_name=dbframe.NAME,
-                reg_no=dbframe.ADMNUMBER,
-                # sur_name=dbframe.USERNAME,
+                sur_name=dbframe.SURNAME,
+                first_name=dbframe.LASTNAME,
+                reg_no=dbframe.REGNUM,
+                full_reg_no=regString,
+                session_admitted=sessObj,
+                class_admitted=StudentClass.objects.get(pk=dbframe.CLASSID),
                 client =clientProfile,
+                createdby=User.objects.get(pk=request.user.pk)
                 )
                 StudObj.save()
 
