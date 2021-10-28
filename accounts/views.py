@@ -40,6 +40,7 @@ def register(request):
             user = form.save()
             #getting username from form
             username = form.cleaned_data.get('username')
+            email = form.cleaned_data.get('email')
             # associate user with admin
             group = Group.objects.get(name='admin')
             user.groups.add(group)
@@ -48,6 +49,15 @@ def register(request):
             Client.objects.create(
                 user = user,
             )
+            
+            # attach a profile to a student
+            StudObj = Student.objects.create(
+            user = user,
+            email=email,
+            client = Client.objects.get(user_id=request.user.pk),
+            createdby=request.user
+            )
+            StudObj.save()
 
             messages.success(request, 'Account creation successful for ' + username)
             return redirect('login')
