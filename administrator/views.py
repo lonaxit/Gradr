@@ -452,7 +452,7 @@ def newStudent(request):
                     group = Group.objects.get(name='student')
                     user.groups.add(group)
 
-                    # attach a profile to a client
+                    # attach a profile to a student
                     StudObj = Student.objects.create(
                     user = user,
                     email=email,
@@ -1742,15 +1742,7 @@ def bulkStudent(request):
                 
                 sessObj=Session.objects.get(pk=dbframe.SESSID)
                 regString= "SKY/STD/"+sessObj.session+"/"+str(dbframe.REGNUM)
-                # check if records of a student exist in that subject, class,term,session
-                # scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
-                # if scoresExist:
-                    # pass
-                # else:
-                # print(dbframe.USERNAME)
-                # fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
-                # user = User.objects.create_user('myusername', 'myemail@crazymail.com', 'mypassword')
-                
+               
                 # comment out
                 
                 obj = User.objects.create(
