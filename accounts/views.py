@@ -35,32 +35,35 @@ def register(request):
     # redirect authenticated user to the dashboard
     form = ClientRegisterForm()
     if request.method == 'POST':
-        form  = ClientRegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            #getting username from form
-            username = form.cleaned_data.get('username')
-            email = form.cleaned_data.get('email')
-            # associate user with admin
-            group = Group.objects.get(name='admin')
-            user.groups.add(group)
-
-            # attach a profile to a client
-            Client.objects.create(
-                user = user,
-            )
+        
+        with transaction.atomic():
             
-            # attach a profile to a student
-            StudObj = Student.objects.create(
-            user = user,
-            email=email,
-            client = Client.objects.get(user_id=request.user.pk),
-            createdby=request.user
-            )
-            StudObj.save()
+            form  = ClientRegisterForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                #getting username from form
+                username = form.cleaned_data.get('username')
+                email = form.cleaned_data.get('email')
+                # associate user with admin
+                group = Group.objects.get(name='admin')
+                user.groups.add(group)
 
-            messages.success(request, 'Account creation successful for ' + username)
-            return redirect('login')
+                # attach a profile to a client
+                Client.objects.create(
+                user = user,
+                )
+            
+                # attach a profile to a student
+                StudObj = Student.objects.create(
+                user = user,
+                email=email,
+                client = Client.objects.get(pk=1),
+                createdby=user
+                )
+                StudObj.save()
+
+                messages.success(request, 'Account creation successful for ' + username)
+                return redirect('login')
 
     context={'form': form}
 
