@@ -54,13 +54,13 @@ def register(request):
                 )
             
                 # attach a profile to a student
-                # StudObj = Student.objects.create(
-                # user = user,
-                # email=email,
-                # client = Client.objects.get(pk=1),
-                # createdby=user
-                # )
-                # StudObj.save()
+                StudObj = Student.objects.create(
+                user = user,
+                email=email,
+                client = Client.objects.get(pk=1),
+                createdby=user
+                )
+                StudObj.save()
 
                 messages.success(request, 'Account creation successful for ' + username)
                 return redirect('login')
