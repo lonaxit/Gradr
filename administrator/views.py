@@ -1716,7 +1716,6 @@ def migrateAss(request):
 
 
 # bulk create students
-# sign up new a student user
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def bulkStudent(request):
@@ -1740,46 +1739,56 @@ def bulkStudent(request):
 
             for dbframe in dbframe.itertuples():
                 
-                sessObj=Session.objects.get(pk=dbframe.SESSID)
-                regString= "SKY/STD/"+sessObj.session+"/"+str(dbframe.REGNUM)
+                # sessObj=Session.objects.get(pk=dbframe.SESSID)
+                # regString= "SKY/STD/"+sessObj.session+"/"+str(dbframe.REGNUM)
                
                 # comment out
                 
                 obj = User.objects.create(
-                    username=dbframe.UNAME, 
-                    password=make_password(dbframe.PWD),
+                    username=dbframe.SURNAME, 
+                    password=make_password(dbframe.PHONE),
                     email=dbframe.EMAIL,           
                     )     
                 obj.save()
             
-                
-                #getting username from form
-                # username = form.cleaned_data.get('username')
-                # email = form.cleaned_data.get('email')
-                # # associate user with student
-                group = Group.objects.get(name='student')
+                group = Group.objects.get(name='teacher')
                 obj.groups.add(group)
-
-                # attach a profile to a client
-                StudObj = Student.objects.create(
-                user = obj,
-                sex=dbframe.GENDER,
-                lga=dbframe.LGA,
-                # STATE=dbframe.STATE,
-                blood_group=dbframe.BLOODGROUP,
-                address=dbframe.CONTADD,
-                # class_admitted=StudentClass.objects.get(pk=dbframe.CLASS),
-                # session_admitted=Session.objects.get(pk=dbframe.SESSION),
-                sur_name=dbframe.SURNAME,
-                first_name=dbframe.LASTNAME,
-                reg_no=dbframe.REGNUM,
-                full_reg_no=regString,
-                session_admitted=sessObj,
-                class_admitted=StudentClass.objects.get(pk=dbframe.CLASSID),
-                client =clientProfile,
-                createdby=User.objects.get(pk=request.user.pk)
+                
+                # attach staff profile
+                TeacherObj = Teacher.objects.create(
+                  user = obj,
+                  sex=dbframe.GENDER,
+                  phone=dbframe.PHONE,
+                  address=dbframe.ADDRESS,
+                  surname=dbframe.SURNAME,
+                  firstname=dbframe.FIRSTNAME,
+                  email=dbframe.EMAIL,
+                  discipline=dbframe.DISCIPLINE,
+                  client =clientProfile,
+                  createdby=User.objects.get(pk=request.user.pk)
                 )
-                StudObj.save()
+                TeacherObj.save()
+
+                # # attach a profile to a client
+                # StudObj = Student.objects.create(
+                # user = obj,
+                # sex=dbframe.GENDER,
+                # lga=dbframe.LGA,
+                # # STATE=dbframe.STATE,
+                # blood_group=dbframe.BLOODGROUP,
+                # address=dbframe.CONTADD,
+                # # class_admitted=StudentClass.objects.get(pk=dbframe.CLASS),
+                # # session_admitted=Session.objects.get(pk=dbframe.SESSION),
+                # sur_name=dbframe.SURNAME,
+                # first_name=dbframe.LASTNAME,
+                # reg_no=dbframe.REGNUM,
+                # full_reg_no=regString,
+                # session_admitted=sessObj,
+                # class_admitted=StudentClass.objects.get(pk=dbframe.CLASSID),
+                # client =clientProfile,
+                # createdby=User.objects.get(pk=request.user.pk)
+                # )
+                # StudObj.save()
 
             messages.success(request, 'Student account creation successful')
             return redirect('create-students')
