@@ -1746,7 +1746,7 @@ def bulkStudent(request):
                 
                 obj = User.objects.create(
                     username=dbframe.SURNAME, 
-                    password=make_password(dbframe.PHONE),
+                    password=make_password(dbframe.PWD),
                     email=dbframe.EMAIL,           
                     )     
                 obj.save()
