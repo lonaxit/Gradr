@@ -633,6 +633,33 @@ def listTeacher(request):
     context = {'teacher':teacher}
     return render(request, "admin/list_teachers.html", context)
 
+# block Teacher
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def blockTeacher(request,pk):
+    with transaction.atomic():
+        
+        teacherStaff = Teacher.objects.get(pk=pk)
+        user = User.objects.select_for_update().get(pk=teacherStaff.user_id)
+        if teacherStaff.user.is_active == True:
+            # block user
+            user.is_active='False'
+            user.save()
+            teacher = Teacher.objects.all()
+            context = {'teacher':teacher}
+            return render(request, "admin/list_teachers.html", context)
+        else:
+            # activate user
+            user.is_active='True'
+            user.save()
+            teacher = Teacher.objects.all()
+            context = {'teacher':teacher}
+            return render(request, "admin/list_teachers.html", context)
+    
+
+
+
+
 
 # update teacher photo
 @login_required(login_url='login')
@@ -684,7 +711,6 @@ def assignSubject(request):
                  messages.error(request, 'Unable to assign subject teacher, check the deails')
                  return redirect('assign-subject')
             else:
-
 
                 obj = SubjectTeacher.objects.create(
                                      teacher = teacherObj,

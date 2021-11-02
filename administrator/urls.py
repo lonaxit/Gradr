@@ -43,6 +43,7 @@ urlpatterns = [
   path('update-teacher/<str:pk>', views.updateTeacherProfile, name='update-teacher'),
   path('view-teacher/<str:pk>', views.viewTeacher, name='view-teacher'),
   path('list-teacher', views.listTeacher, name='list-teacher'),
+  path('block-teacher/<str:pk>', views.blockTeacher, name='block-teacher'),
   path('teacher-photo/<str:pk>', views.teacherPhoto, name='teacher-photo'),
   path('assign-subject', views.assignSubject, name='assign-subject'),
   path('update-subject-teacher/<str:pk>', views.updateSubjectTeacher, name='update-subject-teacher'),
