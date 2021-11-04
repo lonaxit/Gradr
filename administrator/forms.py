@@ -441,12 +441,18 @@ class AssignSubjectForm(forms.ModelForm):
                   label='Select Session',
                   to_field_name='id',
                   widget=forms.Select(attrs={'class': 'form-control','id':'sch_session'}))
+    
+    # term = forms.ModelChoiceField(
+    #               queryset=Term.objects.all(),
+    #               label='Select Session',
+    #               to_field_name='id',
+    #               widget=forms.Select(attrs={'class': 'form-control','id':'term'}))
 
 
     class Meta:
         model = SubjectTeacher
         fields = '__all__'
-        exclude = ['client','createdby']
+        exclude = ['client','createdby','status']
 
 # class teacher form
 class AssignClassTeacherForm(forms.ModelForm):
