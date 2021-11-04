@@ -698,13 +698,15 @@ def assignSubject(request):
             teacher = request.POST["teacher"]
             classroom = request.POST["classroom"]
             subject = request.POST["subject"]
+            session = request.POST["session"]
 
             # #
-            teacherObj = Teacher.objects.get(id=teacher)
-            subjectObj = Subject.objects.get(id=subject)
-            classroomObj = StudentClass.objects.get(id=classroom)
+            teacherObj = Teacher.objects.get(pk=teacher)
+            subjectObj = Subject.objects.get(pk=subject)
+            classroomObj = StudentClass.objects.get(pk=classroom)
+            sessionObj = Session.objects.get(pk=session)
             result = SubjectTeacher.objects.filter(Q(teacher=teacherObj) & Q(classroom=classroomObj)
-            & Q(subject=subjectObj))
+            & Q(subject=subjectObj) & Q(session=sessionObj) )
 
             if result:
 
@@ -716,6 +718,8 @@ def assignSubject(request):
                                      teacher = teacherObj,
                                      classroom = classroomObj,
                                      subject = subjectObj,
+                                     session=sessionObj,
+                                     status='Active',
                                      client = client,
                                      createdby= User.objects.get(pk=request.user.pk)
                                          )
@@ -1820,3 +1824,91 @@ def bulkStudent(request):
             return redirect('create-students')
 
     return render (request,'admin/create_bulk_users.html')
+
+
+# bulk assessment
+@allowed_users(allowed_roles=['teacher'])
+def importBulkAssessment(request):
+
+    # loggedin = request.user.tutor.pk
+    # myclient = request.user.tutor
+
+    # try:
+    # classes = StudentClass.objects.all()
+    # context={
+    # 'classes': classes
+    # }
+
+    if request.method=='POST':
+
+        # activeTerm = Term.objects.get(status='True')
+        # activeSession = Session.objects.get(status='True')
+        # classteacher
+        # teacherObj = SubjectTeacher.objects.get(pk=loggedin)
+        # classroom = request.POST['studentclass']
+
+        # classroom object
+        # classroomObj = StudentClass.objects.get(pk=classroom)
+        # subject_id = request.POST['subject']
+        # subject object
+        # subjectObj = Subject.objects.get(pk=subject_id)
+
+
+        myfile = request.FILES['csvFile']
+        fs = FileSystemStorage()
+        filename = fs.save(myfile.name, myfile)
+        uploaded_file_url = fs.url(filename)
+        excel_file = uploaded_file_url
+        # print(excel_file)
+        empexceldata = pd.read_csv("media/"+filename,encoding='utf-8')
+        # print(type(empexceldata))
+        dbframe = empexceldata
+
+        with transaction.atomic():
+
+            for dbframe in dbframe.itertuples():
+                studentObj=Student.objects.get(pk=dbframe.StudentID)
+                # check if records of a student exist in that subject, class,term,session
+                # scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
+                # if scoresExist:
+                #     pass
+                # else:
+
+                    # fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
+                obj = Scores.objects.create(
+                        firstscore=dbframe.FirstCA,
+                        secondscore=dbframe.SecondCA,
+                        thirdscore=dbframe.ThirdCA,
+                        totalca=dbframe.CATotal,
+                        # examscore=dbframe.Exam,
+                        # subjecttotal=dbframe.Total,
+                        # session=activeSession,
+                        session = Session.objects.get(pk=dbframe.SESSID),
+                        term=Term.objects.get(pk=dbframe.TERM),
+                        student=studentObj,
+                        studentclass=StudentClass.objects.get(pk=dbframe.CLASSID),
+                        subjectteacher= SubjectTeacher.objects.get(pk=1),
+                        client=  Client.objects.get(user_id=request.user.pk),
+                        subject=Subject.objects.get(pk=dbframe.SUBJECTID),
+                    )
+                 
+                obj.save()
+                
+                    # process Scores
+                    # processScores(subjectObj,classroomObj)
+
+                    # process terminal result
+                    # processTerminalResult(obj)
+
+                    # process terminal result
+                    # processAnnualResult(obj)
+
+                    # Add auto comment
+                    # autoAddComment(classroomObj,activeSession,activeTerm)
+            messages.success(request,  'Successful')
+            return render(request,'teacher/import_assessment_sheet.html')
+
+       
+
+    messages.error(request,  'Ensure you specify all information and you have a csv file selected!')
+    return render(request,'teacher/import_assessment_sheet.html')
