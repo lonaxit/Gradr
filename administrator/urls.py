@@ -79,7 +79,8 @@ urlpatterns = [
    
   #  for migration purposes
   path('migrate-ca', views.migrateAss, name='migrate-ca'),
-  path('bulk-create-student', views.bulkStudent, name='create-students'),
+  path('bulk-create-student', views.importBulkAssessment, name='create-students'),
+  path('bulk-exams', views.importBulkExams, name='bulk-exams'),
   
 
 ]
