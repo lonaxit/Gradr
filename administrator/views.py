@@ -1827,7 +1827,7 @@ def bulkStudent(request):
 
 
 # bulk assessment
-@allowed_users(allowed_roles=['teacher'])
+@allowed_users(allowed_roles=['admin'])
 def importBulkAssessment(request):
 
     # loggedin = request.user.tutor.pk
@@ -1867,24 +1867,28 @@ def importBulkAssessment(request):
         with transaction.atomic():
 
             for dbframe in dbframe.itertuples():
-                studentObj=Student.objects.get(pk=dbframe.StudentID)
+                studentObj=Student.objects.get(pk=dbframe.STUDENTID)
                 # check if records of a student exist in that subject, class,term,session
                 # scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
                 # if scoresExist:
                 #     pass
                 # else:
 
-                    # fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
+                 # classroom object
+                classroomObj = StudentClass.objects.get(pk=dbframe.CLASSID)
+                termObj = Term.objects.get(pk=dbframe.TERMID)
+                sessionObj = Session.objects.get(pk=dbframe.SESSID)
+                # subject object
+                subjectObj = Subject.objects.get(pk=dbframe.SUBJECTID)
                 obj = Scores.objects.create(
-                        firstscore=dbframe.FirstCA,
-                        secondscore=dbframe.SecondCA,
-                        thirdscore=dbframe.ThirdCA,
-                        totalca=dbframe.CATotal,
+                        firstscore=dbframe.FIRSTCA,
+                        secondscore=dbframe.SECONDCA,
+                        thirdscore=dbframe.THIRDCA,
+                        totalca=dbframe.CATOTAL,
                         # examscore=dbframe.Exam,
-                        # subjecttotal=dbframe.Total,
-                        # session=activeSession,
-                        session = Session.objects.get(pk=dbframe.SESSID),
-                        term=Term.objects.get(pk=dbframe.TERM),
+                        subjecttotal=0.0,
+                        session = sessionObj,
+                        term=termObj,
                         student=studentObj,
                         studentclass=StudentClass.objects.get(pk=dbframe.CLASSID),
                         subjectteacher= SubjectTeacher.objects.get(pk=1),
@@ -1895,20 +1899,128 @@ def importBulkAssessment(request):
                 obj.save()
                 
                     # process Scores
-                    # processScores(subjectObj,classroomObj)
+                # processScores(subjectObj,classroomObj)
 
                     # process terminal result
-                    # processTerminalResult(obj)
+                # processTerminalResult(obj)
 
                     # process terminal result
-                    # processAnnualResult(obj)
+                # processAnnualResult(obj)    
 
                     # Add auto comment
-                    # autoAddComment(classroomObj,activeSession,activeTerm)
+                # autoAddComment(classroomObj,sessionObj,termObj)
+                    
+                # proccess Affective domain
+                # processAffective(obj)
+                    
+                # process Psychomotor domain
+                # processPsycho(obj)
+                
             messages.success(request,  'Successful')
-            return render(request,'teacher/import_assessment_sheet.html')
+            return render (request,'admin/create_bulk_users.html')
 
-       
 
-    messages.error(request,  'Ensure you specify all information and you have a csv file selected!')
-    return render(request,'teacher/import_assessment_sheet.html')
+    # messages.error(request,  'Ensure you specify all information and you have a csv file selected!')
+    return render (request,'admin/create_bulk_users.html')
+
+
+
+# IMPORT BULK EXAM RECORDS
+@allowed_users(allowed_roles=['admin'])
+def importBulkExams(request):
+
+    # loggedin = request.user.tutor.pk
+    # myclient = request.user.tutor
+
+ 
+
+    if request.method=='POST':
+
+        # activeTerm = Term.objects.get(status='True')
+        # activeSession = Session.objects.get(status='True')
+        # classteacher
+        # teacherObj = SubjectTeacher.objects.get(pk=loggedin)
+        # classroom = request.POST['studentclass']
+
+        # classroom object
+        # classroomObj = StudentClass.objects.get(pk=classroom)
+        # subject_id = request.POST['subject']
+        # subject object
+        # subjectObj = Subject.objects.get(pk=subject_id)
+
+
+        myfile = request.FILES['csvFile']
+        fs = FileSystemStorage()
+        filename = fs.save(myfile.name, myfile)
+        uploaded_file_url = fs.url(filename)
+        excel_file = uploaded_file_url
+        # print(excel_file)
+        empexceldata = pd.read_csv("media/"+filename,encoding='utf-8')
+        # print(type(empexceldata))
+        dbframe = empexceldata
+
+        with transaction.atomic():
+
+            for dbframe in dbframe.itertuples():
+                studentObj=Student.objects.get(pk=dbframe.STUDENTID)
+                
+                 # classroom object
+                classroomObj = StudentClass.objects.get(pk=dbframe.CLASSID)
+                termObj = Term.objects.get(pk=dbframe.TERMID)
+                sessionObj = Session.objects.get(pk=dbframe.SESSID)
+                
+                # subject object
+                subjectObj = Subject.objects.get(pk=dbframe.SUBJECTID)
+                # check if records of a student exist in that subject, class,term,session
+                obj = Scores.objects.get(session=sessionObj,term=termObj,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
+               
+                if obj:
+                    obj.examscore = dbframe.EXAM
+                    obj.subjecttotal= obj.totalca + dbframe.EXAM
+                    obj.save()
+                    
+                else:
+                    pass
+                
+                # obj = Scores.objects.create(
+                #         firstscore=dbframe.FIRSTCA,
+                #         secondscore=dbframe.SECONDCA,
+                #         thirdscore=dbframe.THIRDCA,
+                #         totalca=dbframe.CATOTAL,
+                #         # examscore=dbframe.Exam,
+                #         # subjecttotal=dbframe.Total,
+                #         session = sessionObj,
+                #         term=termObj,
+                #         student=studentObj,
+                #         studentclass=StudentClass.objects.get(pk=dbframe.CLASSID),
+                #         subjectteacher= SubjectTeacher.objects.get(pk=1),
+                #         client=  Client.objects.get(user_id=request.user.pk),
+                #         subject=Subject.objects.get(pk=dbframe.SUBJECTID),
+                #     )
+                 
+                # obj.save()
+                
+                    # process Scores
+                processScores(subjectObj,classroomObj,termObj,sessionObj)
+
+                    # process terminal result
+                processTerminalResult(obj)
+
+                    # process terminal result
+                processAnnualResult(obj)    
+
+                    # Add auto comment
+                autoAddComment(classroomObj,sessionObj,termObj)
+                    
+                # proccess Affective domain
+                processAffective(obj)
+                    
+                # process Psychomotor domain
+                processPsycho(obj)
+                
+            messages.success(request,  'Successful')
+            return render (request,'admin/create_bulk_users.html')
+
+
+    # messages.error(request,  'Ensure you specify all information and you have a csv file selected!')
+    return render (request,'admin/create_bulk_users.html')
