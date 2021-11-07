@@ -807,6 +807,12 @@ def importAssessmentSheet(request):
 
                     # process terminal result
                     processAnnualResult(obj)
+                    
+                    # proccess Affective domain
+                    processAffective(obj)
+                    
+                    # process Psychomotor domain
+                    processPsycho(obj)
 
                     # Add auto comment
                     autoAddComment(classroomObj,activeSession,activeTerm)
@@ -1206,16 +1212,17 @@ def get_subjects(request,pk):
     return JsonResponse({'data':result})
 
 # find subject and class average
-def subjectAverage(subj,classroom):
+def subjectAverage(subj,classroom,termObj,sessionObj):
     # scores = Scores.objects.get(pk=id)
     # get sctive term and session
-    activeTerm = Term.objects.get(status='True')
-    activeSession = Session.objects.get(status='True')
+    
+    # activeTerm = Term.objects.get(status='True')
+    # activeSession = Session.objects.get(status='True')
 
     # get scores based on subject
     # scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).distinct('student').aggregate(Sum('subjAverage'))
 
-    scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).aggregate(scoresav=Avg('subjecttotal'))
+    scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=termObj,session=sessionObj).aggregate(scoresav=Avg('subjecttotal'))
 
     av = scores['scoresav']
 
@@ -1225,15 +1232,18 @@ def subjectAverage(subj,classroom):
 
 
 # terminal average
-def terminalAverage(studentid,classroom):
+def terminalAverage(studentid,classroom,term,session):
 
-    activeTerm = Term.objects.get(status='True')
-    activeSession = Session.objects.get(status='True')
+    # activeTerm = Term.objects.get(status='True')
+    # activeSession = Session.objects.get(status='True')
+    
+    termObj = Term.objects.get(pk=term)
+    sessionObj = Session.objects.get(pk=session)
 
     # get scores based on subject
     # scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).distinct('student').aggregate(Sum('subjAverage'))
 
-    scores = Scores.objects.filter(student=studentid,studentclass=classroom,term=activeTerm,session=activeSession).aggregate(term_sum=Sum('subjecttotal'))
+    scores = Scores.objects.filter(student=studentid,studentclass=classroom,term=termObj,session=sessionObj).aggregate(term_sum=Sum('subjecttotal'))
 
     term_sum = scores['term_sum']
     # get subject per class
@@ -1242,20 +1252,20 @@ def terminalAverage(studentid,classroom):
     class_av = term_sum/no_subj_per_class.no_subject
 
     # TODO MOVE CODE TO UPDATE TERMINAL AVERAGE HERE
-    result = Result.objects.filter(student=studentid,studentclass=classroom,term=activeTerm,session=activeSession).update(termaverage=class_av)
+    result = Result.objects.filter(student=studentid,studentclass=classroom,term=termObj,session=sessionObj).update(termaverage=class_av)
 
 
     # return av
 
 
 #  subject positioning
-def subjectPosition(subject, classroom):
+def subjectPosition(subject, classroom,termObj,sessionObj):
 
 
-    activeTerm = Term.objects.get(status='True')
-    activeSession = Session.objects.get(status='True')
+    # activeTerm = Term.objects.get(status='True')
+    # activeSession = Session.objects.get(status='True')
 
-    scores = Scores.objects.filter(subject=subject,studentclass=classroom,term=activeTerm,session=activeSession)
+    scores = Scores.objects.filter(subject=subject,studentclass=classroom,term=termObj,session=sessionObj)
     ordered_scores = []
     counter = 1
     repeated_counter = 0
@@ -1320,13 +1330,13 @@ def subjectPosition(subject, classroom):
 
 
 # assign terminal result position
-def terminalPosition(classroom):
+def terminalPosition(classroom,term,session):
 
 
-    activeTerm = Term.objects.get(status='True')
-    activeSession = Session.objects.get(status='True')
+    # activeTerm = Term.objects.get(status='True')
+    # activeSession = Session.objects.get(status='True')
 
-    results = Result.objects.filter(studentclass=classroom,term=activeTerm,session=activeSession)
+    results = Result.objects.filter(studentclass=classroom,term=term,session=session)
     ordered_scores = []
     counter = 1
     repeated_counter = 0
@@ -1461,9 +1471,11 @@ def annualPosition(session,classroom):
 # annual average
 def annualAverage(studentid,classroom,session):
 
-    activeTerm = Term.objects.get(status='True')
-    activeSession = Session.objects.get(status='True')
+    # activeTerm = Term.objects.get(status='True')
+    # activeSession = Session.objects.get(status='True')
 
+    # termObj = Term.objects.get(pk=term)
+    # sessionObj = Session.objects.get(pk=session)
     # get scores based on subject
     # scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).distinct('student').aggregate(Sum('subjAverage'))
 
@@ -1481,15 +1493,15 @@ def annualAverage(studentid,classroom,session):
 
 
 # update ratings
-def scoresRating(subject,classroom):
+def scoresRating(subject,classroom,termObj,sessionObj):
 
-    activeTerm = Term.objects.get(status='True')
-    activeSession = Session.objects.get(status='True')
+    # activeTerm = Term.objects.get(status='True')
+    # activeSession = Session.objects.get(status='True')
 
-    minMax = minMaxScores(subject,classroom)
+    minMax = minMaxScores(subject,classroom,termObj,sessionObj)
 
     # TODO: Use select for update because of transaction
-    scores = Scores.objects.filter(subject=subject,studentclass=classroom,term=activeTerm,session=activeSession)
+    scores = Scores.objects.filter(subject=subject,studentclass=classroom,term=termObj,session=sessionObj)
 
     for scoresObj in scores:
 
@@ -1527,43 +1539,43 @@ def scoresRating(subject,classroom):
 
 
 # Minimum and Maximum scores
-def minMaxScores(subject,classroom):
+def minMaxScores(subject,classroom,termObj,sessionObj):
 
     # min_max = []
 
-    activeTerm = Term.objects.get(status='True')
-    activeSession = Session.objects.get(status='True')
+    # activeTerm = Term.objects.get(status='True')
+    # activeSession = Session.objects.get(status='True')
 
     # get scores based on subject
     # scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).distinct('student').aggregate(Sum('subjAverage'))
 
-    min_max = Scores.objects.filter(subject=subject,studentclass=classroom,term=activeTerm,session=activeSession).aggregate(min_scores=Min('subjecttotal'),max_scores=Max('subjecttotal'))
+    min_max = Scores.objects.filter(subject=subject,studentclass=classroom,term=termObj,session=sessionObj).aggregate(min_scores=Min('subjecttotal'),max_scores=Max('subjecttotal'))
 
-    scores = Scores.objects.filter(subject=subject,studentclass=classroom,term=activeTerm,session=activeSession).update(highest_inclass=min_max['max_scores'],lowest_inclass=min_max['min_scores'])
+    scores = Scores.objects.filter(subject=subject,studentclass=classroom,term=termObj,session=sessionObj).update(highest_inclass=min_max['max_scores'],lowest_inclass=min_max['min_scores'])
 
 
 
 
 
 # update subject average
-def processScores(subjectObj,classroomObj):
+def processScores(subjectObj,classroomObj,termObj,sessionObj):
 
     # get active term and session
-    activeTerm = Term.objects.get(status='True')
-    activeSession = Session.objects.get(status='True')
+    # activeTerm = Term.objects.get(status='True')
+    # activeSession = Session.objects.get(status='True')
 
-    subjavg = subjectAverage(subjectObj,classroomObj)
+    subjavg = subjectAverage(subjectObj,classroomObj,termObj,sessionObj)
 
-    scores = Scores.objects.filter(subject=subjectObj,studentclass=classroomObj,term=activeTerm,session=activeSession).update(subjaverage=subjavg)
+    scores = Scores.objects.filter(subject=subjectObj,studentclass=classroomObj,term=termObj,session=sessionObj).update(subjaverage=subjavg)
 
      # update position and grading
-    subjectPosition(subjectObj,classroomObj)
+    subjectPosition(subjectObj,classroomObj,termObj,sessionObj)
 
     # Update  grades
-    scoresRating(subjectObj,classroomObj)
+    scoresRating(subjectObj,classroomObj,termObj,sessionObj)
 
     # update min and max
-    minMaxScores(subjectObj,classroomObj)
+    minMaxScores(subjectObj,classroomObj,termObj,sessionObj)
 
 
 
@@ -1585,13 +1597,18 @@ def processTerminalResult(scoresObj):
         result.update(termtotal=scores['subject_total'])
 
         # update terminal average
-        terminalAverage(scoresObj.student,scoresObj.studentclass)
+        terminalAverage(scoresObj.student,scoresObj.studentclass,scoresObj.term.pk,scoresObj.session.pk)
         # update  term position
-        terminalPosition(scoresObj.studentclass)
+        terminalPosition(scoresObj.studentclass,scoresObj.term,scoresObj.session)
     else:
         # get class teacher
         # TODO: Add class teacher when creating comments
-        class_teacher = ClassTeacher.objects.get(classroom=scoresObj.studentclass,term=scoresObj.term,session=scoresObj.session)
+        
+        # class_teacher = ClassTeacher.objects.get(classroom=scoresObj.studentclass,term=scoresObj.term,session=scoresObj.session)
+        
+        # FIND CLASS TEACHER FOR MIGRATION PURPOSES ONLY, DELETE AFTERWARDS
+        
+        class_teacher = ClassTeacher.objects.get(pk=1)
         # for i in class_teacher:
         #     teacher = i.teacher
 
@@ -1609,10 +1626,10 @@ def processTerminalResult(scoresObj):
         resultObj.save()
 
         # update term average
-        terminalAverage(scoresObj.student,scoresObj.studentclass)
+        terminalAverage(scoresObj.student,scoresObj.studentclass,scoresObj.term.pk,scoresObj.session.pk)
 
         # update  term position
-        terminalPosition(scoresObj.studentclass)
+        terminalPosition(scoresObj.studentclass,scoresObj.term,scoresObj.session)
 
 
 
@@ -1706,6 +1723,88 @@ def autoAddComment(classroom,session,term):
 
     failed = resultFilter.filter(termaverage__lte=39.9).update(classteachercomment='Failed',headteachercomment='Failed')
 
+
+# Add pyscho motor and affective
+def processPsycho(scoresObj):
+
+    # Find record in the result table
+    psycho = Studentpsychomotor.objects.filter(student=scoresObj.student, studentclass=scoresObj.studentclass, term=scoresObj.term,session=scoresObj.session)
+
+  
+
+    # check for existence of record
+    if psycho:
+        pass
+     
+    else:
+        # select three random psychomotor skills
+        psycho_skills = Psychomotor.objects.all().order_by("?")[:3]
+        
+        # select rating
+        
+        rating = Rating.objects.get(pk=3)
+        
+        # get class teacher
+        # TODO: Add class teacher when creating comments
+        # TODO: COMMENT FOR NOW
+        # class_teacher = ClassTeacher.objects.get(classroom=scoresObj.studentclass,term=scoresObj.term,session=scoresObj.session)
+        
+        
+        for i in psycho_skills:
+            
+            # create a new record
+            studentPsycho = Studentpsychomotor.objects.create(
+                    
+                    # classteacher = class_teacher,
+                    classteacher = ClassTeacher.objects.get(pk=1),
+                    session = scoresObj.session,
+                    studentclass = scoresObj.studentclass,
+                    term = scoresObj.term,
+                    client = scoresObj.client,
+                    student = scoresObj.student,
+                    psychomotor = Psychomotor.objects.get(pk=i.pk),
+                    rating= rating,                  
+                                     )
+            studentPsycho.save()
+
+
+# Process affective domain
+def processAffective(scoresObj):
+
+    # Find record in the result table
+    affective = Studentaffective.objects.filter(student=scoresObj.student, studentclass=scoresObj.studentclass, term=scoresObj.term,session=scoresObj.session)
+
+    # check for existence of record
+    if affective:
+        pass
+    else:
+        # select three random affective skills
+        affective_skills = Affective.objects.all().order_by("?")[:3]
+        
+        # select rating
+        rating = Rating.objects.get(pk=3)
+        
+        # get class teacher
+        # TODO: Add class teacher when creating comments
+        # TODO: COMMENT FOR NOW
+        # class_teacher = ClassTeacher.objects.get(classroom=scoresObj.studentclass,term=scoresObj.term,session=scoresObj.session)
+        
+        
+        for i in affective_skills:
+            
+            # create a new record
+            studentAffective = Studentaffective.objects.create(  
+                    # classteacher = class_teacher,
+                    classteacher = ClassTeacher.objects.get(pk=1),
+                    session = scoresObj.session,
+                    studentclass = scoresObj.studentclass,
+                    term = scoresObj.term,
+                    client = scoresObj.client,
+                    student = scoresObj.student,
+                    affective = Affective.objects.get(pk=i.pk),
+                    rating= rating,                  
+                    )
+            studentAffective.save()  
 
 
 
