@@ -1833,95 +1833,93 @@ def importBulkAssessment(request):
     # loggedin = request.user.tutor.pk
     # myclient = request.user.tutor
 
-    # try:
-    # classes = StudentClass.objects.all()
-    # context={
-    # 'classes': classes
-    # }
+    try:
+   
 
-    if request.method=='POST':
+        if request.method=='POST':
 
-        # activeTerm = Term.objects.get(status='True')
-        # activeSession = Session.objects.get(status='True')
-        # classteacher
-        # teacherObj = SubjectTeacher.objects.get(pk=loggedin)
-        # classroom = request.POST['studentclass']
+            # activeTerm = Term.objects.get(status='True')
+            # activeSession = Session.objects.get(status='True')
+            # classteacher
+            # teacherObj = SubjectTeacher.objects.get(pk=loggedin)
+            # classroom = request.POST['studentclass']
 
-        # classroom object
-        # classroomObj = StudentClass.objects.get(pk=classroom)
-        # subject_id = request.POST['subject']
-        # subject object
-        # subjectObj = Subject.objects.get(pk=subject_id)
+            # classroom object
+            # classroomObj = StudentClass.objects.get(pk=classroom)
+            # subject_id = request.POST['subject']
+            # subject object
+            # subjectObj = Subject.objects.get(pk=subject_id)
 
 
-        myfile = request.FILES['csvFile']
-        fs = FileSystemStorage()
-        filename = fs.save(myfile.name, myfile)
-        uploaded_file_url = fs.url(filename)
-        excel_file = uploaded_file_url
-        # print(excel_file)
-        empexceldata = pd.read_csv("media/"+filename,encoding='utf-8')
-        # print(type(empexceldata))
-        dbframe = empexceldata
+            myfile = request.FILES['csvFile']
+            fs = FileSystemStorage()
+            filename = fs.save(myfile.name, myfile)
+            uploaded_file_url = fs.url(filename)
+            excel_file = uploaded_file_url
+            # print(excel_file)
+            empexceldata = pd.read_csv("media/"+filename,encoding='utf-8')
+            # print(type(empexceldata))
+            dbframe = empexceldata
 
-        with transaction.atomic():
+            with transaction.atomic():
 
-            for dbframe in dbframe.itertuples():
-                studentObj=Student.objects.get(pk=dbframe.STUDENTID)
-                # check if records of a student exist in that subject, class,term,session
-                # scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
-                # if scoresExist:
-                #     pass
-                # else:
+                for dbframe in dbframe.itertuples():
+                    studentObj=Student.objects.get(pk=dbframe.STUDENTID)
+                    # check if records of a student exist in that subject, class,term,session
+                    # scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
+                    # if scoresExist:
+                    #     pass
+                    # else:
 
-                 # classroom object
-                classroomObj = StudentClass.objects.get(pk=dbframe.CLASSID)
-                termObj = Term.objects.get(pk=dbframe.TERMID)
-                sessionObj = Session.objects.get(pk=dbframe.SESSID)
-                # subject object
-                subjectObj = Subject.objects.get(pk=dbframe.SUBJECTID)
-                obj = Scores.objects.create(
-                        firstscore=dbframe.FIRSTCA,
-                        secondscore=dbframe.SECONDCA,
-                        thirdscore=dbframe.THIRDCA,
-                        totalca=dbframe.CATOTAL,
-                        # examscore=dbframe.Exam,
-                        subjecttotal=0.0,
-                        session = sessionObj,
-                        term=termObj,
-                        student=studentObj,
-                        studentclass=StudentClass.objects.get(pk=dbframe.CLASSID),
-                        subjectteacher= SubjectTeacher.objects.get(pk=1),
-                        client=  Client.objects.get(user_id=request.user.pk),
-                        subject=Subject.objects.get(pk=dbframe.SUBJECTID),
-                    )
-                 
-                obj.save()
-                
-                    # process Scores
-                # processScores(subjectObj,classroomObj)
-
-                    # process terminal result
-                # processTerminalResult(obj)
-
-                    # process terminal result
-                # processAnnualResult(obj)    
-
-                    # Add auto comment
-                # autoAddComment(classroomObj,sessionObj,termObj)
+                    # classroom object
+                    classroomObj = StudentClass.objects.get(pk=dbframe.CLASSID)
+                    termObj = Term.objects.get(pk=dbframe.TERMID)
+                    sessionObj = Session.objects.get(pk=dbframe.SESSID)
+                    # subject object
+                    subjectObj = Subject.objects.get(pk=dbframe.SUBJECTID)
+                    obj = Scores.objects.create(
+                            firstscore=dbframe.FIRSTCA,
+                            secondscore=dbframe.SECONDCA,
+                            thirdscore=dbframe.THIRDCA,
+                            totalca=dbframe.CATOTAL,
+                            # examscore=dbframe.Exam,
+                            subjecttotal=0.0,
+                            session = sessionObj,
+                            term=termObj,
+                            student=studentObj,
+                            studentclass=StudentClass.objects.get(pk=dbframe.CLASSID),
+                            subjectteacher= SubjectTeacher.objects.get(pk=1),
+                            client=  Client.objects.get(user_id=request.user.pk),
+                            subject=Subject.objects.get(pk=dbframe.SUBJECTID),
+                        )
                     
-                # proccess Affective domain
-                # processAffective(obj)
+                    obj.save()
                     
-                # process Psychomotor domain
-                # processPsycho(obj)
-                
-            messages.success(request,  'Successful')
-            return render (request,'admin/create_bulk_users.html')
+                        # process Scores
+                    # processScores(subjectObj,classroomObj)
 
+                        # process terminal result
+                    # processTerminalResult(obj)
 
-    # messages.error(request,  'Ensure you specify all information and you have a csv file selected!')
-    return render (request,'admin/create_bulk_users.html')
+                        # process terminal result
+                    # processAnnualResult(obj)    
+
+                        # Add auto comment
+                    # autoAddComment(classroomObj,sessionObj,termObj)
+                        
+                    # proccess Affective domain
+                    # processAffective(obj)
+                        
+                    # process Psychomotor domain
+                    # processPsycho(obj)
+                    
+                messages.success(request,  'Successful')
+                return render (request,'admin/create_bulk_users.html')
+            
+        return render (request,'admin/create_bulk_users.html')
+    except Exception as e:
+        messages.error(request,  e)
+        return render (request,'admin/create_bulk_users.html')
 
 
 
@@ -2026,8 +2024,8 @@ def importBulkExams(request):
                 messages.success(request,  'Successful')
                 return render (request,'admin/create_bulk_users.html')
 
-
         return render (request,'admin/create_bulk_users.html')
+    
     except Exception as e:
         messages.error(request,  e)
         return render (request,'admin/create_bulk_users.html')
