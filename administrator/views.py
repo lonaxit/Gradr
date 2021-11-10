@@ -1882,8 +1882,8 @@ def importBulkAssessment(request):
                             secondscore=dbframe.SECONDCA,
                             thirdscore=dbframe.THIRDCA,
                             totalca=dbframe.CATOTAL,
-                            # examscore=dbframe.Exam,
-                            subjecttotal=0.0,
+                            examscore=0.0,
+                            subjecttotal=dbframe.CATOTAL,
                             session = sessionObj,
                             term=termObj,
                             student=studentObj,
@@ -1895,23 +1895,23 @@ def importBulkAssessment(request):
                     
                     obj.save()
                     
-                        # process Scores
-                    # processScores(subjectObj,classroomObj)
+                       # process Scores
+                    processScores(subjectObj,classroomObj,termObj,sessionObj)
 
                         # process terminal result
-                    # processTerminalResult(obj)
+                    processTerminalResult(obj)
 
                         # process terminal result
-                    # processAnnualResult(obj)    
+                    processAnnualResult(obj)    
 
                         # Add auto comment
-                    # autoAddComment(classroomObj,sessionObj,termObj)
+                    autoAddComment(classroomObj,sessionObj,termObj)
                         
                     # proccess Affective domain
-                    # processAffective(obj)
+                    processAffective(obj)
                         
                     # process Psychomotor domain
-                    # processPsycho(obj)
+                    processPsycho(obj)
                     
                 messages.success(request,  'Successful')
                 return render (request,'admin/create_bulk_users.html')
@@ -1980,29 +1980,10 @@ def importBulkExams(request):
                     if obj:
                         obj.examscore = dbframe.EXAM
                         obj.subjecttotal= obj.totalca + dbframe.EXAM
-                        obj.save()
-                        
+                        obj.save() 
                     else:
                         pass
-                    
-                    # obj = Scores.objects.create(
-                    #         firstscore=dbframe.FIRSTCA,
-                    #         secondscore=dbframe.SECONDCA,
-                    #         thirdscore=dbframe.THIRDCA,
-                    #         totalca=dbframe.CATOTAL,
-                    #         # examscore=dbframe.Exam,
-                    #         # subjecttotal=dbframe.Total,
-                    #         session = sessionObj,
-                    #         term=termObj,
-                    #         student=studentObj,
-                    #         studentclass=StudentClass.objects.get(pk=dbframe.CLASSID),
-                    #         subjectteacher= SubjectTeacher.objects.get(pk=1),
-                    #         client=  Client.objects.get(user_id=request.user.pk),
-                    #         subject=Subject.objects.get(pk=dbframe.SUBJECTID),
-                    #     )
-                    
-                    # obj.save()
-                    
+
                         # process Scores
                     processScores(subjectObj,classroomObj,termObj,sessionObj)
 
