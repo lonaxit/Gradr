@@ -1862,11 +1862,11 @@ def importBulkAssessment(request):
                     # else:
 
                     # classroom object
-                    classroomObj = StudentClass.objects.get(pk=dbframe.CLASSID)
+                    # classroomObj = StudentClass.objects.get(pk=dbframe.CLASSID)
                     termObj = Term.objects.get(pk=dbframe.TERMID)
                     sessionObj = Session.objects.get(pk=dbframe.SESSID)
                     # subject object
-                    subjectObj = Subject.objects.get(pk=dbframe.SUBJECTID)
+                    # subjectObj = Subject.objects.get(pk=dbframe.SUBJECTID)
                     obj = Scores.objects.create(
                             firstscore=dbframe.FIRSTCA,
                             secondscore=dbframe.SECONDCA,
