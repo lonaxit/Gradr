@@ -1886,22 +1886,22 @@ def importBulkAssessment(request):
                     obj.save()
                     
                        # process Scores
-                    processScores(subjectObj,classroomObj,termObj,sessionObj)
+                    # processScores(subjectObj,classroomObj,termObj,sessionObj)
 
                         # process terminal result
-                    processTerminalResult(obj)
+                    # processTerminalResult(obj)
 
                         # process terminal result
-                    processAnnualResult(obj)    
+                    # processAnnualResult(obj)    
 
                         # Add auto comment
-                    autoAddComment(classroomObj,sessionObj,termObj)
+                    # autoAddComment(classroomObj,sessionObj,termObj)
                         
                     # proccess Affective domain
-                    processAffective(obj)
+                    # processAffective(obj)
                         
                     # process Psychomotor domain
-                    processPsycho(obj)
+                    # processPsycho(obj)
                     
                 messages.success(request,  'Successful')
                 return render (request,'admin/create_bulk_users.html')
@@ -1971,22 +1971,22 @@ def importBulkExams(request):
                         pass
 
                         # process Scores
-                    processScores(subjectObj,classroomObj,termObj,sessionObj)
+                    # processScores(subjectObj,classroomObj,termObj,sessionObj)
 
                         # process terminal result
-                    processTerminalResult(obj)
+                    # processTerminalResult(obj)
 
                         # process terminal result
-                    processAnnualResult(obj)    
+                    # processAnnualResult(obj)    
 
                         # Add auto comment
-                    autoAddComment(classroomObj,sessionObj,termObj)
+                    # autoAddComment(classroomObj,sessionObj,termObj)
                         
                     # proccess Affective domain
-                    processAffective(obj)
+                    # processAffective(obj)
                         
                     # process Psychomotor domain
-                    processPsycho(obj)
+                    # processPsycho(obj)
                     
                 messages.success(request,  'Successful')
                 return render (request,'admin/create_bulk_users.html')
