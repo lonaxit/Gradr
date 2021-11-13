@@ -1659,90 +1659,80 @@ def get_json_lg_data(request,pk):
 # not complete
 
 @allowed_users(allowed_roles=['admin'])
-def migrateAss(request):
+def processMyResult(request):
 
-    loggedin = request.user.tutor.pk
-    myclient = request.user.tutor
+    # loggedin = request.user.tutor.pk
+    # myclient = request.user.tutor
 
+    logged_inuser = request.user
+    clientProfile  = Client.objects.get(user_id=logged_inuser.id)
+    
+    # form
+    form = ResultFilterForm()
     # try:
-    classes = StudentClass.objects.all()
+   
     context={
-    'classes': classes
-    }
+       'form':form
+        }
 
-    if request.method=='POST' and request.POST.get('subject'):
+    if request.method=='POST':
+        
+        classroom = request.POST['classroom']
+        term = request.POST['term']
+        session = request.POST['session']
 
-        activeTerm = Term.objects.get(status='True')
-        activeSession = Session.objects.get(status='True')
+        
+       
         # classteacher
-        teacherObj = SubjectTeacher.objects.get(pk=loggedin)
-        classroom = request.POST['studentclass']
+        # teacherObj = SubjectTeacher.objects.get(pk=loggedin)
+        # classroom = request.POST['studentclass']
 
         # classroom object
-        classroomObj = StudentClass.objects.get(pk=classroom)
-        subject_id = request.POST['subject']
+        # classroomObj = StudentClass.objects.get(pk=pk)
+        
         # subject object
-        subjectObj = Subject.objects.get(pk=subject_id)
+        # subjectObj = Subject.objects.get(pk=subject_id)
 
-
-        myfile = request.FILES['csvFile']
-        fs = FileSystemStorage()
-        filename = fs.save(myfile.name, myfile)
-        uploaded_file_url = fs.url(filename)
-        excel_file = uploaded_file_url
-        # print(excel_file)
-        empexceldata = pd.read_csv("media/"+filename,encoding='utf-8')
-        # print(type(empexceldata))
-        dbframe = empexceldata
-
+        
         with transaction.atomic():
-
-            for dbframe in dbframe.itertuples():
-                studentObj=Student.objects.get(pk=dbframe.StudentID)
-                # check if records of a student exist in that subject, class,term,session
-                scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
-                if scoresExist:
-                    pass
-                else:
-
-                    # fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
-                    obj = Scores.objects.create(
-                        firstscore=dbframe.FirstCA,
-                        secondscore=dbframe.SecondCA,
-                        thirdscore=dbframe.ThirdCA,
-                        totalca=dbframe.CATotal,
-                        examscore=dbframe.Exam,
-                        subjecttotal=dbframe.Total,
-                        session=activeSession,
-                        term=activeTerm,
-                        student=studentObj,
-                        studentclass=classroomObj,
-                        subjectteacher= teacherObj,
-                        client= myclient.client,
-                        subject=subjectObj,
-                    )
-                    # DOB=fromdate_time_obj,
-                    # qualification=dbframe.qualification)
-                    # print(type(obj))
-                    obj.save()
-                    # process Scores
-                    processScores(subjectObj,classroomObj)
+            
+            scores = Scores.objects.filter(session=session,term=term,studentclass=classroom)
+            
+            if scores:
+                
+                for score in scores:
+                    # print(score)
+                        
+                      # process Scores
+                    processScores(score.subject,score.studentclass,score.term,score.session)
 
                     # process terminal result
-                    processTerminalResult(obj)
+                    processTerminalResult(score)
 
                     # process terminal result
-                    processAnnualResult(obj)
+                    processAnnualResult(score)    
 
                     # Add auto comment
-                    autoAddComment(classroomObj,activeSession,activeTerm)
+                    autoAddComment(score.studentclass,score.session,score.term)
+                        
+                    # proccess Affective domain
+                    processAffective(score)
+                        
+                    # process Psychomotor domain
+                    processPsycho(score)
+                        
+            else:
+                pass
+
+            # for dbframe in dbframe.itertuples():
+            #     studentObj=Student.objects.get(pk=dbframe.StudentID)
+                # check if records of a student exist in that subject, class,term,session
+                # scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
+                   
             messages.success(request,  'Successful')
-            return render(request,'admin/import_assessment_sheet.html',context)
+            return render(request,'admin/processMyResult.html',context)
 
-        # return render(request, 'teacher/import_assessment_sheet.html',context)
-
-    messages.error(request,  'Ensure you specify all information and you have a csv file selected!')
-    return render(request,'teacher/import_assessment_sheet.html',context)
+    return render(request,'admin/processMyResult.html',context)
 
 
 # bulk create students
@@ -1970,11 +1960,7 @@ def importBulkExams(request):
                     # subject object
                     subjectObj = Subject.objects.get(pk=dbframe.SUBJECTID)
                     # check if records of a student exist in that subject, class,term,session
-                    # print(studentObj)
-                    # print(classroomObj)
-                    # print(termObj)
-                    # print(sessionObj)
-                    # print(subjectObj)
+                 
                     obj = Scores.objects.get(session=sessionObj.pk,term=termObj.pk,subject=subjectObj.pk,studentclass=classroomObj.pk,student=studentObj.pk)
                 
                     if obj:
