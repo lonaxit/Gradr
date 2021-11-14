@@ -1960,7 +1960,7 @@ def importBulkExams(request):
                     # subject object
                     subjectObj = Subject.objects.get(pk=dbframe.SUBJECTID)
                     # check if records of a student exist in that subject, class,term,session
-                    scoresExist = Scores.objects.get(session=sessionObj.pk,term=termObj.pk,subject=subjectObj.pk,studentclass=classroomObj.pk,student=studentObj.pk).exists()
+                    scoresExist = Scores.objects.filter(session=sessionObj.pk,term=termObj.pk,subject=subjectObj.pk,studentclass=classroomObj.pk,student=studentObj.pk).exists()
                     
                     if scoresExist:
                         
