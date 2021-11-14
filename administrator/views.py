@@ -1960,15 +1960,34 @@ def importBulkExams(request):
                     # subject object
                     subjectObj = Subject.objects.get(pk=dbframe.SUBJECTID)
                     # check if records of a student exist in that subject, class,term,session
-                 
-                    obj = Scores.objects.get(session=sessionObj.pk,term=termObj.pk,subject=subjectObj.pk,studentclass=classroomObj.pk,student=studentObj.pk)
-                
-                    if obj:
-                        obj.examscore = dbframe.EXAM
-                        obj.subjecttotal= obj.totalca + dbframe.EXAM
-                        obj.save() 
-                    else:
-                        pass
+                    scoresExist = Scores.objects.get(session=sessionObj.pk,term=termObj.pk,subject=subjectObj.pk,studentclass=classroomObj.pk,student=studentObj.pk).exists()
+                    
+                    if scoresExist:
+                        
+                        obj = Scores.objects.get(session=sessionObj.pk,term=termObj.pk,subject=subjectObj.pk,studentclass=classroomObj.pk,student=studentObj.pk)
+                    
+                        if obj:
+                            obj.examscore = dbframe.EXAM
+                            obj.subjecttotal= obj.totalca + dbframe.EXAM
+                            obj.save() 
+                        else:
+                            # create scores using the exam record
+                            newScore = Scores.objects.create(
+                            firstscore=0.0,
+                            secondscore=0.0,
+                            thirdscore=0.0,
+                            totalca=0.0,
+                            examscore=dbframe.EXAM,
+                            subjecttotal=dbframe.EXAM,
+                            session = sessionObj,
+                            term=termObj,
+                            student=studentObj,
+                            studentclass=StudentClass.objects.get(pk=dbframe.CLASSID),
+                            subjectteacher= SubjectTeacher.objects.get(pk=1),
+                            client=  Client.objects.get(user_id=request.user.pk),
+                            subject=Subject.objects.get(pk=dbframe.SUBJECTID),
+                        )
+                        newScore.save()
 
                         # process Scores
                     # processScores(subjectObj,classroomObj,termObj,sessionObj)
