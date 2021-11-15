@@ -799,29 +799,29 @@ def importAssessmentSheet(request):
                     # qualification=dbframe.qualification)
                     # print(type(obj))
                     obj.save()
+                    
                     # process Scores
                     processScores(subjectObj,classroomObj)
 
                     # process terminal result
-                    processTerminalResult(obj)
+                    # processTerminalResult(obj)
 
                     # process terminal result
-                    processAnnualResult(obj)
+                    # processAnnualResult(obj)
                     
                     # proccess Affective domain
-                    processAffective(obj)
+                    # processAffective(obj)
                     
                     # process Psychomotor domain
-                    processPsycho(obj)
+                    # processPsycho(obj)
 
                     # Add auto comment
-                    autoAddComment(classroomObj,activeSession,activeTerm)
+                    # autoAddComment(classroomObj,activeSession,activeTerm)
             messages.success(request,  'Successful')
             return render(request,'teacher/import_assessment_sheet.html',context)
 
         # return render(request, 'teacher/import_assessment_sheet.html',context)
 
-    messages.error(request,  'Ensure you specify all information and you have a csv file selected!')
     return render(request,'teacher/import_assessment_sheet.html',context)
 
     # except Exception as e:
@@ -829,6 +829,125 @@ def importAssessmentSheet(request):
             #  return render(request,'teacher/import_assessment_sheet.html')
 
 
+# Process result 
+@allowed_users(allowed_roles=['teacher'])
+def processResult(request):
+
+    loggedin = request.user.tutor.pk
+    myclient = request.user.tutor
+
+    # logged_inuser = request.user
+    # clientProfile  = Client.objects.get(user_id=logged_inuser.id)
+    
+    # form
+    form = ResultFilterForm()
+    # try:
+   
+    context={
+       'form':form
+        }
+
+    if request.method=='POST':
+        
+        classroom = request.POST['classroom']
+        term = request.POST['term']
+        session = request.POST['session']
+
+        
+       
+        # classteacher
+        # teacherObj = SubjectTeacher.objects.get(pk=loggedin)
+        # classroom = request.POST['studentclass']
+
+        # classroom object
+        # classroomObj = StudentClass.objects.get(pk=pk)
+        
+        # subject object
+        # subjectObj = Subject.objects.get(pk=subject_id)
+
+        
+        with transaction.atomic():
+            
+            scores = Scores.objects.filter(session=session,term=term,studentclass=classroom)
+            
+            if scores:
+                
+                for score in scores:
+                    # print(score)
+                        
+                      # process Scores
+                    # processScores(score.subject,score.studentclass,score.term,score.session)
+
+                    # process terminal result
+                    processTerminalResult(score)
+
+                    # process terminal result
+                    processAnnualResult(score)    
+
+                    # Add auto comment
+                    # autoAddComment(score.studentclass,score.session,score.term)
+                        
+                    # # proccess Affective domain
+                    # processAffective(score)
+                        
+                    # # process Psychomotor domain
+                    # processPsycho(score)
+                        
+            else:
+                pass
+
+            
+                   
+            messages.success(request,  'Successful')
+            return render(request,'admin/processMyResult.html',context)
+
+    return render(request,'admin/processMyResult.html',context)
+
+
+# process traits and comments
+
+@allowed_users(allowed_roles=['teacher'])
+def processTraitsComments(request):
+
+   
+    # form
+    form = ResultFilterForm()
+    # try:
+   
+    context={
+       'form':form
+        }
+
+    if request.method=='POST':
+        
+        classroom = request.POST['classroom']
+        term = request.POST['term']
+        session = request.POST['session']
+
+        with transaction.atomic():
+            
+            scores = Scores.objects.filter(session=session,term=term,studentclass=classroom)
+            
+            if scores:
+                
+                for score in scores:
+                    
+                    # Add auto comment
+                    autoAddComment(score.studentclass,score.session,score.term)
+                        
+                    # proccess Affective domain
+                    processAffective(score)
+                        
+                    # process Psychomotor domain
+                    processPsycho(score)
+                        
+            else:
+                pass
+  
+            messages.success(request,  'Successful')
+            return render(request,'admin/processTraitsAndComments.html',context)
+
+    return render(request,'admin/processTraitsAndComments.html',context)
 
 
 # Select result from finish button action
@@ -1728,7 +1847,7 @@ def autoAddComment(classroom,session,term):
 def processPsycho(scoresObj):
 
     # Find record in the result table
-    psycho = Studentpsychomotor.objects.filter(student=scoresObj.student, studentclass=scoresObj.studentclass, term=scoresObj.term,session=scoresObj.session)
+    psycho = Studentpsychomotor.objects.filter(student=scoresObj.student, studentclass=scoresObj.studentclass, term=scoresObj.term,session=scoresObj.session).exists()
 
   
 
@@ -1772,7 +1891,7 @@ def processPsycho(scoresObj):
 def processAffective(scoresObj):
 
     # Find record in the result table
-    affective = Studentaffective.objects.filter(student=scoresObj.student, studentclass=scoresObj.studentclass, term=scoresObj.term,session=scoresObj.session)
+    affective = Studentaffective.objects.filter(student=scoresObj.student, studentclass=scoresObj.studentclass, term=scoresObj.term,session=scoresObj.session).exists()
 
     # check for existence of record
     if affective:
