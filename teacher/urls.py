@@ -23,6 +23,10 @@ urlpatterns = [
   path('export-sheet/<str:classroom>/<str:subject>', views.exportSheet, name='export-sheet'),
   path('import-assessment-sheet', views.importAssessmentSheet, name='import-assessment-sheet'),
   
+  path('result-processing', views.processResult, name='result-processing'),
+  path('process-traits', views.processTraitsComments, name='process-traits'),
+  
+  
   
 
 
