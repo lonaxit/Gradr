@@ -1724,16 +1724,161 @@ def processMyResult(request):
             else:
                 pass
 
-            # for dbframe in dbframe.itertuples():
-            #     studentObj=Student.objects.get(pk=dbframe.StudentID)
-                # check if records of a student exist in that subject, class,term,session
-                # scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
+            
                    
             messages.success(request,  'Successful')
             return render(request,'admin/processMyResult.html',context)
 
     return render(request,'admin/processMyResult.html',context)
 
+
+
+# process traits
+@allowed_users(allowed_roles=['admin'])
+def processTraits(request):
+
+    # loggedin = request.user.tutor.pk
+    # myclient = request.user.tutor
+
+    logged_inuser = request.user
+    clientProfile  = Client.objects.get(user_id=logged_inuser.id)
+    
+    # form
+    form = ResultFilterForm()
+    # try:
+   
+    context={
+       'form':form
+        }
+
+    if request.method=='POST':
+        
+        classroom = request.POST['classroom']
+        term = request.POST['term']
+        session = request.POST['session']
+
+        
+       
+        # classteacher
+        # teacherObj = SubjectTeacher.objects.get(pk=loggedin)
+        # classroom = request.POST['studentclass']
+
+        # classroom object
+        # classroomObj = StudentClass.objects.get(pk=pk)
+        
+        # subject object
+        # subjectObj = Subject.objects.get(pk=subject_id)
+
+        
+        with transaction.atomic():
+            
+            scores = Scores.objects.filter(session=session,term=term,studentclass=classroom)
+            
+            if scores:
+                
+                for score in scores:
+                    # print(score)
+                        
+                      # process Scores
+                    # processScores(score.subject,score.studentclass,score.term,score.session)
+
+                    # process terminal result
+                    # processTerminalResult(score)
+
+                    # process terminal result
+                    # processAnnualResult(score)    
+
+                    # Add auto comment
+                    # autoAddComment(score.studentclass,score.session,score.term)
+                        
+                    # proccess Affective domain
+                    processAffective(score)
+                        
+                    # process Psychomotor domain
+                    processPsycho(score)
+                        
+            else:
+                pass
+
+            messages.success(request,  'Successful')
+            return render(request,'admin/processTraits.html',context)
+
+    return render(request,'admin/processTraits.html',context)
+
+
+# process scores
+
+@allowed_users(allowed_roles=['admin'])
+def processScores(request):
+
+    # loggedin = request.user.tutor.pk
+    # myclient = request.user.tutor
+
+    logged_inuser = request.user
+    clientProfile  = Client.objects.get(user_id=logged_inuser.id)
+    
+    # form
+    form = ResultFilterForm()
+    # try:
+   
+    context={
+       'form':form
+        }
+
+    if request.method=='POST':
+        
+        classroom = request.POST['classroom']
+        term = request.POST['term']
+        session = request.POST['session']
+
+        
+       
+        # classteacher
+        # teacherObj = SubjectTeacher.objects.get(pk=loggedin)
+        # classroom = request.POST['studentclass']
+
+        # classroom object
+        # classroomObj = StudentClass.objects.get(pk=pk)
+        
+        # subject object
+        # subjectObj = Subject.objects.get(pk=subject_id)
+
+        
+        with transaction.atomic():
+            
+            scores = Scores.objects.filter(session=session,term=term,studentclass=classroom)
+            
+            if scores:
+                
+                for score in scores:
+                    # print(score)
+                        
+                      # process Scores
+                    processScores(score.subject,score.studentclass,score.term,score.session)
+
+                    # process terminal result
+                    # processTerminalResult(score)
+
+                    # process terminal result
+                    # processAnnualResult(score)    
+
+                    # Add auto comment
+                    # autoAddComment(score.studentclass,score.session,score.term)
+                        
+                   
+                    # proccess Affective domain
+                    # processAffective(score)
+                        
+                    # process Psychomotor domain
+                    # processPsycho(score)
+                              
+            else:
+                pass
+
+            messages.success(request,  'Successful')
+            return render(request,'admin/processScores.html',context)
+
+    return render(request,'admin/processScores.html',context)
 
 # bulk create students
 @login_required(login_url='login')
@@ -1828,17 +1973,6 @@ def importBulkAssessment(request):
 
         if request.method=='POST':
 
-            # activeTerm = Term.objects.get(status='True')
-            # activeSession = Session.objects.get(status='True')
-            # classteacher
-            # teacherObj = SubjectTeacher.objects.get(pk=loggedin)
-            # classroom = request.POST['studentclass']
-
-            # classroom object
-            # classroomObj = StudentClass.objects.get(pk=classroom)
-            # subject_id = request.POST['subject']
-            # subject object
-            # subjectObj = Subject.objects.get(pk=subject_id)
 
 
             myfile = request.FILES['csvFile']
