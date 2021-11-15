@@ -86,6 +86,13 @@
 
             <li class="nav-item"><a class="nav-link dropdown-indicator" href="#result" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="result">Result</a>
               <ul class="nav collapse" id="result" data-parent="#academics">
+
+                <li class="nav-item"><a class="nav-link" href="{% url 'result-processing' %}">Process Result</a>
+                </li>
+
+                <li class="nav-item"><a class="nav-link" href="{% url 'process-traits' %}">Process Traits/Comments</a>
+                </li>
+
                 <li class="nav-item"><a class="nav-link" href="{% url 'result-summary' %}">Terminal</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'annual-result' %}">Annual</a>
