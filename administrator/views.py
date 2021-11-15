@@ -1704,7 +1704,7 @@ def processMyResult(request):
                     # print(score)
                         
                       # process Scores
-                    processScores(score.subject,score.studentclass,score.term,score.session)
+                    # processScores(score.subject,score.studentclass,score.term,score.session)
 
                     # process terminal result
                     processTerminalResult(score)
@@ -1713,19 +1713,16 @@ def processMyResult(request):
                     processAnnualResult(score)    
 
                     # Add auto comment
-                    autoAddComment(score.studentclass,score.session,score.term)
+                    # autoAddComment(score.studentclass,score.session,score.term)
                         
                     # proccess Affective domain
-                    processAffective(score)
+                    # processAffective(score)
                         
                     # process Psychomotor domain
-                    processPsycho(score)
-                        
+                    # processPsycho(score)       
             else:
                 pass
-
             
-                   
             messages.success(request,  'Successful')
             return render(request,'admin/processMyResult.html',context)
 
@@ -1807,7 +1804,6 @@ def processTraits(request):
 
 
 # process scores
-
 @allowed_users(allowed_roles=['admin'])
 def processScores(request):
 
