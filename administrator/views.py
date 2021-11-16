@@ -1810,22 +1810,21 @@ def processScores(request):
     # loggedin = request.user.tutor.pk
     # myclient = request.user.tutor
 
-    logged_inuser = request.user
-    clientProfile  = Client.objects.get(user_id=logged_inuser.id)
+    # logged_inuser = request.user
+    # clientProfile  = Client.objects.get(user_id=logged_inuser.id)
     
     # form
     form = ResultFilterForm()
-    # try:
-   
-    context={
+    try:
+        context={
        'form':form
         }
 
-    if request.method=='POST':
+        if request.method=='POST':
         
-        classroom = request.POST['classroom']
-        term = request.POST['term']
-        session = request.POST['session']
+            classroom = request.POST['classroom']
+            term = request.POST['term']
+            session = request.POST['session']
 
         
        
@@ -1840,17 +1839,17 @@ def processScores(request):
         # subjectObj = Subject.objects.get(pk=subject_id)
 
         
-        with transaction.atomic():
+            with transaction.atomic():
             
-            scores = Scores.objects.filter(session=session,term=term,studentclass=classroom)
+                scores = Scores.objects.filter(session=session,term=term,studentclass=classroom)
             
-            if scores:
+                if scores:
                 
-                for score in scores:
+                    for score in scores:
                     # print(score)
                         
                       # process Scores
-                    processScores(score.subject,score.studentclass,score.term,score.session)
+                        processScores(score.subject,score.studentclass,score.term,score.session)
 
                     # process terminal result
                     # processTerminalResult(score)
@@ -1868,13 +1867,20 @@ def processScores(request):
                     # process Psychomotor domain
                     # processPsycho(score)
                               
-            else:
-                pass
+                else:
+                    pass
 
             messages.success(request,  'Successful')
             return render(request,'admin/processScores.html',context)
 
-    return render(request,'admin/processScores.html',context)
+        return render(request,'admin/processScores.html',context)
+        
+    except Exception as e:
+        messages.error(request,  e)
+        return render(request,'admin/processScores.html',context)
+        
+   
+    
 
 # bulk create students
 @login_required(login_url='login')
