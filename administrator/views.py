@@ -1710,7 +1710,7 @@ def processMyResult(request):
                     processTerminalResult(score)
 
                     # process terminal result
-                    processAnnualResult(score)    
+                    # processAnnualResult(score)    
 
                     # Add auto comment
                     # autoAddComment(score.studentclass,score.session,score.term)
@@ -1857,7 +1857,7 @@ def processMyScores(request):
                         processScores(score.subject,score.studentclass,score.term,score.session)
 
                         # process terminal result
-                        processTerminalResult(score)
+                        # processTerminalResult(score)
 
                         # process terminal result
                         # processAnnualResult(score)    
