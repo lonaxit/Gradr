@@ -80,7 +80,7 @@ urlpatterns = [
   #for migration purposes
   path('process-my-result', views.processMyResult, name='process-my-result'),
   path('process-traits', views.processTraits, name='process-traits'),
-   path('process-scores', views.processScores, name='process-scores'),
+   path('process-scores', views.processMyScores, name='process-scores'),
   path('bulk-create-student', views.importBulkAssessment, name='create-students'),
   path('bulk-exams', views.importBulkExams, name='bulk-exams'),
   
