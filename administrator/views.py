@@ -1727,6 +1727,9 @@ def processMyResult(request):
             return render(request,'admin/processMyResult.html',context)
 
     return render(request,'admin/processMyResult.html',context)
+#  except Exception as e:
+#         messages.error(request,  e)
+#         return render(request,'admin/processMyResult.html',context)
 
 
 
@@ -1805,7 +1808,7 @@ def processTraits(request):
 
 # process scores
 @allowed_users(allowed_roles=['admin'])
-def processScores(request):
+def processMyScores(request):
 
     # loggedin = request.user.tutor.pk
     # myclient = request.user.tutor
@@ -1817,7 +1820,7 @@ def processScores(request):
     form = ResultFilterForm()
     try:
         context={
-       'form':form
+        'form':form
         }
 
         if request.method=='POST':
@@ -1827,7 +1830,7 @@ def processScores(request):
             session = request.POST['session']
 
         
-       
+        
         # classteacher
         # teacherObj = SubjectTeacher.objects.get(pk=loggedin)
         # classroom = request.POST['studentclass']
@@ -1848,8 +1851,9 @@ def processScores(request):
                     for score in scores:
                     # print(score)
                         
-                      # process Scores
-                        processScores(score.subject,score.studentclass,score.term,score.session)
+                        # process Scores
+                        subjectObj = Subject.objects.get(pk=score.subject.pk)
+                        processScores(subjectObj,score.studentclass,score.term,score.session)
 
                     # process terminal result
                     # processTerminalResult(score)
@@ -1860,15 +1864,15 @@ def processScores(request):
                     # Add auto comment
                     # autoAddComment(score.studentclass,score.session,score.term)
                         
-                   
+                    
                     # proccess Affective domain
                     # processAffective(score)
                         
                     # process Psychomotor domain
                     # processPsycho(score)
-                              
-                else:
-                    pass
+                                
+                # else:
+                #     pass
 
             messages.success(request,  'Successful')
             return render(request,'admin/processScores.html',context)
