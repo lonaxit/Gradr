@@ -1817,7 +1817,7 @@ def processMyScores(request):
     # clientProfile  = Client.objects.get(user_id=logged_inuser.id)
     
     # form
-    form = ResultFilterForm()
+    form = ScoresProcessForm()
     try:
         context={
         'form':form
@@ -1828,6 +1828,7 @@ def processMyScores(request):
             classroom = request.POST['classroom']
             term = request.POST['term']
             session = request.POST['session']
+            subject = request.POST['subject']
 
         
         
@@ -1844,7 +1845,7 @@ def processMyScores(request):
         
             with transaction.atomic():
             
-                scores = Scores.objects.filter(session=session,term=term,studentclass=classroom)
+                scores = Scores.objects.filter(session=session,term=term,studentclass=classroom,subject=subject)
             
                 if scores:
                 
@@ -1852,8 +1853,8 @@ def processMyScores(request):
                     # print(score)
                         
                         # process Scores
-                        subjectObj = Subject.objects.get(pk=score.subject.pk)
-                        processScores(subjectObj,score.studentclass,score.term,score.session)
+                        # subjectObj = Subject.objects.get(pk=score.subject.pk)
+                        processScores(score.subject,score.studentclass,score.term,score.session)
 
                     # process terminal result
                     # processTerminalResult(score)
