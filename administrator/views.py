@@ -1850,17 +1850,17 @@ def processMyScores(request):
                 if scores:
                 
                     for score in scores:
-                    # print(score)
+                        # print(score)
                         
                         # process Scores
                         # subjectObj = Subject.objects.get(pk=score.subject.pk)
                         processScores(score.subject,score.studentclass,score.term,score.session)
 
-                    # process terminal result
-                    # processTerminalResult(score)
+                        # process terminal result
+                        processTerminalResult(score)
 
-                    # process terminal result
-                    # processAnnualResult(score)    
+                        # process terminal result
+                        processAnnualResult(score)    
 
                     # Add auto comment
                     # autoAddComment(score.studentclass,score.session,score.term)
