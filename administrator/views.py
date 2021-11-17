@@ -1860,7 +1860,7 @@ def processMyScores(request):
                         processTerminalResult(score)
 
                         # process terminal result
-                        processAnnualResult(score)    
+                        # processAnnualResult(score)    
 
                     # Add auto comment
                     # autoAddComment(score.studentclass,score.session,score.term)
