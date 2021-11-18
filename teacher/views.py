@@ -117,9 +117,9 @@ def render_pdf_view(request):
 # @admin_only
 @allowed_users(allowed_roles=['teacher'])
 def teacherHome(request):
-    students = Student.objects.all()
-    context = {'students':students}
-    return render(request,'teacher/teacher_home.html',context)
+    # students = Student.objects.all()
+    # context = {'students':students}
+    return render(request,'teacher/teacher_home.html')
 
 
 
@@ -1678,23 +1678,23 @@ def minMaxScores(subject,classroom,termObj,sessionObj):
 
 # update subject average
 def processScores(subjectObj,classroomObj,termObj,sessionObj):
-
+    pass
     # get active term and session
     # activeTerm = Term.objects.get(status='True')
     # activeSession = Session.objects.get(status='True')
 
-    subjavg = subjectAverage(subjectObj,classroomObj,termObj,sessionObj)
+    # subjavg = subjectAverage(subjectObj,classroomObj,termObj,sessionObj)
 
-    scores = Scores.objects.filter(subject=subjectObj,studentclass=classroomObj,term=termObj,session=sessionObj).update(subjaverage=subjavg)
+    # scores = Scores.objects.filter(subject=subjectObj,studentclass=classroomObj,term=termObj,session=sessionObj).update(subjaverage=subjavg)
 
      # update position and grading
-    subjectPosition(subjectObj,classroomObj,termObj,sessionObj)
+    # subjectPosition(subjectObj,classroomObj,termObj,sessionObj)
 
     # Update  grades
-    scoresRating(subjectObj,classroomObj,termObj,sessionObj)
+    # scoresRating(subjectObj,classroomObj,termObj,sessionObj)
 
     # update min and max
-    minMaxScores(subjectObj,classroomObj,termObj,sessionObj)
+    # minMaxScores(subjectObj,classroomObj,termObj,sessionObj)
 
 
 
