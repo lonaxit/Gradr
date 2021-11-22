@@ -1679,7 +1679,7 @@ def minMaxScores(subject,classroom,termObj,sessionObj):
 
 # update subject average
 def processScores(subjectObj,classroomObj,termObj,sessionObj):
-    pass
+    # pass
     # get active term and session
     # activeTerm = Term.objects.get(status='True')
     # activeSession = Session.objects.get(status='True')
