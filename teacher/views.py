@@ -545,6 +545,7 @@ def addAttendance(request):
 def enrollStudent(request):
 
     loggedin = request.user.tutor.pk
+    
 
     if request.method =='POST':
 
@@ -560,7 +561,7 @@ def enrollStudent(request):
                     student = Student.objects.get(reg_no=enroll)
 
                     # check if student is already enrolled
-                    studentEnrolled = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q      (class_room=classTeacher.classroom.pk) & Q(student=student.pk))
+                    studentEnrolled = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q (class_room=classTeacher.classroom.pk) & Q(student=student.pk))
 
                     if studentEnrolled:
 
@@ -1683,18 +1684,18 @@ def processScores(subjectObj,classroomObj,termObj,sessionObj):
     # activeTerm = Term.objects.get(status='True')
     # activeSession = Session.objects.get(status='True')
 
-    # subjavg = subjectAverage(subjectObj,classroomObj,termObj,sessionObj)
+    subjavg = subjectAverage(subjectObj,classroomObj,termObj,sessionObj)
 
-    # scores = Scores.objects.filter(subject=subjectObj,studentclass=classroomObj,term=termObj,session=sessionObj).update(subjaverage=subjavg)
+    scores = Scores.objects.filter(subject=subjectObj,studentclass=classroomObj,term=termObj,session=sessionObj).update(subjaverage=subjavg)
 
-     # update position and grading
-    # subjectPosition(subjectObj,classroomObj,termObj,sessionObj)
+    # update position and grading
+    subjectPosition(subjectObj,classroomObj,termObj,sessionObj)
 
     # Update  grades
-    # scoresRating(subjectObj,classroomObj,termObj,sessionObj)
+    scoresRating(subjectObj,classroomObj,termObj,sessionObj)
 
     # update min and max
-    # minMaxScores(subjectObj,classroomObj,termObj,sessionObj)
+    minMaxScores(subjectObj,classroomObj,termObj,sessionObj)
 
 
 
