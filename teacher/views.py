@@ -1618,7 +1618,7 @@ def scoresRating(subject,classroom,termObj,sessionObj):
     # activeTerm = Term.objects.get(status='True')
     # activeSession = Session.objects.get(status='True')
 
-    minMax = minMaxScores(subject,classroom,termObj,sessionObj)
+    # minMax = minMaxScores(subject,classroom,termObj,sessionObj)
 
     # TODO: Use select for update because of transaction
     scores = Scores.objects.filter(subject=subject,studentclass=classroom,term=termObj,session=sessionObj)
