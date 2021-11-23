@@ -1342,7 +1342,7 @@ def admissionList(request):
         if form.is_valid():
             term = Term.objects.get(pk=request.POST['term'])
             session = Session.objects.get(pk=request.POST['session'])
-            classroom = Term.objects.get(pk=request.POST['classroom'])
+            classroom = StudentClass.objects.get(pk=request.POST['classroom'])
             # term_id = request.POST['term']
             # session_id = request.POST['session']
             # class_id = request.POST['classroom']
@@ -1368,6 +1368,42 @@ def admissionList(request):
 
     context ={'form':form}
     return render(request, 'admin/filter_admission_list.html',context)
+
+
+
+# Admission List by class,session
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def studentsByClass(request):
+    form = AdmissionListForm()
+    # context ={'form':form}
+    if request.method == 'POST':
+        form = AdmissionListForm(request.POST)
+        if form.is_valid():
+            term = Term.objects.get(pk=request.POST['term'])
+            session = Session.objects.get(pk=request.POST['session'])
+            classroom = StudentClass.objects.get(pk=request.POST['classroom'])
+           
+            
+            # select students based on search parameter
+            students = Classroom.objects.filter(Q(session=session.pk)  & Q(class_room=classroom.pk) & Q(term=term.pk)).order_by('student__sur_name')
+            if not students:
+                messages.error(request, 'No record exist')
+                return redirect('student-by-class')
+            else:
+                context = { 'form':form,
+                           'students':students,
+                           'term':term,
+                           'session':session,
+                           'classroom':classroom
+                           }
+                return render(request,'admin/student_by_class.html',context)
+        else:
+            messages.error(request, 'oops! something went wrong')
+            return redirect('student-by-class')
+
+    context ={'form':form}
+    return render(request, 'admin/student_by_class.html',context)
 
 # export admission List
 @allowed_users(allowed_roles=['admin'])
@@ -1395,6 +1431,35 @@ def exportAdmissionList(request,session,classroom,term):
     except Exception as e:
              messages.error(request,  e)
              return render(request,'admin/filter_admission_list.html')
+         
+
+# export students by class
+@allowed_users(allowed_roles=['admin'])
+def exportStudents(request,session,classroom,term):
+
+
+    # try:
+    termObj = Term.objects.get(pk=term)
+    sessObj = Session.objects.get(pk=session)
+    classroomObj = StudentClass.objects.get(pk=classroom)
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=Admission_List_'+classroomObj.class_name+'_'+termObj.term+'_'+sessObj.session+'.csv'
+    writer = csv.writer(response)
+
+    writer.writerow(['Name','Class','Sex','Session','RegNumber'])
+
+    # select students based on search parameter
+    students = Classroom.objects.filter(Q(session=sessObj.pk)  & Q(class_room=classroomObj.pk) & Q(term=termObj.pk)).order_by('student__sur_name')
+        
+    for student in students:
+        writer.writerow([student.student.sur_name+ ' ' +student.student.first_name,student.class_room.class_name,student.student.sex,student.session.session,student.student.full_reg_no])
+
+    return response
+
+    # except Exception as e:
+    #          messages.error(request,  e)
+    #          return render(request,'admin/student_by_class.html')
 
 
 # register user with group
@@ -1980,8 +2045,6 @@ def importBulkAssessment(request):
    
 
         if request.method=='POST':
-
-
 
             myfile = request.FILES['csvFile']
             fs = FileSystemStorage()
