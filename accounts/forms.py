@@ -120,6 +120,42 @@ class StaffRegisterForm(UserCreationForm):
         model = User
         fields =['username','email','password1','password2']
 
+# user update form
+
+class UserUpdateForm(forms.ModelForm):
+    
+    email = forms.EmailField(label='E-Mail',
+            max_length=100,
+            widget=forms.EmailInput(attrs={'class': 'form-control','placeholder':'Enter your email','id':'email'}))
+    
+    class Meta:
+        model=User
+        fields=['username','email']
+        
+
+# update profile picture
+
+class ClientPictureUpdateForm(forms.ModelForm):
+    
+    # email = forms.EmailField(label='E-Mail',
+    #         max_length=100,
+    #         widget=forms.EmailInput(attrs={'class': 'form-control','placeholder':'Enter your email','id':'email'}))
+    
+    class Meta:
+        model=Client
+        fields=['profile_image']
+
+class StudentPictureUpdateForm(forms.ModelForm):
+    
+    class Meta:
+        model=Student
+        fields=['profile_image']
+
+class TeacherPictureUpdateForm(forms.ModelForm):
+    
+    class Meta:
+        model=Client
+        fields=['profile_image']
 
 
 class contactForm(forms.Form):
