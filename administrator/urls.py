@@ -53,7 +53,9 @@ urlpatterns = [
   path('list-class-teacher', views.listClassTeacher, name='list-class-teacher'),
   path('update-class-teacher/<str:pk>', views.updateClassTeacher, name='update-class-teacher'),
   path('admission-list', views.admissionList, name='admission-list'),
+  path('student-by-class', views.studentsByClass, name='student-by-class'),
   path('export-admission-list/<str:session>/<str:classroom>/<str:term>', views.exportAdmissionList, name='export-admission'),
+  path('export-students/<str:session>/<str:classroom>/<str:term>', views.exportStudents, name='export-students'),
 
   path('add-affective', views.addAffective, name='add-affective'),
   path('list-affective', views.listAffective, name='list-affective'),
