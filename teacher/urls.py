@@ -27,9 +27,6 @@ urlpatterns = [
   path('process-traits', views.processTraitsComments, name='process-traits'),
   
   
-  
-
-
   path('result-summary', views.resultSummary, name='result-summary'),
   path('annual-result', views.annualResultSummary, name='annual-result'),
   path('annual-result-detail', views.annualResultDetail, name='annual-result-detail'),
