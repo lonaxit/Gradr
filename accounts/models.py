@@ -35,12 +35,16 @@ class Teacher(models.Model):
                 ('MSC','MSC'),
                 ('PHD','PHD'),
                 )
+    GENDER = (
+                ('M','MALE'),
+                ('F','FEMALE'),
+                )
     createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='tutor')
     surname = models.CharField(max_length=200,blank=True,null=True)
     firstname = models.CharField(max_length=200,blank=True,null=True)
     othername = models.CharField(max_length=200,blank=True,null=True)
-    sex = models.CharField(max_length=20)
+    sex = models.CharField(max_length=20,choices=GENDER)
     phone = models.CharField(max_length=20)
     profile_image = models.ImageField(upload_to='photos/%Y/%m/%d/',default='default_img.png')
     address = models.CharField(max_length=200)
