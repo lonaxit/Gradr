@@ -35,9 +35,9 @@ def register(request):
     # redirect authenticated user to the dashboard
     form = ClientRegisterForm()
     if request.method == 'POST':
-        
+
         with transaction.atomic():
-            
+
             form  = ClientRegisterForm(request.POST)
             if form.is_valid():
                 user = form.save()
@@ -52,7 +52,7 @@ def register(request):
                 Client.objects.create(
                 user = user,
                 )
-            
+
                 # attach a profile to a student
                 # StudObj = Student.objects.create(
                 # user = user,
@@ -105,6 +105,25 @@ def loginPage(request):
 
     return render(request,'accounts/login.html')
 
+
+# student authentication
+@unauthenticated_user
+def studentAuth(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request,user)
+            return redirect('student')
+        else:
+            messages.info(request, 'Username or Password is incorrect')
+            return render(request,'accounts/studentAuth.html')
+
+    return render(request,'accounts/studentAuth.html')
+
 def logoutUser(request):
     logout(request)
     return redirect('login')
@@ -113,7 +132,7 @@ def logoutUser(request):
 @login_required(login_url='login')
 @admin_only
 def admin(request):
-   
+
     students = Student.objects.filter(reg_no__isnull=True)
     context = {'students':students}
     return render(request,'accounts/admin.html',context)
