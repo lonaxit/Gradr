@@ -3,12 +3,20 @@
     <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarStandard" aria-controls="navbarStandard" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
     <div class="collapse navbar-collapse scrollbar perfect-scrollbar" id="navbarStandard">
       <ul class="navbar-nav">
-        <li class="nav-item dropdown dropdown-on-hover"><a class="nav-link dropdown-toggle" id="navbarDropdownHome" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Menu</a>
-          <div class="dropdown-menu dropdown-menu-card" aria-labelledby="navbarDropdownHome">
-            <div class="bg-white rounded-soft py-2"><a class="dropdown-item" href="../index.html">Dashboard</a><a class="dropdown-item" href="../home/dashboard-alt.html">Dashboard alt</a><a class="dropdown-item" href="../home/feed.html">Feed</a><a class="dropdown-item" href="../home/landing.html">Landing</a></div>
-          </div>
-        </li>
 
+        <!-- menu item -->
+
+        <!-- <li class="nav-item dropdown dropdown-on-hover"><a class="nav-link dropdown-toggle" id="navbarDropdownHome" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Menu</a>
+          <div class="dropdown-menu dropdown-menu-card" aria-labelledby="navbarDropdownHome">
+            <div class="bg-white rounded-soft py-2"><a class="dropdown-item" href="../index.html">Dashboard</a>
+              <a class="dropdown-item" href="../home/dashboard-alt.html">Dashboard alt</a>
+              <a class="dropdown-item" href="../home/feed.html">Feed</a>
+              <a class="dropdown-item" href="../home/landing.html">Landing</a></div>
+          </div>
+        </li> -->
+
+
+<!-- -######################################################################################## -->
         <!-- pages link/menu -->
         <!-- <li class="nav-item dropdown dropdown-on-hover">
         <a class="nav-link dropdown-toggle" id="navbarDropdownPages" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pages</a>
@@ -144,8 +152,8 @@
 
       </ul>
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item"><a class="nav-link" href="../index.html"><span class="fas fa-chart-pie d-none d-lg-inline-block" data-toggle="tooltip" data-placement="bottom" title="Dashboard"></span><span class="d-lg-none">Dashboard</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="../home/feed.html"><span class="fas fa-list-alt d-none d-lg-inline-block" data-toggle="tooltip" data-placement="bottom" title="Feed"></span><span class="d-lg-none">Feed</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'auth-student' %}" target="_blank"><span class="far fa-user d-none d-lg-inline-block" data-toggle="tooltip" data-placement="bottom" title="Student"></span><span class="d-lg-none">Student</span></a></li>
+        <!-- <li class="nav-item"><a class="nav-link" href="../home/feed.html"><span class="fas fa-list-alt d-none d-lg-inline-block" data-toggle="tooltip" data-placement="bottom" title="Feed"></span><span class="d-lg-none">Feed</span></a></li> -->
 
 <!-- login -->
         <!-- <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" id="navbarDropdownLogin" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Login</a>
@@ -195,7 +203,7 @@
           </div>
         </li> -->
         <!-- <li class="nav-item"><a class="nav-link" href="#!" data-toggle="modal" data-target="#exampleModal">Register</a></li> -->
-        <li class="nav-item"><a class="nav-link" href="#!">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}" target="_blank">Staff</a></li>
       </ul>
     </div>
   </div>
