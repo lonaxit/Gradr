@@ -8,6 +8,27 @@ from datetime import datetime
 
 # Model to hold terms
 
+class Guardian(models.Model):
+    GENDER = (
+                ('M','MALE'),
+                ('F','FEMALE'),
+                )  
+    surname = models.CharField(max_length=100,null=True,blank=True)
+    firstname = models.CharField(max_length=100,null=True,blank=True)
+    othername = models.CharField(max_length=100,null=True,blank=True)
+    sex = models.CharField(max_length=100,null=True,blank=True,choices=GENDER)
+    phone = models.CharField(max_length=100,null=True,blank=True)
+    email = models.CharField(max_length=100,null=True,blank=True)
+    address = models.CharField(max_length=300,null=True,blank=True)
+    occupation = models.CharField(max_length=100,null=True,blank=True)
+    createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
+    client = models.ForeignKey(Client,null=True,on_delete=models.DO_NOTHING)
+    student = models.ForeignKey("accounts.Student",on_delete=models.DO_NOTHING)
+    date_created = models.DateTimeField(auto_now_add=True,null=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.surname
+
 class Term(models.Model):
     createdby = models.ForeignKey(User,null=True,on_delete=models.DO_NOTHING)
     client = models.ForeignKey(Client,null=True,on_delete=models.DO_NOTHING)
