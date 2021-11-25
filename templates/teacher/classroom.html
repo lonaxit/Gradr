@@ -11,6 +11,15 @@
                 <div class="col-4 col-sm-auto d-flex align-items-center pr-0">
                   <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Classroom</h5>
                 </div>
+                 <div class="mb-4">
+                      {% if messages %}
+                      <small class="alert alert-success">
+                        {% for message in messages %}
+                        {{message}}
+                        {% endfor %}
+                      </small>
+                      {% endif %}
+                    </div>
 
                 <div class="col-8 col-sm-auto text-right pl-2">
                   <!-- <div class="d-none" id="customers-actions">
@@ -72,7 +81,7 @@
                             </div>
                           </div>
                         </a></td>
-                      
+
                       <td class="py-2 align-middle">{{student.student.sex}}</td>
                       {% comment %} <td class="py-2 align-middle white-space-nowrap">{{student.student.sex}}</td> {% endcomment %}
                       <td class="py-2 align-middle">{{student.class_room}}</td>
@@ -84,7 +93,9 @@
                           <div class="dropdown-menu dropdown-menu-right border py-0" aria-labelledby="customer-dropdown-0">
                             <div class="bg-white py-2">
                             {% comment %} <a class="dropdown-item" href="#!">Edit</a> {% endcomment %}
-                            <a class="dropdown-item text-danger" href="{% url 'delete-enrollment' student.pk %}">Unenroll</a></div>
+                            <a class="dropdown-item text-danger" href="{% url 'delete-enrollment' student.pk %}">Unenroll</a>
+                            <a class="dropdown-item text-success" href="{% url 'add-parent' student.pk %}">Add Parent</a>
+                          </div>
                           </div>
                         </div>
                       </td>
@@ -122,7 +133,7 @@
 
 
 
-                  
+
 
                   </tbody>
                 </table>
