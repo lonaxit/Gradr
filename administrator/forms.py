@@ -415,6 +415,50 @@ class TeacherProfileForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['client','user','createdby']
 
+# Parent/Guardian form
+
+class GuardianProfileForm(forms.ModelForm):
+  
+    GENDER = (
+            ('M','Male'),
+            ('F','Female'),
+    )
+
+    surname = forms.CharField(label='Surname',
+             max_length=100,required=True,
+             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter surname','id':'sur_name'}))
+
+    firstname = forms.CharField(label='Firstname',
+             max_length=100, required=True,
+             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter firstname','id':'first_name'}))
+    othername = forms.CharField(label='Othername',
+             max_length=100,required=False,
+             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter other_name','id':'other_name'}))
+    email = forms.CharField(label='E-Mail',
+                required=False,
+                 max_length=100,
+                 widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter optional email','id':'email'}))
+    phone = forms.CharField(label='Phone Number',
+                 required=True,
+                 max_length=100,
+                 widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Phone number','id':'phone'}))  
+    sex = forms.ChoiceField(
+              label='Choose Sex',
+              choices=GENDER,
+              widget=forms.Select(attrs={'class': 'form-control','id':'city'}))
+    address = forms.CharField(label='Address',
+             max_length=300,required=False,
+             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter address','id':'address'}))
+    occupation = forms.CharField(label='Occupation',
+             max_length=300,required=False,
+             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter occupation','id':'occupation'}))
+
+    class Meta:
+        model = Guardian
+        fields = '__all__'
+        exclude = ['client','student','createdby']
+
+
 # assign subject
 class AssignSubjectForm(forms.ModelForm):
 
