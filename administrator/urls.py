@@ -69,6 +69,7 @@ urlpatterns = [
   path('list-rating', views.listRating, name='list-rating'),
   path('update-rating/<str:pk>', views.updateRating, name='update-rating'),
   path('generate-numbers', views.generateAdmissionNumber, name='generate-numbers'),
+  path('update-password', views.updatePassword, name='update-password'),
 
   # filter scores
   path('scores-summary', views.scoresFilter, name='scores-summary'),
