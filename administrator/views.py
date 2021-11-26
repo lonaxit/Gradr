@@ -490,8 +490,6 @@ def updateStudentProfile(request,pk):
             messages.success(request, 'Student profile  modification/creation was  successful')
             return redirect('view-student',pk=student.pk)
         else:
-
-
             messages.success(request, 'Something went wrong')
             return redirect('update-student',pk=pk)
 
@@ -727,6 +725,7 @@ def assignSubject(request):
                 messages.success(request, 'Subject successfully assigned')
                 return redirect('assign-subject')
     return render(request, "admin/assign_subject.html", context)
+
 
 # update subject assinged to teacher
 @login_required(login_url='login')
@@ -1685,6 +1684,29 @@ def updateRating(request,pk):
     return render(request, "admin/updateRating.html", context)
 
 
+
+# SMS Messaging
+# update Rating
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def smsMessaging(request,pk):
+
+    rating = Rating.objects.get(id=pk)
+    form = RatingForm(instance=rating)
+    context = {'form':form}
+    if request.method == "POST":
+
+        form = RatingForm(request.POST,instance=rating)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Record updated')
+            return redirect('list-rating')
+        else:
+            messages.success(request, 'Something went wrong')
+            return redirect('update-rating',pk=pk)
+    context={'form':form}
+    return render(request, "admin/updateRating.html", context)
+
 # register user with out group
 @unauthenticated_user
 def registerPage(request):
@@ -1694,7 +1716,7 @@ def registerPage(request):
         form  = ClientRegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            #getting username from form
+            #getting username from
             user = form.cleaned_data.get('username')
             messages.success(request, 'Account creation successful for ' + user)
             return redirect('login')
@@ -1702,6 +1724,8 @@ def registerPage(request):
     context={'form': form}
 
     return render (request,'accounts/register.html',{'form':form})
+
+
 
 
 # get state data via json
@@ -2032,6 +2056,31 @@ def bulkStudent(request):
             return redirect('create-students')
 
     return render (request,'admin/create_bulk_users.html')
+
+
+# update user password
+# bulk create students
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updatePassword(request):
+    
+    if request.method == 'POST':
+        
+        with transaction.atomic():
+            username = request.POST['username']
+            password = request.POST['password']
+            
+            user = User.objects.get(username=username)
+            # print(user)
+            user.password = make_password(password)  
+            user.save()
+
+            messages.success(request, 'Update successful')
+            return redirect('update-password')
+
+    return render (request,'admin/updatePassword.html')
+
+
 
 
 # bulk assessment
