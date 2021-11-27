@@ -308,9 +308,6 @@ def updateNumber(request,pk):
             messages.success(request, 'Please provide a value')
             return redirect('update-numbers',pk=pk)
         else:
-           
-
-
              # Get prefix
             sch_prefix = RegPrefix.objects.filter(client=ClientProfile).first()
 
@@ -326,7 +323,7 @@ def updateNumber(request,pk):
             no_item.save()
             messages.success(request, 'Admission number updated successfully')
             # return to list students
-            return redirect('list-students')
+            return redirect('admin')
 
     return render(request, 'admin/update_number.html',context)
 
