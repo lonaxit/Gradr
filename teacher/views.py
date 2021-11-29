@@ -631,8 +631,9 @@ def myClassroom(request):
         classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
        
         stds = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q(class_room=classTeacher.classroom.pk)).order_by('student__sur_name')
-     
-        context = {'students':stds}
+        classObj = stds.first()
+        context = {'students':stds,
+                   'classSingleObj':classObj}
         return render(request,'teacher/classroom.html',context)
     except Exception as e:
         messages.error(request,e)
