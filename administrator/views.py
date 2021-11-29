@@ -1430,7 +1430,7 @@ def exportAdmissionList(request,session,classroom,term):
          
 
 # export students by class
-@allowed_users(allowed_roles=['admin'])
+@allowed_users(allowed_roles=['admin','teacher'])
 def exportStudents(request,session,classroom,term):
 
 
