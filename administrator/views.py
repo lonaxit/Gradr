@@ -312,7 +312,7 @@ def updateNumber(request,pk):
             sch_prefix = RegPrefix.objects.filter(client=ClientProfile).first()
 
             # casting int to str
-            full_adm_string = sch_prefix.reg_prefix + student.session_admitted.session + str(no_)
+            full_adm_string = sch_prefix.reg_prefix + student.session_admitted.session + '/' + str(no_)
 
 
             # update student with the serial reg number
