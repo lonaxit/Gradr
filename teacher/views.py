@@ -634,7 +634,9 @@ def allClassrooms(request):
         activeSession = Session.objects.get(status='True')
         classTeacher = ClassTeacher.objects.filter(teacher=loggedin,term=activeTerm,session=activeSession).first()
        
-        allClasses = Classroom.objects.filter(class_room=classTeacher.classroom.pk).distinct('class_room')
+        allClasses = Classroom.objects.filter(class_room=classTeacher.classroom.pk)
+        
+        # allClasses = Classroom.objects.filter(class_room=classTeacher.classroom.pk).distinct('class_room')
         
        
         context = {'allClasses':allClasses}
