@@ -98,8 +98,8 @@
                           <div class="dropdown-menu dropdown-menu-right border py-0" aria-labelledby="customer-dropdown-0">
                             <div class="bg-white py-2">
                             {% comment %} <a class="dropdown-item" href="#!">Edit</a> {% endcomment %}
-                            <a class="dropdown-item text-info" href="{% url 'classroom' classroom.class_room.pk classroom.term.pk classroom.session.pk %}">View</a>
-                            <a class="dropdown-item text-success" href="{% url 'export-students' classroom.session.pk classroom.class_room.pk classroom.term.pk %}">Download</a>
+                            <a class="dropdown-item text-info" href="{% url 'classroom' classroom.classroom.pk classroom.term.pk classroom.session.pk %}">View</a>
+                            <a class="dropdown-item text-success" href="{% url 'export-students' classroom.session.pk classroom.classroom.pk classroom.term.pk %}">Download</a>
                           </div>
                           </div>
                         </div>
