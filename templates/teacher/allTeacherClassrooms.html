@@ -55,6 +55,7 @@
                         <th class="align-middle sort">Class</th>
                       <th class="align-middle sort">Session</th>
                       <th class="align-middle sort">Term</th>
+                      <th class="align-middle sort">Action</th>
                 
                       {% comment %} <th class="align-middle sort">RegNumber</th> {% endcomment %}
                       {% comment %} <th class="align-middle sort pl-5" style="min-width: 200px;">RegNumber</th> {% endcomment %}
@@ -86,8 +87,9 @@
 
                       {% comment %} <td class="py-2 align-middle">{{student.student.sex}}</td> {% endcomment %}
                       {% comment %} <td class="py-2 align-middle white-space-nowrap">{{student.student.sex}}</td> {% endcomment %}
-                      <td class="py-2 align-middle">{{classroom.class_room.class_name}}</td>
+                      <td class="py-2 align-middle">{{classroom.classroom.class_name}}</td>
                       <td class="py-2 align-middle">{{classroom.session.session}}</td>
+                      <td class="py-2 align-middle">{{classroom.term.term}}</td>
                       {% comment %} <td class="py-2 align-middle pl-5">2392 Main Avenue, Penasauka, New Jersey 02139</td> {% endcomment %}
                       {% comment %} <td class="py-2 align-middle">{{student.date_created}}</td> {% endcomment %}
                       <td class="py-2 align-middle white-space-nowrap">
