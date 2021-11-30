@@ -656,7 +656,8 @@ def myClassroom(request,classroom,term,session):
         stdClass = StudentClass.objects.get(pk=classroom)
         termObj = Term.objects.get(pk=term)
         sessObj = Session.objects.get(pk=session)
-        classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=termObj,session=sessObj)
+        
+        # classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=termObj,session=sessObj)
        
         stds = Classroom.objects.filter(Q(term=termObj.pk) & Q(session=sessObj.pk) & Q(class_room=stdClass.pk)).order_by('student__sur_name')
         
