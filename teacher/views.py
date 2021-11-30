@@ -556,17 +556,18 @@ def enrollStudent(request):
         try:
             activeTerm = Term.objects.get(status='True')
             activeSession = Session.objects.get(status='True')
-            classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
+            classTeacher = ClassTeacher.objects.filter(teacher=loggedin).first()
             if classTeacher:
 
 
                 class_room = request.POST['class_room']
+                stdClass = StudentClass.objects.get(pk=class_room)
                 registration_no = request.POST['student']
                 if registration_no:
                     student = Student.objects.get(reg_no=registration_no)
 
                     # check if student is already enrolled
-                    studentEnrolled = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q (class_room=classTeacher.classroom.pk) & Q(student=student.pk))
+                    studentEnrolled = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q (class_room=stdClass.pk) & Q(student=student.pk))
 
                     if studentEnrolled:
 
@@ -575,7 +576,7 @@ def enrollStudent(request):
                     else:
                         # enroll student
                         enrollObj = Classroom.objects.create(
-                        class_room=classTeacher.classroom,
+                        class_room=stdClass,
                         client =classTeacher.client,
                         session = activeSession,
                         term = activeTerm,
