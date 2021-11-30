@@ -232,7 +232,7 @@ class ClassEnrollmentForm(forms.ModelForm):
     student= forms.CharField(label='Reg No',
              max_length=10,
              required=True,
-             widget=forms.NumberInput(attrs={'class': 'form-control','placeholder':'Enter number of subjects','id':'student'}))
+             widget=forms.NumberInput(attrs={'class': 'form-control','placeholder':'Enter Reg Number eg 876','id':'student'}))
     
     class Meta:
         model = Classroom
