@@ -18,7 +18,8 @@ urlpatterns = [
   path('back-to-result/<str:classroom>/<str:term>/<str:session>', views.resultComments, name='back-to-result'),
   path('enroll', views.enrollStudent, name='enroll'),
   path('delete-enrollment/<str:pk>', views.deleteEnrollment, name='delete-enrollment'),
-  path('classroom', views.myClassroom, name='classroom'),
+  path('all-classrooms', views.allClassrooms, name='all-classrooms'),
+  path('classroom/<str:classroom>/<str:term>/<str:session>', views.myClassroom, name='classroom'),
 
   path('assessment-sheet', views.assessmentSheet, name='assessment-sheet'),
   path('export-sheet/<str:classroom>/<str:subject>', views.exportSheet, name='export-sheet'),
