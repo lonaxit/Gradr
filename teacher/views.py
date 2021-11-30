@@ -548,6 +548,8 @@ def addAttendance(request):
 def enrollStudent(request):
 
     loggedin = request.user.tutor.pk
+    form = ClassEnrollmentForm()
+    context = {'form':form}
 
     if request.method =='POST':
 
@@ -558,9 +560,10 @@ def enrollStudent(request):
             if classTeacher:
 
 
-                enroll = request.POST['enroll']
-                if enroll:
-                    student = Student.objects.get(reg_no=enroll)
+                class_room = request.POST['class_room']
+                registration_no = request.POST['student']
+                if registration_no:
+                    student = Student.objects.get(reg_no=registration_no)
 
                     # check if student is already enrolled
                     studentEnrolled = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q (class_room=classTeacher.classroom.pk) & Q(student=student.pk))
@@ -591,7 +594,8 @@ def enrollStudent(request):
                 messages.error(request,  e)
                 return redirect('enroll')
 
-    return render(request,'teacher/enroll_student.html')
+    return render(request,'teacher/enroll_student.html',context)
+
 
 # remove student in class
 @allowed_users(allowed_roles=['teacher'])
@@ -622,7 +626,7 @@ def deleteEnrollment(request,pk):
 
 # my classroom enrollees
 @allowed_users(allowed_roles=['teacher'])
-def myClassroom(request):
+def allClassrooms(request):
     
     try:
         loggedin = request.user.tutor
@@ -630,7 +634,29 @@ def myClassroom(request):
         activeSession = Session.objects.get(status='True')
         classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
        
-        stds = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q(class_room=classTeacher.classroom.pk)).order_by('student__sur_name')
+        allClasses = Classroom.objects.filter(class_room=classTeacher.classroom.pk).distinct('class_room')
+        
+       
+        context = {'allClasses':allClasses}
+        return render(request,'teacher/allTeacherClassrooms.html',context)
+    except Exception as e:
+        messages.error(request,e)
+        return render(request,'teacher/allTeacherClassrooms.html')
+    
+
+
+# # my classroom enrollees
+@allowed_users(allowed_roles=['teacher'])
+def myClassroom(request,classroom,term,session):
+    
+    try:
+        loggedin = request.user.tutor
+        stdClass = Term.objects.get(pk=classroom)
+        termObj = Term.objects.get(pk=term)
+        sessObj = Session.objects.get(pk=session)
+        classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=termObj,session=sessObj)
+       
+        stds = Classroom.objects.filter(Q(term=termObj.pk) & Q(session=sessObj.pk) & Q(class_room=stdClass.pk)).order_by('student__sur_name')
         
         classObj = stds.first()
         context = {'students':stds,
