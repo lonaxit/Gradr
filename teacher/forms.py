@@ -220,3 +220,21 @@ class StudentPsychomotorForm(forms.ModelForm):
         exclude = ['client','student','term','session','classteacher','studentclass']
         
     
+# Class enrollment form
+class ClassEnrollmentForm(forms.ModelForm):
+    class_room = forms.ModelChoiceField(
+                  queryset=StudentClass.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Choose Class',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'class_room'}))
+    student= forms.CharField(label='Reg No',
+             max_length=10,
+             required=True,
+             widget=forms.NumberInput(attrs={'class': 'form-control','placeholder':'Enter number of subjects','id':'student'}))
+    
+    class Meta:
+        model = Classroom
+        fields = '__all__'
+        exclude = ['client','term','session']
