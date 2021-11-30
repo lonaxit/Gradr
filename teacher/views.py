@@ -549,7 +549,6 @@ def enrollStudent(request):
 
     loggedin = request.user.tutor.pk
 
-
     if request.method =='POST':
 
         try:
@@ -624,6 +623,7 @@ def deleteEnrollment(request,pk):
 # my classroom enrollees
 @allowed_users(allowed_roles=['teacher'])
 def myClassroom(request):
+    
     try:
         loggedin = request.user.tutor
         activeTerm = Term.objects.get(status='True')
@@ -631,6 +631,7 @@ def myClassroom(request):
         classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
        
         stds = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q(class_room=classTeacher.classroom.pk)).order_by('student__sur_name')
+        
         classObj = stds.first()
         context = {'students':stds,
                    'classSingleObj':classObj}
@@ -638,35 +639,6 @@ def myClassroom(request):
     except Exception as e:
         messages.error(request,e)
         return render(request,'teacher/classroom.html')
-
-
-    # loggedin = request.user.tutor.pk
-
-    # try:
-
-    #     activeTerm = Term.objects.get(status='True')
-    #     activeSession = Session.objects.get(status='True')
-
-    #     classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
-
-    #     if classTeacher:
-
-    #             students = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q(class_room=classTeacher.classroom.pk)).order_by('student__sur_name')
-    #             # ordering using a different table, student field is on classroom table which is related to the student table and sur_name is on the student table
-
-    #             if students:
-    #                 context={
-    #                     'students':students
-    #                 }
-    #                 return render(request,'teacher/classroom.html',context)
-    #     else:
-    #          messages.error(request, 'Access Denied')
-    #          return redirect('teacher')
-
-    # except Exception as e:
-        
-    #     messages.error(request,e)
-    #     return render(request,'teacher/classroom.html')
 
 
 # Add parent profile
