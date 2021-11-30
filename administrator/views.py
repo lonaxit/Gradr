@@ -1443,13 +1443,15 @@ def exportStudents(request,session,classroom,term):
     response['Content-Disposition'] = 'attachment; filename=Admission_List_'+classroomObj.class_name+'_'+termObj.term+'_'+sessObj.session+'.csv'
     writer = csv.writer(response)
 
-    writer.writerow(['Name','Class','Sex','Session','RegNumber'])
+    writer.writerow(['SNO','NAME','CLASS','SEX','SESSION','REGNO'])
 
     # select students based on search parameter
     students = Classroom.objects.filter(Q(session=sessObj.pk)  & Q(class_room=classroomObj.pk) & Q(term=termObj.pk)).order_by('student__sur_name')
         
     for student in students:
-        writer.writerow([student.student.sur_name+ ' ' +student.student.first_name,student.class_room.class_name,student.student.sex,student.session.session,student.student.full_reg_no])
+        i=1
+        writer.writerow([i,student.student.sur_name+ ' ' +student.student.first_name,student.class_room.class_name,student.student.sex,student.session.session,student.student.full_reg_no])
+        i+=1
 
     return response
 
