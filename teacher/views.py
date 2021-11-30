@@ -632,7 +632,7 @@ def allClassrooms(request):
         loggedin = request.user.tutor
         activeTerm = Term.objects.get(status='True')
         activeSession = Session.objects.get(status='True')
-        classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
+        classTeacher = ClassTeacher.objects.filter(teacher=loggedin,term=activeTerm,session=activeSession).first()
        
         allClasses = Classroom.objects.filter(class_room=classTeacher.classroom.pk).distinct('class_room')
         
