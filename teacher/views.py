@@ -653,7 +653,7 @@ def myClassroom(request,classroom,term,session):
     
     try:
         loggedin = request.user.tutor
-        stdClass = Term.objects.get(pk=classroom)
+        stdClass = StudentClass.objects.get(pk=classroom)
         termObj = Term.objects.get(pk=term)
         sessObj = Session.objects.get(pk=session)
         classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=termObj,session=sessObj)
