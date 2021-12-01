@@ -1447,11 +1447,11 @@ def exportStudents(request,session,classroom,term):
 
     # select students based on search parameter
     students = Classroom.objects.filter(Q(session=sessObj.pk)  & Q(class_room=classroomObj.pk) & Q(term=termObj.pk)).order_by('student__sur_name')
-        
+    i=1
     for student in students:
-        i=1
+        
         writer.writerow([i,student.student.sur_name+ ' ' +student.student.first_name,student.class_room.class_name,student.student.sex,student.session.session,student.student.full_reg_no])
-        i+=1
+        i= i+1
 
     return response
 
