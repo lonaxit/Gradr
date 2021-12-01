@@ -603,26 +603,26 @@ def enrollStudent(request):
 def deleteEnrollment(request,pk):
 
     loggedin = request.user.tutor.pk
+    student = Classroom.objects.get(pk=pk)
+    # try:
+    # if request.method == 'POST':
 
-    try:
-        if request.method == 'POST':
+    # activeTerm = Term.objects.get(status='True')
+    # activeSession = Session.objects.get(status='True')
+    # classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
+    # if classTeacher:
+    student = Classroom.objects.get(pk=pk)
+    student.delete()
+    messages.success(request, 'Student unenrolled in this class')
+    return redirect('classroom', classroom=student.class_room.pk,term=student.term.pk,session=student.session.pk)
 
-            activeTerm = Term.objects.get(status='True')
-            activeSession = Session.objects.get(status='True')
-            classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=activeTerm,session=activeSession)
-            if classTeacher:
-                student = Classroom.objects.get(pk=pk)
-                student.delete()
-                messages.success(request, 'Student unenrolled in this class')
-                return redirect('classroom')
-
-            else:
-                messages.error(request, 'You are not a class teacher you can not perform this action!')
-                return redirect('classroom')
-        return render(request,'teacher/confirm_delete.html')
-    except Exception as e:
-                messages.error(request,  e)
-                return redirect('classroom')
+        # else:
+        #     messages.error(request, 'You are not a class teacher you can not perform this action!')
+        #     return redirect('classroom')
+    # return render(request,'teacher/confirm_delete.html')
+    # except Exception as e:
+    #             messages.error(request,  e)
+    #             return redirect('classroom', classroom=student.class_room.pk,term=student.term.pk,session=student.session.pk)
 
 
 # my classroom enrollees
