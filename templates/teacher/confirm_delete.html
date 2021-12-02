@@ -35,7 +35,7 @@
                           </div> -->
                           <div class="d-flex justify-content-start">
                             <input class="btn btn-danger mr-2"  type="submit" value="Yes">
-                            <a href="{% url 'classroom' %}">
+                            <a href="{% url 'classroom' student.class_room.pk student.term.pk student.session.pk %}">
                               <div class="btn btn-primary">
                               Cancel
                               </div>
