@@ -32,15 +32,18 @@
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'admission-list' %}">Admission List</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'update-password' %}">Update Password</a>
-                </li>
+
                 <li class="nav-item"><a class="nav-link" href="{% url 'student-by-class' %}">Classroom</a>
                 </li>
-                 <li class="nav-item"><a class="nav-link" href="{% url 'create-students' %}">bulk Students</a>
+                 <!-- <li class="nav-item"><a class="nav-link" href="{% url 'create-students' %}">bulk Students</a>
                 </li>
                    <li class="nav-item"><a class="nav-link" href="{% url 'bulk-exams' %}">bulk exams</a>
-                </li>
+                </li> -->
+
+
               </ul>
+
+
             </li>
 
             <li class="nav-item"><a class="nav-link dropdown-indicator" href="#teachers" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="teachers">Teachers</a>
@@ -49,6 +52,14 @@
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'list-teacher' %}">List</a>
                 </li>
+              </ul>
+            </li>
+
+            <li class="nav-item"><a class="nav-link dropdown-indicator" href="#management" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="management">Accounts</a>
+              <ul class="nav collapse" id="management" data-parent="#user">
+                <li class="nav-item"><a class="nav-link" href="{% url 'update-password' %}">Update Password</a>
+                </li>
+
               </ul>
             </li>
 
@@ -157,7 +168,7 @@
                 </li>
               </ul>
             </li>
-{% comment %} 
+{% comment %}
             <li class="nav-item"><a class="nav-link dropdown-indicator" href="#demographics" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="demographics">Demographics</a>
               <ul class="nav collapse" id="demographics" data-parent="#settings">
                 <li class="nav-item"><a class="nav-link" href="{% url 'subject-perclass' %}">Add Country</a>
@@ -221,6 +232,19 @@
             </div>
           </a>
         </li -->
+
+        <li class="nav-item"><a class="nav-link dropdown-indicator" href="#messages" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="messages">
+            <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-comment-alt"></span></span><span class="nav-link-text">Messaging</span>
+            </div>
+          </a>
+          <ul class="nav collapse" id="messages" data-parent="#navbarVerticalCollapse">
+            <li class="nav-item"><a class="nav-link" href="{% url 'scores-summary' %}">Bulk SMS</a>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'comment-result' %}">Class SMS</a>
+            </li>
+
+          </ul>
+        </li>
       </ul>
 
       <!-- <div class="navbar-vertical-divider">
