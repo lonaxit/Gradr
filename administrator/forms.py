@@ -252,13 +252,13 @@ class StudentProfileForm(forms.ModelForm):
     other_name = forms.CharField(label='Othername',
              max_length=100,required=False,
              widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter other_name','id':'other_name'}))
-    parentsurname = forms.CharField(label='Parent Surname',
-             max_length=100,required=False,
-             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter parent/guardian surname','id':'psurname'}))
+    # parentsurname = forms.CharField(label='Parent Surname',
+    #          max_length=100,required=False,
+    #          widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter parent/guardian surname','id':'psurname'}))
 
-    parentfirstname = forms.CharField(label='Parent Firstname',
-             max_length=100, required=False,
-             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter parent/guardin firstname','id':'pfirstname'}))
+    # parentfirstname = forms.CharField(label='Parent Firstname',
+    #          max_length=100, required=False,
+    #          widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter parent/guardin firstname','id':'pfirstname'}))
     
     email = forms.CharField(label='E-Mail',
                 required=False,
