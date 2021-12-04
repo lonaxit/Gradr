@@ -2086,7 +2086,7 @@ def updateBulkParents(request):
     # loggedin = request.user.tutor.pk
     # myclient = request.user.tutor
 
-    # try:
+    try:
         if request.method=='POST':
 
             myfile = request.FILES['csvFile']
@@ -2102,9 +2102,7 @@ def updateBulkParents(request):
             with transaction.atomic():
                 zeroDigit =str(0)
                 for dbframe in dbframe.itertuples():
-                    studentObj=Student.objects.filter(full_reg_no=dbframe.REGNO)
-                    print(studentObj)
-                    studentObj = studentObj.get()
+                    studentObj=Student.objects.filter(full_reg_no=dbframe.REGNO).first()
                     phone_num = str(dbframe.PHONE)
                     mobilePhone = zeroDigit+phone_num
                     studentObj.phone = mobilePhone
@@ -2114,9 +2112,9 @@ def updateBulkParents(request):
                 return render (request,'admin/updateBulkParents.html')
 
         return render (request,'admin/updateBulkParents.html')
-    # except Exception as e:
-    #     messages.error(request,  e)
-    #     return render (request,'admin/updateBulkParents.html')
+    except Exception as e:
+        messages.error(request,  e)
+        return render (request,'admin/updateBulkParents.html')
 
 
 # bulk assessment
