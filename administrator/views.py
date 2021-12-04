@@ -2102,7 +2102,7 @@ def updateBulkParents(request):
             with transaction.atomic():
                 zeroDigit =str(0)
                 for dbframe in dbframe.itertuples():
-                    studentObj=Student.objects.get(full_reg_no=dbframe.REGNO)
+                    studentObj=Student.objects.get(reg_no=dbframe.REGNO)
                     phone_num = str(dbframe.PHONE)
                     mobilePhone = zeroDigit+phone_num
                     studentObj.phone = mobilePhone
