@@ -76,17 +76,17 @@ urlpatterns = [
   path('comment-result', views.resultFilter, name='comment-result'),
   path('result-analysis', views.resultAnalysis, name='result-analysis'),
   path('approve-result/<str:classroom>/<str:term>/<str:session>', views.approveResult, name='approve-result'),
-  
+
   # institution
    path('logo/<str:pk>', views.logo, name='logo'),
-   
+
   #for migration purposes
   path('process-my-result', views.processMyResult, name='process-my-result'),
   path('process-traits', views.processTraits, name='process-traits'),
    path('process-scores', views.processMyScores, name='process-scores'),
-  path('bulk-create-student', views.importBulkAssessment, name='create-students'),
+  path('bulk-update-parents', views.updateBulkParents, name='update-parents'),
   path('bulk-exams', views.importBulkExams, name='bulk-exams'),
-  
-  
+
+
 
 ]
