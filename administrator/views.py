@@ -2103,6 +2103,8 @@ def updateBulkParents(request):
                 zeroDigit =str(0)
                 for dbframe in dbframe.itertuples():
                     studentObj=Student.objects.filter(full_reg_no=dbframe.REGNO).first()
+                    print(studentObj)
+                    print(studentObj.phone)
                     phone_num = str(dbframe.PHONE)
                     mobilePhone = zeroDigit+phone_num
                     studentObj.phone = mobilePhone
