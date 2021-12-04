@@ -436,7 +436,7 @@ def newStudent(request):
     # context={'form': form}
     if request.method == 'POST':
         try:
-            
+
             # transaction
             with transaction.atomic():
                 form  = StudentRegisterForm(request.POST)
@@ -633,7 +633,7 @@ def listTeacher(request):
 @allowed_users(allowed_roles=['admin'])
 def blockTeacher(request,pk):
     with transaction.atomic():
-        
+
         teacherStaff = Teacher.objects.get(pk=pk)
         user = User.objects.select_for_update().get(pk=teacherStaff.user_id)
         if teacherStaff.user.is_active == True:
@@ -650,7 +650,7 @@ def blockTeacher(request,pk):
             teacher = Teacher.objects.all()
             context = {'teacher':teacher}
             return render(request, "admin/list_teachers.html", context)
-    
+
 
 
 
@@ -867,12 +867,12 @@ def listClassTeacher(request):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def addTerm(request):
-    
+
     form = TermForm()
     context = {}
     if request.method == "POST":
         try:
-            
+
             client = Client.objects.get(user_id=request.user.pk)
             form = TermForm(request.POST)
             if form.is_valid():
@@ -893,12 +893,12 @@ def addTerm(request):
             messages.error(request,  e)
             context={'form':form}
             return render(request, "admin/addTerm.html", context)
-    context={'form':form}    
+    context={'form':form}
     return render(request, "admin/addTerm.html", context)
-        
-        
-    
-    
+
+
+
+
 
 
 # add subject per class
@@ -1053,12 +1053,12 @@ def updateSession(request,pk):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def addClass(request):
-    
+
     form = ClassForm()
     context = {}
     if request.method == 'POST':
         try:
-            
+
             client = Client.objects.get(user_id=request.user.id)
             form = ClassForm(request.POST)
             if form.is_valid():
@@ -1071,7 +1071,7 @@ def addClass(request):
                                  createdby= User.objects.get(pk=request.user.pk)
                                      )
                 obj.save()
-                
+
 
                 messages.success(request, 'Record added')
                 return redirect('add-class')
@@ -1343,8 +1343,8 @@ def admissionList(request):
             # session_id = request.POST['session']
             # class_id = request.POST['classroom']
             # term = Term.objects.get(pk=term_id)
-            
-            
+
+
             # select students based on search parameter
             result = Student.objects.filter(Q(session_admitted=session.pk)  & Q(class_admitted=classroom.pk) & Q(term_admitted=term.pk))
             if not result:
@@ -1379,8 +1379,8 @@ def studentsByClass(request):
             term = Term.objects.get(pk=request.POST['term'])
             session = Session.objects.get(pk=request.POST['session'])
             classroom = StudentClass.objects.get(pk=request.POST['classroom'])
-           
-            
+
+
             # select students based on search parameter
             students = Classroom.objects.filter(Q(session=session.pk)  & Q(class_room=classroom.pk) & Q(term=term.pk)).order_by('student__sur_name')
             if not students:
@@ -1418,7 +1418,7 @@ def exportAdmissionList(request,session,classroom,term):
         writer.writerow(['Name','Class','Sex','Session','RegNumber'])
 
         students = Student.objects.filter(Q(session_admitted=sessObj) & Q(term_admitted=termObj.pk) & Q(class_admitted=classroomObj.pk)).order_by('sur_name')
-         
+
         for student in students:
             writer.writerow([student.sur_name+ ' ' +student.first_name,student.class_admitted.class_name,student.sex,student.session_admitted.session,student.full_reg_no])
 
@@ -1427,7 +1427,7 @@ def exportAdmissionList(request,session,classroom,term):
     except Exception as e:
              messages.error(request,  e)
              return render(request,'admin/filter_admission_list.html')
-         
+
 
 # export students by class
 @allowed_users(allowed_roles=['admin','teacher'])
@@ -1449,7 +1449,7 @@ def exportStudents(request,session,classroom,term):
     students = Classroom.objects.filter(Q(session=sessObj.pk)  & Q(class_room=classroomObj.pk) & Q(term=termObj.pk)).order_by('student__sur_name')
     i=1
     for student in students:
-        
+
         writer.writerow([i,student.student.sur_name+ ' ' +student.student.first_name,student.class_room.class_name,student.student.sex,student.session.session,student.student.full_reg_no])
         i= i+1
 
@@ -1754,44 +1754,44 @@ def processMyResult(request):
 
     logged_inuser = request.user
     clientProfile  = Client.objects.get(user_id=logged_inuser.id)
-    
+
     # form
     form = ScoresProcessForm()
     # try:
-   
+
     context={
        'form':form
         }
 
     if request.method=='POST':
-        
+
         classroom = request.POST['classroom']
         term = request.POST['term']
         session = request.POST['session']
         subject = request.POST['subject']
 
-        
-       
+
+
         # classteacher
         # teacherObj = SubjectTeacher.objects.get(pk=loggedin)
         # classroom = request.POST['studentclass']
 
         # classroom object
         # classroomObj = StudentClass.objects.get(pk=pk)
-        
+
         # subject object
         # subjectObj = Subject.objects.get(pk=subject_id)
 
-        
+
         with transaction.atomic():
-            
+
             scores = Scores.objects.filter(session=session,term=term,studentclass=classroom,subject=subject)
-            
+
             if scores:
-                
+
                 for score in scores:
                     # print(score)
-                        
+
                       # process Scores
                     # processScores(score.subject,score.studentclass,score.term,score.session)
 
@@ -1799,19 +1799,19 @@ def processMyResult(request):
                     processTerminalResult(score)
 
                     # process terminal result
-                    # processAnnualResult(score)    
+                    # processAnnualResult(score)
 
                     # Add auto comment
                     # autoAddComment(score.studentclass,score.session,score.term)
-                        
+
                     # proccess Affective domain
                     # processAffective(score)
-                        
+
                     # process Psychomotor domain
-                    # processPsycho(score)       
+                    # processPsycho(score)
             else:
                 pass
-            
+
             messages.success(request,  'Successful')
             return render(request,'admin/processMyResult.html',context)
 
@@ -1831,43 +1831,43 @@ def processTraits(request):
 
     logged_inuser = request.user
     clientProfile  = Client.objects.get(user_id=logged_inuser.id)
-    
+
     # form
     form = ResultFilterForm()
     # try:
-   
+
     context={
        'form':form
         }
 
     if request.method=='POST':
-        
+
         classroom = request.POST['classroom']
         term = request.POST['term']
         session = request.POST['session']
 
-        
-       
+
+
         # classteacher
         # teacherObj = SubjectTeacher.objects.get(pk=loggedin)
         # classroom = request.POST['studentclass']
 
         # classroom object
         # classroomObj = StudentClass.objects.get(pk=pk)
-        
+
         # subject object
         # subjectObj = Subject.objects.get(pk=subject_id)
 
-        
+
         with transaction.atomic():
-            
+
             scores = Scores.objects.filter(session=session,term=term,studentclass=classroom)
-            
+
             if scores:
-                
+
                 for score in scores:
                     # print(score)
-                        
+
                       # process Scores
                     # processScores(score.subject,score.studentclass,score.term,score.session)
 
@@ -1875,17 +1875,17 @@ def processTraits(request):
                     # processTerminalResult(score)
 
                     # process terminal result
-                    # processAnnualResult(score)    
+                    # processAnnualResult(score)
 
                     # Add auto comment
                     # autoAddComment(score.studentclass,score.session,score.term)
-                        
+
                     # proccess Affective domain
                     processAffective(score)
-                        
+
                     # process Psychomotor domain
                     processPsycho(score)
-                        
+
             else:
                 pass
 
@@ -1904,7 +1904,7 @@ def processMyScores(request):
 
     # logged_inuser = request.user
     # clientProfile  = Client.objects.get(user_id=logged_inuser.id)
-    
+
     # form
     form = ScoresProcessForm()
     try:
@@ -1913,34 +1913,34 @@ def processMyScores(request):
         }
 
         if request.method=='POST':
-        
+
             classroom = request.POST['classroom']
             term = request.POST['term']
             session = request.POST['session']
             subject = request.POST['subject']
 
-        
-        
+
+
         # classteacher
         # teacherObj = SubjectTeacher.objects.get(pk=loggedin)
         # classroom = request.POST['studentclass']
 
         # classroom object
         # classroomObj = StudentClass.objects.get(pk=pk)
-        
+
         # subject object
         # subjectObj = Subject.objects.get(pk=subject_id)
 
-        
+
             with transaction.atomic():
-            
+
                 scores = Scores.objects.filter(session=session,term=term,studentclass=classroom,subject=subject)
-            
+
                 if scores:
-                
+
                     for score in scores:
                         # print(score)
-                        
+
                         # process Scores
                         # subjectObj = Subject.objects.get(pk=score.subject.pk)
                         processScores(score.subject,score.studentclass,score.term,score.session)
@@ -1949,18 +1949,18 @@ def processMyScores(request):
                         # processTerminalResult(score)
 
                         # process terminal result
-                        # processAnnualResult(score)    
+                        # processAnnualResult(score)
 
                     # Add auto comment
                     # autoAddComment(score.studentclass,score.session,score.term)
-                        
-                    
+
+
                     # proccess Affective domain
                     # processAffective(score)
-                        
+
                     # process Psychomotor domain
                     # processPsycho(score)
-                                
+
                 # else:
                 #     pass
 
@@ -1968,24 +1968,24 @@ def processMyScores(request):
             return render(request,'admin/processScores.html',context)
 
         return render(request,'admin/processScores.html',context)
-        
+
     except Exception as e:
         messages.error(request,  e)
         return render(request,'admin/processScores.html',context)
-        
-   
-    
+
+
+
 
 # bulk create students
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def bulkStudent(request):
-    
+
     logged_inuser = request.user
     clientProfile  = Client.objects.get(user_id=logged_inuser.id)
-    
+
     if request.method == 'POST':
-        
+
         myfile = request.FILES['csvFile']
         fs = FileSystemStorage()
         filename = fs.save(myfile.name, myfile)
@@ -1999,22 +1999,22 @@ def bulkStudent(request):
         with transaction.atomic():
 
             for dbframe in dbframe.itertuples():
-                
+
                 # sessObj=Session.objects.get(pk=dbframe.SESSID)
                 # regString= "SKY/STD/"+sessObj.session+"/"+str(dbframe.REGNUM)
-               
+
                 # comment out
-                
+
                 obj = User.objects.create(
-                    username=dbframe.SURNAME, 
+                    username=dbframe.SURNAME,
                     password=make_password(dbframe.PWD),
-                    email=dbframe.EMAIL,           
-                    )     
+                    email=dbframe.EMAIL,
+                    )
                 obj.save()
-            
+
                 group = Group.objects.get(name='teacher')
                 obj.groups.add(group)
-                
+
                 # attach staff profile
                 TeacherObj = Teacher.objects.create(
                   user = obj,
@@ -2058,20 +2058,19 @@ def bulkStudent(request):
 
 
 # update user password
-# bulk create students
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def updatePassword(request):
-    
+
     if request.method == 'POST':
-        
+
         with transaction.atomic():
             username = request.POST['username']
             password = request.POST['password']
-            
+
             user = User.objects.get(username=username)
             # print(user)
-            user.password = make_password(password)  
+            user.password = make_password(password)
             user.save()
 
             messages.success(request, 'Update successful')
@@ -2079,7 +2078,43 @@ def updatePassword(request):
 
     return render (request,'admin/updatePassword.html')
 
+# TODO: REMOVE AFTER OPERATION
+# Update bulk update parents
+@allowed_users(allowed_roles=['admin'])
+def updateBulkParents(request):
 
+    # loggedin = request.user.tutor.pk
+    # myclient = request.user.tutor
+
+    try:
+        if request.method=='POST':
+
+            myfile = request.FILES['csvFile']
+            fs = FileSystemStorage()
+            filename = fs.save(myfile.name, myfile)
+            uploaded_file_url = fs.url(filename)
+            excel_file = uploaded_file_url
+            # print(excel_file)
+            empexceldata = pd.read_csv("media/"+filename,encoding='utf-8')
+            # print(type(empexceldata))
+            dbframe = empexceldata
+
+            with transaction.atomic():
+                zeroDigit =str(0)
+                for dbframe in dbframe.itertuples():
+                    studentObj=Student.objects.get(full_reg_no=dbframe.REGNO)
+                    phone_num = str(dbframe.PHONE)
+                    mobilePhone = zeroDigit+phone_num
+                    studentObj.phone = mobilePhone
+                    studentObj.save()
+                    
+                messages.success(request,  'Successful')
+                return render (request,'admin/updateBulkParents.html')
+
+        return render (request,'admin/updateBulkParents.html')
+    except Exception as e:
+        messages.error(request,  e)
+        return render (request,'admin/updateBulkParents.html')
 
 
 # bulk assessment
@@ -2090,7 +2125,7 @@ def importBulkAssessment(request):
     # myclient = request.user.tutor
 
     try:
-   
+
 
         if request.method=='POST':
 
@@ -2135,9 +2170,9 @@ def importBulkAssessment(request):
                             client=  Client.objects.get(user_id=request.user.pk),
                             subject=Subject.objects.get(pk=dbframe.SUBJECTID),
                         )
-                    
+
                     obj.save()
-                    
+
                        # process Scores
                     # processScores(subjectObj,classroomObj,termObj,sessionObj)
 
@@ -2145,20 +2180,20 @@ def importBulkAssessment(request):
                     # processTerminalResult(obj)
 
                         # process terminal result
-                    # processAnnualResult(obj)    
+                    # processAnnualResult(obj)
 
                         # Add auto comment
                     # autoAddComment(classroomObj,sessionObj,termObj)
-                        
+
                     # proccess Affective domain
                     # processAffective(obj)
-                        
+
                     # process Psychomotor domain
                     # processPsycho(obj)
-                    
+
                 messages.success(request,  'Successful')
                 return render (request,'admin/create_bulk_users.html')
-            
+
         return render (request,'admin/create_bulk_users.html')
     except Exception as e:
         messages.error(request,  e)
@@ -2173,7 +2208,7 @@ def importBulkExams(request):
     # loggedin = request.user.tutor.pk
     # myclient = request.user.tutor
 
- 
+
     try:
         if request.method=='POST':
 
@@ -2204,26 +2239,26 @@ def importBulkExams(request):
 
                 for dbframe in dbframe.itertuples():
                     studentObj=Student.objects.get(pk=dbframe.STUDENTID)
-                    
+
                     # classroom object
                     classroomObj = StudentClass.objects.get(pk=dbframe.CLASSID)
                     termObj = Term.objects.get(pk=dbframe.TERMID)
                     sessionObj = Session.objects.get(pk=dbframe.SESSID)
-                    
+
                     # subject object
                     subjectObj = Subject.objects.get(pk=dbframe.SUBJECTID)
                     # check if records of a student exist in that subject, class,term,session
                     scoresExist = Scores.objects.filter(session=sessionObj.pk,term=termObj.pk,subject=subjectObj.pk,studentclass=classroomObj.pk,student=studentObj.pk).exists()
-                    
+
                     if scoresExist:
-                        
+
                         obj = Scores.objects.get(session=sessionObj.pk,term=termObj.pk,subject=subjectObj.pk,studentclass=classroomObj.pk,student=studentObj.pk)
-                        
+
                         obj.examscore = dbframe.EXAM
                         obj.subjecttotal= obj.totalca + dbframe.EXAM
-                        obj.save() 
+                        obj.save()
                     else:
-                        
+
                         # create scores using the exam record
                         newScore = Scores.objects.create(
                         firstscore=0.0,
@@ -2249,22 +2284,22 @@ def importBulkExams(request):
                     # processTerminalResult(obj)
 
                         # process terminal result
-                    # processAnnualResult(obj)    
+                    # processAnnualResult(obj)
 
                         # Add auto comment
                     # autoAddComment(classroomObj,sessionObj,termObj)
-                        
+
                     # proccess Affective domain
                     # processAffective(obj)
-                        
+
                     # process Psychomotor domain
                     # processPsycho(obj)
-                    
+
                 messages.success(request,  'Successful')
                 return render (request,'admin/create_bulk_users.html')
 
         return render (request,'admin/create_bulk_users.html')
-    
+
     except Exception as e:
         messages.error(request,  e)
         return render (request,'admin/create_bulk_users.html')
