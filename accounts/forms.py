@@ -120,6 +120,8 @@ class StaffRegisterForm(UserCreationForm):
         model = User
         fields =['username','email','password1','password2']
 
+# NEW FORMS NOT WORKED ON IT YET
+
 # user update form
 
 class UserUpdateForm(forms.ModelForm):
