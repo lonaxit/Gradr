@@ -2100,14 +2100,12 @@ def updateBulkParents(request):
             dbframe = empexceldata
 
             with transaction.atomic():
-                zeroDigit =str(0)
+                # zeroDigit = str(0)
                 for dbframe in dbframe.itertuples():
                     studentObj=Student.objects.filter(full_reg_no=dbframe.REGNO).first()
-                    print(studentObj)
-                    print(studentObj.phone)
-                    phone_num = str(dbframe.PHONE)
-                    mobilePhone = zeroDigit+phone_num
-                    studentObj.phone = mobilePhone
+                    # phone_num = str(dbframe.PHONE)
+                    # mobilePhone = zeroDigit+phone_num
+                    studentObj.phone = dbframe.PHONE
                     studentObj.save()
                     
                 messages.success(request,  'Successful')
