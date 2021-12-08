@@ -2167,7 +2167,7 @@ def updateBulkParents(request):
                     
                     GuardianObj = Guardian.objects.create(
                     student = studentObj,
-               
+                    phone= dbframe.PHONE,
                     client =clientProfile,
                     createdby=User.objects.get(pk=request.user.pk)
                     )
