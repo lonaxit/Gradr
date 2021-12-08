@@ -33,6 +33,8 @@ urlpatterns = [
   path('define-prefix', views.definePrefix, name='define-prefix'),
   path('list-prefix', views.listPrefix, name='list-prefix'),
   path('update-prefix/<str:pk>', views.updatePrefix, name='update-prefix'),
+  
+  path('update-student-profilephoto/<str:pk>/<str:session>/<str:term>/<str:classroom>', views.updateStudentPhoto, name='student-profile-photo'),
 
 
   # path('country-json', views.get_json_country_data, name='country-json'),
