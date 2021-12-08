@@ -264,10 +264,10 @@ class StudentProfileForm(forms.ModelForm):
                 required=False,
                  max_length=100,
                  widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter optional email','id':'email'}))
-    phone = forms.CharField(label='SMS Phone Number',
-                 required=False,
-                 max_length=100,
-                 widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter optional phone number','id':'phone'}))
+    # phone = forms.CharField(label='SMS Phone Number',
+    #              required=False,
+    #              max_length=100,
+    #              widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter optional phone number','id':'phone'}))
     dob = forms.DateField(
         widget=forms.DateInput(
         # format='%Y-%m-%d',
@@ -334,7 +334,7 @@ class StudentProfileForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = '__all__'
-        exclude = ['client','user','reg_no','full_reg_no','profile_image','createdby']
+        exclude = ['client','user','phone','reg_no','full_reg_no','profile_image','createdby']
 
 
 # teacher profile form
@@ -423,44 +423,29 @@ class TeacherProfileForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['client','user','createdby']
 
-# Parent/Guardian form
 
+
+# Parent/Guardian form
 class GuardianProfileForm(forms.ModelForm):
   
-    GENDER = (
-            ('M','Male'),
-            ('F','Female'),
-    )
+   
 
-    surname = forms.CharField(label='Surname',
-             max_length=100,required=True,
+    surname = forms.CharField(label='Parent Surname',
+             max_length=100,required=False,
              widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter surname','id':'sur_name'}))
 
-    firstname = forms.CharField(label='Firstname',
-             max_length=100, required=True,
+    firstname = forms.CharField(label='Parent Firstname',
+             max_length=100, required=False,
              widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter firstname','id':'first_name'}))
-    othername = forms.CharField(label='Othername',
+    othername = forms.CharField(label='Parent Othername',
              max_length=100,required=False,
              widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter other_name','id':'other_name'}))
-    email = forms.CharField(label='E-Mail',
-                required=False,
-                 max_length=100,
-                 widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter optional email','id':'email'}))
-    phone = forms.CharField(label='Phone Number',
-                 required=True,
+   
+    phone = forms.CharField(label='SMS Mobile',
+                 required=False,
                  max_length=100,
                  widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Phone number','id':'phone'}))  
-    sex = forms.ChoiceField(
-              label='Choose Sex',
-              choices=GENDER,
-              widget=forms.Select(attrs={'class': 'form-control','id':'city'}))
-    address = forms.CharField(label='Address',
-             max_length=300,required=False,
-             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter address','id':'address'}))
-    occupation = forms.CharField(label='Occupation',
-             max_length=300,required=False,
-             widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'Enter occupation','id':'occupation'}))
-
+   
     class Meta:
         model = Guardian
         fields = '__all__'
