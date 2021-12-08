@@ -457,6 +457,14 @@ def newStudent(request):
                     createdby=User.objects.get(pk=logged_inuser.pk)
                     )
                     StudObj.save()
+                    
+                    # attach student to Guardian
+                    GuardianObj = Guardian.objects.create(
+                    student = StudObj,
+                    client = clientProfile,
+                    createdby=User.objects.get(pk=logged_inuser.pk)
+                    )
+                    GuardianObj.save()
 
                 messages.success(request, 'Student account creation successful for ' + username + ',  please update the profile')
                 return redirect('update-student',pk=StudObj.pk)
@@ -474,15 +482,22 @@ def newStudent(request):
 def updateStudentProfile(request,pk):
     user = request.user
     student  = Student.objects.get(pk=pk)
+    student_guardian  = Guardian.objects.get(student=student.pk)
     ClientProfile  = Client.objects.get(user_id=user.id)
 
     form = StudentProfileForm(instance=student)
-    # form = StudentProfileForm()
-    context = {'form':form}
+    p_form = GuardianProfileForm()
+    context = {
+               'form':form,
+               'p_form':p_form
+               }
     if request.method == 'POST':
-        form = StudentProfileForm(request.POST,request.FILES, instance=student)
-        if form.is_valid():
-            form.save()
+        # form = StudentProfileForm(request.POST,request.FILES, instance=student)
+        form = StudentProfileForm(request.POST, instance=student)
+        p_form = GuardianProfileForm(request.POST,instance=student_guardian)
+        if form.is_valid() and p_form.is_valid():
+            form.save() 
+            p_form.save()
 
             messages.success(request, 'Student profile  modification/creation was  successful')
             return redirect('view-student',pk=student.pk)
@@ -493,6 +508,7 @@ def updateStudentProfile(request,pk):
     return render(request, 'admin/updateStudentProfile.html',context)
 
 # Change student photo
+# to resize photo first overide the save method of the student model
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def studentPhoto(request,pk):
@@ -511,6 +527,43 @@ def studentPhoto(request,pk):
         else:
              messages.success(request, 'Photo update failed')
              return redirect('student-photo',pk=pk)
+
+    return render(request, 'admin/changeProfilePicture.html',context)
+
+
+# update student profile photo from their class list
+# Return to class list after upload
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updateStudentPhoto(request,pk,session,term,classroom):
+    user = request.user
+    
+    student  = Student.objects.get(pk=pk)
+    form = StudentImageUpdateForm(instance=student)
+    
+    context = {'form':form}
+    if request.method == 'POST':
+        form = StudentImageUpdateForm(request.POST,request.FILES,instance=student)
+        if form.is_valid():
+            form.save()
+            
+            termObj = Term.objects.get(pk=term)
+            sessionObj = Session.objects.get(pk=session)
+            classroomObj = StudentClass.objects.get(pk=classroom)
+            
+            students = Classroom.objects.filter(Q(session=sessionObj.pk)  & Q(class_room=classroomObj.pk) & Q(term=termObj.pk)).order_by('student__sur_name')
+            context={
+                'form':form,
+                'students':students,
+                'session':session,
+                'term':term,
+                'classroom':classroom
+            }
+            messages.success(request, 'Photo changed')
+            return render(request,'admin/student_by_class.html',context)
+        else:
+             messages.success(request, 'Photo update failed')
+             return redirect('student-prfile-photo',pk=pk,session=session,term=term,classroom=classroom)
 
     return render(request, 'admin/changeProfilePicture.html',context)
 
@@ -1443,14 +1496,14 @@ def exportStudents(request,session,classroom,term):
     response['Content-Disposition'] = 'attachment; filename=Admission_List_'+classroomObj.class_name+'_'+termObj.term+'_'+sessObj.session+'.csv'
     writer = csv.writer(response)
 
-    writer.writerow(['SNO','NAME','CLASS','SEX','SESSION','REGNO'])
+    writer.writerow(['SNO','NAME','CLASS','SEX','SESSION','REGNO','ID'])
 
     # select students based on search parameter
     students = Classroom.objects.filter(Q(session=sessObj.pk)  & Q(class_room=classroomObj.pk) & Q(term=termObj.pk)).order_by('student__sur_name')
     i=1
     for student in students:
 
-        writer.writerow([i,student.student.sur_name+ ' ' +student.student.first_name,student.class_room.class_name,student.student.sex,student.session.session,student.student.full_reg_no])
+        writer.writerow([i,student.student.sur_name+ ' ' +student.student.first_name,student.class_room.class_name,student.student.sex,student.session.session,student.student.full_reg_no,student.student.pk])
         i= i+1
 
     return response
@@ -2083,8 +2136,9 @@ def updatePassword(request):
 @allowed_users(allowed_roles=['admin'])
 def updateBulkParents(request):
 
-    # loggedin = request.user.tutor.pk
-    # myclient = request.user.tutor
+
+    logged_inuser = request.user
+    clientProfile  = Client.objects.get(user_id=logged_inuser.id)
 
     try:
         if request.method=='POST':
@@ -2098,15 +2152,26 @@ def updateBulkParents(request):
             empexceldata = pd.read_csv("media/"+filename,encoding='utf-8')
             # print(type(empexceldata))
             dbframe = empexceldata
+            client =clientProfile,
+            createdby=User.objects.get(pk=request.user.pk)
 
             with transaction.atomic():
                 # zeroDigit = str(0)
                 for dbframe in dbframe.itertuples():
-                    studentObj=Student.objects.filter(full_reg_no=dbframe.REGNO).first()
-                    # phone_num = str(dbframe.PHONE)
-                    # mobilePhone = zeroDigit+phone_num
-                    studentObj.phone = dbframe.PHONE
-                    studentObj.save()
+                    studentObj=Student.objects.get(pk=dbframe.ID)
+                    # print(studentObj)
+                    # # phone_num = str(dbframe.PHONE)
+                    # # mobilePhone = zeroDigit+phone_num
+                    # studentObj.phone = dbframe.PHONE
+                    # studentObj.save()
+                    
+                    GuardianObj = Guardian.objects.create(
+                    student = studentObj,
+               
+                    client =clientProfile,
+                    createdby=User.objects.get(pk=request.user.pk)
+                    )
+                    GuardianObj.save()
                     
                 messages.success(request,  'Successful')
                 return render (request,'admin/updateBulkParents.html')
