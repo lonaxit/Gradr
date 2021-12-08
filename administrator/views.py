@@ -2156,18 +2156,18 @@ def updateBulkParents(request):
             createdby=User.objects.get(pk=request.user.pk)
 
             with transaction.atomic():
-                # zeroDigit = str(0)
+                zeroDigit = str(0)
                 for dbframe in dbframe.itertuples():
                     studentObj=Student.objects.get(pk=dbframe.ID)
                     # print(studentObj)
-                    # # phone_num = str(dbframe.PHONE)
-                    # # mobilePhone = zeroDigit+phone_num
+                    phone_num = str(dbframe.PHONE)
+                    mobilePhone = zeroDigit+phone_num
                     # studentObj.phone = dbframe.PHONE
                     # studentObj.save()
                     
                     GuardianObj = Guardian.objects.create(
                     student = studentObj,
-                    phone= dbframe.PHONE,
+                    phone= mobilePhone,
                     client =clientProfile,
                     createdby=User.objects.get(pk=request.user.pk)
                     )
