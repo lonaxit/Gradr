@@ -1,6 +1,8 @@
 # from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth.models import User
+# # import image from Pillow
+# from PIL import Image
 
 # class User(AbstractUser):
 #     is_teacher = models.BooleanField(default=False)
@@ -107,9 +109,20 @@ class Student(models.Model):
     client = models.ForeignKey(Client,on_delete=models.DO_NOTHING,null=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True)
     date_modified = models.DateTimeField(auto_now=True)
-
+    # overide the save method of the Student model to rezie pictures
     def __str__(self):
         return self.sur_name
+    # def save(self,*args,**kwargs):
+    #     super().save(*args,**kwargs)
+    #     img = Image.open(self.profile_image.path)
+    #     if img.height > 300 or img.width > 300:
+    #         output_size =(300,300)
+    #         img.thumbnail(output_size)
+    #         img.save(self.profile_image.path)
+        
+    
+   
+    
 
 # class Customer(models.Model):
 #     #user = models.OneToOneField(User,on_delete=models.CASCADE,primary_key=True)
