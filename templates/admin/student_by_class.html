@@ -94,7 +94,7 @@
                 <th class="sort">Session</th>
                 <th class="sort">Sex</th>
                 <th class="sort">Reg Number</th>
-                <th class="sort">Status</th>
+                {% comment %} <th class="sort">Status</th> {% endcomment %}
                 <!-- <th class="sort">Age</th> -->
                 <th>Action</th>
               </tr>
@@ -108,7 +108,7 @@
                 <td>{{student.session.session}}</td>
                 <td>{{student.student.sex}}</td>
                 <td>{{student.student.full_reg_no}}</td>
-                <td>{{student.student.user.is_active}}</td>
+                {% comment %} <td>{{student.student.user.is_active}}</td> {% endcomment %}
                 <!-- <td>61</td> -->
 
                 <td class="align-middle white-space-nowrap">
@@ -134,7 +134,7 @@
                 <th class="sort">Session</th>
                 <th class="sort">Sex</th>
                 <th class="sort">Reg Number</th>
-                <th class="sort">Status</th>
+                {% comment %} <th class="sort">Status</th> {% endcomment %}
                 <th>Action</th>
 
               </tr>
