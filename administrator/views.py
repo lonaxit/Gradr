@@ -540,7 +540,7 @@ def updateStudentPhoto(request,pk,session,term,classroom):
     
     student  = Student.objects.get(pk=pk)
     form = StudentImageUpdateForm(instance=student)
-    
+    pform = AdmissionListForm()
     context = {'form':form}
     if request.method == 'POST':
         form = StudentImageUpdateForm(request.POST,request.FILES,instance=student)
@@ -553,12 +553,12 @@ def updateStudentPhoto(request,pk,session,term,classroom):
             
             students = Classroom.objects.filter(Q(session=sessionObj.pk)  & Q(class_room=classroomObj.pk) & Q(term=termObj.pk)).order_by('student__sur_name')
             context={
-                'form':form,
+                'form':pform,
                 'students':students,
-                'session':session,
-                'term':term,
-                'classroom':classroom
-            }
+                'session':sessionObj,
+                'term':termObj,
+                'classroom':classroomObj
+                 }
             messages.success(request, 'Photo changed')
             return render(request,'admin/student_by_class.html',context)
         else:
