@@ -797,7 +797,7 @@ def exportSheet(request,classroom,subject):
 
             # ordering using a different table, student field is on classroom table which is related to the student table and sur_name is on the student table
         for student in students:
-            writer.writerow([student.student.pk,student.student.sur_name,student.class_room.class_name,subject.subject,0,0,0,0,0,0])
+            writer.writerow([student.student.pk,student.student.sur_name + "  " + student.student.first_name,student.class_room.class_name,subject.subject,0,0,0,0,0,0])
 
         return response
 
@@ -850,7 +850,7 @@ def importAssessmentSheet(request):
             for dbframe in dbframe.itertuples():
                 studentObj=Student.objects.get(pk=dbframe.StudentID)
                 # check if records of a student exist in that subject, class,term,session
-                scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk)
+                scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk).exists()
                 if scoresExist:
                     pass
                 else:
@@ -860,9 +860,12 @@ def importAssessmentSheet(request):
                         firstscore=dbframe.FirstCA,
                         secondscore=dbframe.SecondCA,
                         thirdscore=dbframe.ThirdCA,
-                        totalca=dbframe.CATotal,
+                        totalca=dbframe.FirstCA + dbframe.SecondCA + dbframe.ThirdCA,
+                        # totalca=dbframe.CATotal,
                         examscore=dbframe.Exam,
-                        subjecttotal=dbframe.Total,
+                        subjecttotal=dbframe.Exam + dbframe.FirstCA + dbframe.SecondCA + dbframe.ThirdCA,
+                        # subjecttotal=dbframe.Total,
+                        
                         session=activeSession,
                         term=activeTerm,
                         student=studentObj,
@@ -871,28 +874,26 @@ def importAssessmentSheet(request):
                         client= myclient.client,
                         subject=subjectObj,
                     )
-                    # DOB=fromdate_time_obj,
-                    # qualification=dbframe.qualification)
-                    # print(type(obj))
+                    
                     obj.save()
 
-                    # process Scores
-                    processScores(subjectObj,classroomObj)
+            # process Scores after creating the scores in the for loop
+            processScores(subjectObj,classroomObj,activeTerm,activeSession)
 
-                    # process terminal result
-                    # processTerminalResult(obj)
+            # process terminal result
+            # processTerminalResult(obj)
 
-                    # process terminal result
-                    # processAnnualResult(obj)
+            # process terminal result
+            # processAnnualResult(obj)
 
-                    # proccess Affective domain
-                    # processAffective(obj)
+            # proccess Affective domain
+            # processAffective(obj)
 
-                    # process Psychomotor domain
-                    # processPsycho(obj)
+            # process Psychomotor domain
+            # processPsycho(obj)
 
-                    # Add auto comment
-                    # autoAddComment(classroomObj,activeSession,activeTerm)
+            # Add auto comment
+            # autoAddComment(classroomObj,activeSession,activeTerm)
             messages.success(request,  'Successful')
             return render(request,'teacher/import_assessment_sheet.html',context)
 
@@ -912,6 +913,8 @@ def processResult(request):
     loggedin = request.user.tutor.pk
     myclient = request.user.tutor
 
+# TODO Check if logged in user is not class teacher, then redirect with a message
+
     # logged_inuser = request.user
     # clientProfile  = Client.objects.get(user_id=logged_inuser.id)
 
@@ -930,54 +933,47 @@ def processResult(request):
         session = request.POST['session']
 
 
-
-        # classteacher
-        # teacherObj = SubjectTeacher.objects.get(pk=loggedin)
-        # classroom = request.POST['studentclass']
-
         # classroom object
-        # classroomObj = StudentClass.objects.get(pk=pk)
+        classroomObj = StudentClass.objects.get(pk=classroom)
 
-        # subject object
-        # subjectObj = Subject.objects.get(pk=subject_id)
+        # term object
+        termObj = Term.objects.get(pk=term)
 
+        # session object
+        sessObj = Session.objects.get(pk=session)
 
         with transaction.atomic():
 
-            scores = Scores.objects.filter(session=session,term=term,studentclass=classroom)
+            # students = Scores.objects.filter(session=session,term=term,studentclass=classroom).distinct('student')
+            
+            # print(students)
 
-            if scores:
+            # if students:
 
-                for score in scores:
-                    # print(score)
+            # for student in students:
+                
+                
+            # process terminal result
+            processTerminalResult(classroomObj,termObj,sessObj)
 
-                      # process Scores
-                    # processScores(score.subject,score.studentclass,score.term,score.session)
+            # process terminal result
+            # processAnnualResult(score)
 
-                    # process terminal result
-                    processTerminalResult(score)
+            # Add auto comment
+            # autoAddComment(score.studentclass,score.session,score.term)
 
-                    # process terminal result
-                    processAnnualResult(score)
+            # proccess Affective domain
+            # processAffective(score)
 
-                    # Add auto comment
-                    # autoAddComment(score.studentclass,score.session,score.term)
+            # process Psychomotor domain
+            # processPsycho(score)
 
-                    # # proccess Affective domain
-                    # processAffective(score)
-
-                    # # process Psychomotor domain
-                    # processPsycho(score)
-
-            else:
-                pass
-
-
-
+    # else:
+        # pass
             messages.success(request,  'Successful')
-            return render(request,'admin/processMyResult.html',context)
+            return render(request,'teacher/processClassResult.html',context)
 
-    return render(request,'admin/processMyResult.html',context)
+    return render(request,'teacher/processClassResult.html',context)
 
 
 # process traits and comments
@@ -1408,20 +1404,13 @@ def get_subjects(request,pk):
 
 # find subject and class average
 def subjectAverage(subj,classroom,termObj,sessionObj):
-    # scores = Scores.objects.get(pk=id)
-    # get sctive term and session
-
-    # activeTerm = Term.objects.get(status='True')
-    # activeSession = Session.objects.get(status='True')
-
+    
     # get scores based on subject
     # scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).distinct('student').aggregate(Sum('subjAverage'))
 
     scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=termObj,session=sessionObj).aggregate(scoresav=Avg('subjecttotal'))
 
     av = scores['scoresav']
-
-    # scoresAv = scores.aggregate(Sum('subjAverage'))
 
     return av
 
@@ -1456,7 +1445,6 @@ def terminalAverage(studentid,classroom,term,session):
 #  subject positioning
 def subjectPosition(subject, classroom,termObj,sessionObj):
 
-
     # activeTerm = Term.objects.get(status='True')
     # activeSession = Session.objects.get(status='True')
 
@@ -1482,7 +1470,6 @@ def subjectPosition(subject, classroom,termObj,sessionObj):
             # })
             previous_score = score
             counter += 1
-
 
         else:
 
@@ -1693,8 +1680,7 @@ def scoresRating(subject,classroom,termObj,sessionObj):
     # activeTerm = Term.objects.get(status='True')
     # activeSession = Session.objects.get(status='True')
 
-    # minMax = minMaxScores(subject,classroom,termObj,sessionObj)
-
+    
     # TODO: Use select for update because of transaction
     scores = Scores.objects.filter(subject=subject,studentclass=classroom,term=termObj,session=sessionObj)
 
@@ -1703,8 +1689,6 @@ def scoresRating(subject,classroom,termObj,sessionObj):
         if scoresObj.subjecttotal <= 39:
             scoresObj.subjectgrade = 'F'
             scoresObj.subjectrating = 'Failed'
-            # scoresObj.highest_inclass = minMax['max_scores']
-            # scoresObj.lowest_inclass = minMax['min_scores']
             scoresObj.save()
         elif scoresObj.subjecttotal >= 40 and scoresObj.subjecttotal <= 44.9:
             scoresObj.subjectgrade = 'E'
@@ -1735,15 +1719,7 @@ def scoresRating(subject,classroom,termObj,sessionObj):
 
 # Minimum and Maximum scores
 def minMaxScores(subject,classroom,termObj,sessionObj):
-
-    # min_max = []
-
-    # activeTerm = Term.objects.get(status='True')
-    # activeSession = Session.objects.get(status='True')
-
-    # get scores based on subject
-    # scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).distinct('student').aggregate(Sum('subjAverage'))
-
+ 
     min_max = Scores.objects.filter(subject=subject,studentclass=classroom,term=termObj,session=sessionObj).aggregate(min_scores=Min('subjecttotal'),max_scores=Max('subjecttotal'))
 
     scores = Scores.objects.filter(subject=subject,studentclass=classroom,term=termObj,session=sessionObj).update(highest_inclass=min_max['max_scores'],lowest_inclass=min_max['min_scores'])
@@ -1754,10 +1730,7 @@ def minMaxScores(subject,classroom,termObj,sessionObj):
 
 # update subject average
 def processScores(subjectObj,classroomObj,termObj,sessionObj):
-    # pass
-    # get active term and session
-    # activeTerm = Term.objects.get(status='True')
-    # activeSession = Session.objects.get(status='True')
+   
 
     subjavg = subjectAverage(subjectObj,classroomObj,termObj,sessionObj)
 
@@ -1775,55 +1748,71 @@ def processScores(subjectObj,classroomObj,termObj,sessionObj):
 
 
 # Process terminal result
-def processTerminalResult(scoresObj):
+def processTerminalResult(classObj,termObj,sessionObj):
+    
+    # find distint students in the scores table
+    students = Scores.objects.filter(session=sessionObj,term=termObj,studentclass=classObj).distinct('student')
+    
+    # filter scores based on session, term and class
+    scores = Scores.objects.filter(studentclass=classObj,term=termObj,session=sessionObj)
+    
+    # filter result based on session,class and term
+    result = Result.objects.filter(studentclass=classObj, term=termObj,session=sessionObj)
+    
+    for student in students:
+        
+        
+        scores = Scores.objects.filter(student=student.student).aggregate(subject_total=Sum('subjecttotal'))
+        
+        # Find record in the result table
+        # result = Result.objects.filter(student=student.student).exists()
 
 
-    # Find record in the result table
-    result = Result.objects.filter(student=scoresObj.student, studentclass=scoresObj.studentclass, term=scoresObj.term,session=scoresObj.session)
+        # print(scores['subject_total'])
 
-    scores = Scores.objects.filter(student=scoresObj.student,studentclass=scoresObj.studentclass,term=scoresObj.term,session=scoresObj.session).aggregate(subject_total=Sum('subjecttotal'))
+        # check for existence of record
+        if Result.objects.filter(student=student.student).exists():
+            # update the record
+            result.filter(student=student.student).update(termtotal=scores['subject_total'])
+            
+            # result.update(termtotal=scores['subject_total'])
 
-    # print(scores['subject_total'])
+            # update terminal average
+            # terminalAverage(scoresObj.student,scoresObj.studentclass,scoresObj.term.pk,scoresObj.session.pk)
+            # update  term position
+            # terminalPosition(scoresObj.studentclass,scoresObj.term,scoresObj.session)
+        else:
+            # get class teacher
+            # TODO: Add class teacher when creating comments
+            # old code
+            # class_teacher = ClassTeacher.objects.get(classroom=scoresObj.studentclass,term=scoresObj.term,session=scoresObj.session)
+            
+            class_teacher = ClassTeacher.objects.get(classroom=classObj,term=termObj,session=sessionObj)
 
-    # check for existence of record
-    if result:
-        # update the record
-        result.update(termtotal=scores['subject_total'])
+            # FIND CLASS TEACHER FOR MIGRATION PURPOSES ONLY, DELETE AFTERWARDS
 
-        # update terminal average
-        terminalAverage(scoresObj.student,scoresObj.studentclass,scoresObj.term.pk,scoresObj.session.pk)
-        # update  term position
-        terminalPosition(scoresObj.studentclass,scoresObj.term,scoresObj.session)
-    else:
-        # get class teacher
-        # TODO: Add class teacher when creating comments
+            # class_teacher = ClassTeacher.objects.get(pk=1)
+        
+            # for i in class_teacher:
+            #     teacher = i.teacher
 
-        # class_teacher = ClassTeacher.objects.get(classroom=scoresObj.studentclass,term=scoresObj.term,session=scoresObj.session)
-
-        # FIND CLASS TEACHER FOR MIGRATION PURPOSES ONLY, DELETE AFTERWARDS
-
-        class_teacher = ClassTeacher.objects.get(pk=1)
-        # for i in class_teacher:
-        #     teacher = i.teacher
-
-        # create a new record
-        resultObj = Result.objects.create(
+            # create a new record
+            resultObj = Result.objects.create(
                                  termtotal = scores['subject_total'],
                                  classteacher = class_teacher,
-                                #  classteacher = ClassTeacher.objects.get(pk=teacher.id),
-                                 session = scoresObj.session,
-                                 studentclass = scoresObj.studentclass,
-                                 term = scoresObj.term,
-                                 client = scoresObj.client,
-                                 student = scoresObj.student
+                                 session = sessionObj,
+                                 studentclass = classObj,
+                                 term = termObj,
+                                 client = student.student.client,
+                                 student = student.student
                                      )
-        resultObj.save()
+            resultObj.save()
 
         # update term average
-        terminalAverage(scoresObj.student,scoresObj.studentclass,scoresObj.term.pk,scoresObj.session.pk)
+        # terminalAverage(scoresObj.student,scoresObj.studentclass,scoresObj.term.pk,scoresObj.session.pk)
 
         # update  term position
-        terminalPosition(scoresObj.studentclass,scoresObj.term,scoresObj.session)
+        # terminalPosition(scoresObj.studentclass,scoresObj.term,scoresObj.session)
 
 
 
