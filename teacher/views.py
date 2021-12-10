@@ -1416,27 +1416,24 @@ def subjectAverage(subj,classroom,termObj,sessionObj):
 
 
 # terminal average
-def terminalAverage(studentid,classroom,term,session):
+def terminalAverage(classroom,term,session):
 
-    # activeTerm = Term.objects.get(status='True')
-    # activeSession = Session.objects.get(status='True')
-
-    termObj = Term.objects.get(pk=term)
-    sessionObj = Session.objects.get(pk=session)
-
-    # get scores based on subject
-    # scores = Scores.objects.filter(subject=subj,studentclass=classroom,term=activeTerm,session=activeSession).distinct('student').aggregate(Sum('subjAverage'))
-
-    scores = Scores.objects.filter(student=studentid,studentclass=classroom,term=termObj,session=sessionObj).aggregate(term_sum=Sum('subjecttotal'))
-
-    term_sum = scores['term_sum']
+    resultList = Result.objects.filter(studentclass=classroom,term=term,session=session)
     # get subject per class
     no_subj_per_class = SubjectPerClass.objects.get(sch_class=classroom)
 
-    class_av = term_sum/no_subj_per_class.no_subject
+    # termObj = Term.objects.get(pk=term)
 
-    # TODO MOVE CODE TO UPDATE TERMINAL AVERAGE HERE
-    result = Result.objects.filter(student=studentid,studentclass=classroom,term=termObj,session=sessionObj).update(termaverage=class_av)
+    for result in resultList:
+
+    # scores = Scores.objects.filter(student=studentid,studentclass=classroom,term=termObj,session=sessionObj).aggregate(term_sum=Sum('subjecttotal'))
+
+    # term_sum = scores['term_sum']
+    
+
+        class_av = result.termtotal/no_subj_per_class.no_subject
+
+        result = resultList.filter(student=result.student.pk).update(termaverage=class_av)
 
 
     # return av
@@ -1514,9 +1511,6 @@ def subjectPosition(subject, classroom,termObj,sessionObj):
 # assign terminal result position
 def terminalPosition(classroom,term,session):
 
-
-    # activeTerm = Term.objects.get(status='True')
-    # activeSession = Session.objects.get(status='True')
 
     results = Result.objects.filter(studentclass=classroom,term=term,session=session)
     ordered_scores = []
@@ -1809,10 +1803,13 @@ def processTerminalResult(classObj,termObj,sessionObj):
             resultObj.save()
 
         # update term average
-        # terminalAverage(scoresObj.student,scoresObj.studentclass,scoresObj.term.pk,scoresObj.session.pk)
+    # terminalAverage(scoresObj.student,scoresObj.studentclass,scoresObj.term.pk,   scoresObj.session.pk)
+    
+    # new code 
+    terminalAverage(classObj,termObj,sessionObj)
 
-        # update  term position
-        # terminalPosition(scoresObj.studentclass,scoresObj.term,scoresObj.session)
+    # update  term position
+    terminalPosition(classObj,termObj,sessionObj)
 
 
 
