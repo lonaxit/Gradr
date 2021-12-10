@@ -786,7 +786,7 @@ def exportSheet(request,classroom,subject):
         response['Content-Disposition'] = 'attachment; filename=CA_SHEET_'+subjectObj.subject+'_'+classroomObj.class_name+'_'+activeTerm.term+'_'+activeSession.session+'.csv'
         writer = csv.writer(response)
 
-        writer.writerow(['StudentID','Name','Class','Subject','FirstCA','SecondCA','ThirdCA','Exam','CATotal','Total'])
+        writer.writerow(['StudentID','Name','Class','Subject','FirstCA','SecondCA','ThirdCA','Exam'])
 
         # activeTerm = Term.objects.get(status='True')
         # activeSession = Session.objects.get(status='True')
@@ -797,7 +797,7 @@ def exportSheet(request,classroom,subject):
 
             # ordering using a different table, student field is on classroom table which is related to the student table and sur_name is on the student table
         for student in students:
-            writer.writerow([student.student.pk,student.student.sur_name + "  " + student.student.first_name,student.class_room.class_name,subject.subject,0,0,0,0,0,0])
+            writer.writerow([student.student.pk,student.student.sur_name + "  " + student.student.first_name,student.class_room.class_name,subject.subject,0,0,0,0])
 
         return response
 
@@ -948,14 +948,7 @@ def processResult(request):
             with transaction.atomic():
 
                 # students = Scores.objects.filter(session=session,term=term,studentclass=classroom).distinct('student')
-                
-                # print(students)
-
-                # if students:
-
-                # for student in students:
-                    
-                    
+                 
                 # process terminal result
                 processTerminalResult(classroomObj,termObj,sessObj)
 
