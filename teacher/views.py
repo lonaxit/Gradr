@@ -849,37 +849,43 @@ def importAssessmentSheet(request):
 
             for dbframe in dbframe.itertuples():
                 studentObj=Student.objects.get(pk=dbframe.StudentID)
-                # check if records of a student exist in that subject, class,term,session
-                scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk).exists()
-                if scoresExist:
-                    pass
-                else:
-
-                    # fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
-                    obj = Scores.objects.create(
-                        firstscore=dbframe.FirstCA,
-                        secondscore=dbframe.SecondCA,
-                        thirdscore=dbframe.ThirdCA,
-                        totalca=dbframe.FirstCA + dbframe.SecondCA + dbframe.ThirdCA,
-                        # totalca=dbframe.CATotal,
-                        examscore=dbframe.Exam,
-                        subjecttotal=dbframe.Exam + dbframe.FirstCA + dbframe.SecondCA + dbframe.ThirdCA,
-                        # subjecttotal=dbframe.Total,
-                        
-                        session=activeSession,
-                        term=activeTerm,
-                        student=studentObj,
-                        studentclass=classroomObj,
-                        subjectteacher= teacherObj,
-                        client= myclient.client,
-                        subject=subjectObj,
-                    )
+                # Check if student is enrolled in that class or not
+                
+                inClass = Classroom.objects.filter(session=activeSession,term=activeTerm,class_room = classroomObj,student=studentObj.pk).exists
+                
+                if inClass:
                     
-                    obj.save()
+                    # check if records of a student exist in that subject,class,term,session
+                    scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk).exists()
+                    if scoresExist:
+                        pass
+                    else:
 
+                        # fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
+                        obj = Scores.objects.create(
+                            firstscore=dbframe.FirstCA,
+                            secondscore=dbframe.SecondCA,
+                            thirdscore=dbframe.ThirdCA,
+                            totalca=dbframe.FirstCA + dbframe.SecondCA + dbframe.ThirdCA,
+                            # totalca=dbframe.CATotal,
+                            examscore=dbframe.Exam,
+                            subjecttotal=dbframe.Exam + dbframe.FirstCA + dbframe.SecondCA + dbframe.ThirdCA,
+                            # subjecttotal=dbframe.Total,
+                            session=activeSession,
+                            term=activeTerm,
+                            student=studentObj,
+                            studentclass=classroomObj,
+                            subjectteacher= teacherObj,
+                            client= myclient.client,
+                            subject=subjectObj,
+                        )
+                        
+                        obj.save()
+                
+                else:
+                    pass
             # process Scores after creating the scores in the for loop
             processScores(subjectObj,classroomObj,activeTerm,activeSession)
-
             # process terminal result
             # processTerminalResult(obj)
 
@@ -977,7 +983,7 @@ def processResult(request):
 # process traits and comments
 
 @allowed_users(allowed_roles=['teacher'])
-def processTraitsComments(request):
+def processTraits(request):
 
 
     # form
@@ -993,31 +999,69 @@ def processTraitsComments(request):
         classroom = request.POST['classroom']
         term = request.POST['term']
         session = request.POST['session']
+        
+        sessObj = Session.objects.get(pk=session)
+        classObj = StudentClass.objects.get(pk=classroom)
+        termObj = Term.objects.get(pk=term)
+
+        with transaction.atomic():
+            
+
+            # proccess Affective domain
+            processAffective(classObj,sessObj,termObj)
+
+            # process Psychomotor domain
+            processPsycho(classObj,sessObj,termObj)
+
+            messages.success(request,  'Successful')
+            return render(request,'teacher/processTraits.html',context)
+
+    return render(request,'teacher/processTraits.html',context)
+
+
+
+# process auto comments
+
+@allowed_users(allowed_roles=['teacher'])
+def myAutoComments(request):
+
+
+    # form
+    form = ResultFilterForm()
+    # try:
+
+    context={
+       'form':form
+        }
+
+    if request.method=='POST':
+
+        classroom = request.POST['classroom']
+        term = request.POST['term']
+        session = request.POST['session']
+        
+        sessObj = Session.objects.get(pk=session)
+        classObj = StudentClass.objects.get(pk=classroom)
+        termObj = Term.objects.get(pk=term)
 
         with transaction.atomic():
 
-            scores = Scores.objects.filter(session=session,term=term,studentclass=classroom)
+            scores = Scores.objects.filter(session=session,term=term,studentclass=classroom).exists()
 
             if scores:
-
-                for score in scores:
-
-                    # Add auto comment
-                    autoAddComment(score.studentclass,score.session,score.term)
-
-                    # proccess Affective domain
-                    processAffective(score)
-
-                    # process Psychomotor domain
-                    processPsycho(score)
+                
+                # Add auto comment
+                autoAddComment(classObj,sessObj,termObj)
 
             else:
                 pass
 
             messages.success(request,  'Successful')
-            return render(request,'admin/processTraitsAndComments.html',context)
+            return render(request,'teacher/processComments.html',context)
 
-    return render(request,'admin/processTraitsAndComments.html',context)
+    return render(request,'teacher/processComments.html',context)
+
+
 
 
 # Select result from finish button action
@@ -1746,7 +1790,7 @@ def processTerminalResult(classObj,termObj,sessionObj):
     students = Scores.objects.filter(session=sessionObj,term=termObj,studentclass=classObj).distinct('student')
     
     # filter scores based on session, term and class
-    scores = Scores.objects.filter(studentclass=classObj,term=termObj,session=sessionObj)
+    scoresList = Scores.objects.filter(studentclass=classObj,term=termObj,session=sessionObj)
     
     # filter result based on session,class and term
     result = Result.objects.filter(studentclass=classObj, term=termObj,session=sessionObj)
@@ -1754,7 +1798,7 @@ def processTerminalResult(classObj,termObj,sessionObj):
     for student in students:
         
         
-        scores = Scores.objects.filter(student=student.student).aggregate(subject_total=Sum('subjecttotal'))
+        scores = scoresList.filter(student=student.student).aggregate(subject_total=Sum('subjecttotal'))
         
         # Find record in the result table
         # result = Result.objects.filter(student=student.student).exists()
@@ -1763,7 +1807,7 @@ def processTerminalResult(classObj,termObj,sessionObj):
         # print(scores['subject_total'])
 
         # check for existence of record
-        if Result.objects.filter(student=student.student).exists():
+        if result.filter(student=student.student).exists():
             # update the record
             result.filter(student=student.student).update(termtotal=scores['subject_total'])
             
@@ -1774,11 +1818,8 @@ def processTerminalResult(classObj,termObj,sessionObj):
             # update  term position
             # terminalPosition(scoresObj.studentclass,scoresObj.term,scoresObj.session)
         else:
+           
             # get class teacher
-            # TODO: Add class teacher when creating comments
-            # old code
-            # class_teacher = ClassTeacher.objects.get(classroom=scoresObj.studentclass,term=scoresObj.term,session=scoresObj.session)
-            
             class_teacher = ClassTeacher.objects.get(classroom=classObj,term=termObj,session=sessionObj)
 
             # FIND CLASS TEACHER FOR MIGRATION PURPOSES ONLY, DELETE AFTERWARDS
@@ -1859,7 +1900,7 @@ def processAnnualResult(scoresObj):
 def autoAddComment(classroom,session,term):
 
     # select result
-    resultFilter = Result.objects.select_for_update().filter(studentclass=classroom,session=session,term=term)
+    resultFilter = Result.objects.select_for_update().filter(studentclass=classroom.pk,session=session.pk,term=term.pk)
 
     for resultObj in resultFilter:
 
@@ -1897,92 +1938,100 @@ def autoAddComment(classroom,session,term):
 
 
 
-    passed = resultFilter.filter(termaverage__gte=40).update(classteachercomment='Passed',headteachercomment='Passed')
+    # passed = resultFilter.filter(termaverage__gte=40).update(classteachercomment='Passed',headteachercomment='Passed')
 
-    failed = resultFilter.filter(termaverage__lte=39.9).update(classteachercomment='Failed',headteachercomment='Failed')
+    # failed = resultFilter.filter(termaverage__lte=39.9).update(classteachercomment='Failed',headteachercomment='Failed')
 
 
 # Add pyscho motor and affective
-def processPsycho(scoresObj):
+def processPsycho(classroom,session,term):
 
-    # Find record in the result table
-    psycho = Studentpsychomotor.objects.filter(student=scoresObj.student, studentclass=scoresObj.studentclass, term=scoresObj.term,session=scoresObj.session).exists()
+ 
+    # list psycho items
+    psychoList = Studentpsychomotor.objects.filter(studentclass=classroom.pk,term=term.pk,session=session.pk)
+    
+    if not psychoList:
+        # select Distinct students from result table
+        studentsResultList = Result.objects.filter(studentclass=classroom.pk,session=session.pk,term=term.pk).distinct('student')
 
+        # Get class teacher
+        class_teacher = ClassTeacher.objects.get(classroom=classroom,term=term,session=session)
+  
+        for student in studentsResultList:
+            
+            # check for existence of record
+            if psychoList.filter(student=student.student.pk).exists():
+                pass
+            else:
+                # select three random random skills
+                psycho_skills = Psychomotor.objects.all().order_by("?")[:3]
+                # select rating
+                rating = Rating.objects.get(pk=3)
 
-
-    # check for existence of record
-    if psycho:
-        pass
-
-    else:
-        # select three random psychomotor skills
-        psycho_skills = Psychomotor.objects.all().order_by("?")[:3]
-
-        # select rating
-
-        rating = Rating.objects.get(pk=3)
-
-        # get class teacher
-        # TODO: Add class teacher when creating comments
-        # TODO: COMMENT FOR NOW
-        # class_teacher = ClassTeacher.objects.get(classroom=scoresObj.studentclass,term=scoresObj.term,session=scoresObj.session)
-
-
-        for i in psycho_skills:
-
-            # create a new record
-            studentPsycho = Studentpsychomotor.objects.create(
-
-                    # classteacher = class_teacher,
-                    classteacher = ClassTeacher.objects.get(pk=1),
-                    session = scoresObj.session,
-                    studentclass = scoresObj.studentclass,
-                    term = scoresObj.term,
-                    client = scoresObj.client,
-                    student = scoresObj.student,
+            for i in  psycho_skills:
+                
+                studentPsycho = Studentpsychomotor.objects.create(
+                    classteacher = class_teacher,
+                    session = session,
+                    studentclass = classroom,
+                    term = term,
+                    client = session.client,
+                    student = student.student,
                     psychomotor = Psychomotor.objects.get(pk=i.pk),
                     rating= rating,
                                      )
-            studentPsycho.save()
+                studentPsycho.save()
+
+                
+
+
+    
+
 
 
 # Process affective domain
-def processAffective(scoresObj):
+def processAffective(classroom,session,term):
+    
+    # list affetive items
+    affective = Studentaffective.objects.filter(studentclass=classroom.pk,term=term.pk,session=session.pk)
+    
+    if not affective:
+        
+        # select Distinct students from result table
+        studentsResultList = Result.objects.filter(studentclass=classroom,session=session,term=term).distinct('student')
 
-    # Find record in the result table
-    affective = Studentaffective.objects.filter(student=scoresObj.student, studentclass=scoresObj.studentclass, term=scoresObj.term,session=scoresObj.session).exists()
+        # list affetive items
+        # affective = Studentaffective.objects.filter(studentclass=classroom,term=term,session=session)
+        
+        # Get class teacher
+        class_teacher = ClassTeacher.objects.get(classroom=classroom,term=term,session=session)
+        
+        for student in studentsResultList:
+        
+            # check for existence of record
+            if affective.filter(student=student.student.pk).exists():
+                pass
+            else:
+                # select three random affective skills
+                affective_skills = Affective.objects.all().order_by("?")[:3]
+                # select rating
+                rating = Rating.objects.get(pk=3)
 
-    # check for existence of record
-    if affective:
-        pass
-    else:
-        # select three random affective skills
-        affective_skills = Affective.objects.all().order_by("?")[:3]
+            for i in affective_skills:
 
-        # select rating
-        rating = Rating.objects.get(pk=3)
-
-        # get class teacher
-        # TODO: Add class teacher when creating comments
-        # TODO: COMMENT FOR NOW
-        # class_teacher = ClassTeacher.objects.get(classroom=scoresObj.studentclass,term=scoresObj.term,session=scoresObj.session)
-
-
-        for i in affective_skills:
-
-            # create a new record
-            studentAffective = Studentaffective.objects.create(
-                    # classteacher = class_teacher,
-                    classteacher = ClassTeacher.objects.get(pk=1),
-                    session = scoresObj.session,
-                    studentclass = scoresObj.studentclass,
-                    term = scoresObj.term,
-                    client = scoresObj.client,
-                    student = scoresObj.student,
-                    affective = Affective.objects.get(pk=i.pk),
-                    rating= rating,
-                    )
-            studentAffective.save()
+                # create a new record
+                studentAffective = Studentaffective.objects.create(
+                        # classteacher = class_teacher,
+                        classteacher = class_teacher,
+                        session = session,
+                        studentclass = classroom,
+                        term = term,
+                        client = session.client,
+                        student = student.student,
+                        affective = Affective.objects.get(pk=i.pk),
+                        rating= rating,
+                        )
+                studentAffective.save()
 
 
 
