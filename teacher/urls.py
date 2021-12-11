@@ -26,7 +26,8 @@ urlpatterns = [
   path('import-assessment-sheet', views.importAssessmentSheet, name='import-assessment-sheet'),
 
   path('result-processing', views.processResult, name='result-processing'),
-  path('process-traits', views.processTraitsComments, name='process-traits'),
+  path('process-traits', views.processTraits, name='process-traits'),
+  path('auto-comments', views.myAutoComments, name='auto-comments'),
 
 
   path('result-summary', views.resultSummary, name='result-summary'),
