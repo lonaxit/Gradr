@@ -35,6 +35,7 @@ import os
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from teacher.views import *
+import requests
 
 # academics routine
 # Filter Scores
@@ -2368,3 +2369,16 @@ def importBulkExams(request):
     except Exception as e:
         messages.error(request,  e)
         return render (request,'admin/create_bulk_users.html')
+
+
+# SMS MESSAGING
+def ClassSMS(request):
+    response = requests.get('https://api.ebulksms.com:4433/sendsms?username=lupertivkaa@gmail.com&apikey=b0808a0610a0a9c6e11f105fb40e284e73269712&sender=SKYGIFTED&messagetext=testingsms&flash=0&recipients=07036190112')
+    
+    # return response
+    # response = requests.get('https://api.github.com')
+    print(response.status_code)
+    return HttpResponse('fine')
+
+def BulkSMS(request):
+    pass

@@ -90,5 +90,8 @@ urlpatterns = [
   path('bulk-exams', views.importBulkExams, name='bulk-exams'),
 
 
+  #messages route
+  path('class-sms', views.ClassSMS, name='classsms'),
+  path('bulk-sms', views.BulkSMS, name='bulksms'),
 
 ]
