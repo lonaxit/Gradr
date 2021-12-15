@@ -331,7 +331,7 @@ def deleteScores(request,id):
 
                 # check if teacher created the score
                 if score.subjectteacher == loggedin.pk:
-                    # aallow operation
+                    # allow operation
                     # get sctive term and session
                     activeTerm = Term.objects.get(status='True')
                     activeSession = Session.objects.get(status='True')
@@ -1937,7 +1937,7 @@ def autoAddComment(classroom,session,term):
 
     for resultObj in resultFilter:
 
-        if resultObj.termaverage <= 39:
+        if resultObj.termaverage <= 39.9:
             resultObj.classteachercomment = 'Failed'
             resultObj.headteachercomment = 'Failed'
 
