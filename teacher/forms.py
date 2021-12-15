@@ -110,6 +110,66 @@ class ResultFilterForm(forms.Form):
                   to_field_name='id',
                   label='Select session',
                   widget=forms.Select(attrs={'class': 'form-control','id':'session'}))
+
+
+
+class ClassSMSForm(forms.Form):
+    classroom = forms.ModelChoiceField(
+                  queryset=StudentClass.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Choose Class',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'classroom'}))
+    term = forms.ModelChoiceField(
+                  queryset=Term.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Select Term',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'term'}))
+    session = forms.ModelChoiceField(
+                  queryset=Session.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Select session',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'session'}))
+    
+    smsbody = forms.CharField(
+              label='SMS Body',
+              required=True,
+              widget=forms.Textarea(attrs={'class': 'form-control','id':'smsbody'}))
+    
+# bulk sms form
+class BulkSMSForm(forms.Form):
+    # classroom = forms.ModelChoiceField(
+    #               queryset=StudentClass.objects.all(),
+    #               empty_label=None,
+    #               required=True,
+    #               to_field_name='id',
+    #               label='Choose Class',
+    #               widget=forms.Select(attrs={'class': 'form-control','id':'classroom'}))
+    # term = forms.ModelChoiceField(
+    #               queryset=Term.objects.all(),
+    #               empty_label=None,
+    #               required=True,
+    #               to_field_name='id',
+    #               label='Select Term',
+    #               widget=forms.Select(attrs={'class': 'form-control','id':'term'}))
+    # session = forms.ModelChoiceField(
+    #               queryset=Session.objects.all(),
+    #               empty_label=None,
+    #               required=True,
+    #               to_field_name='id',
+    #               label='Select session',
+    #               widget=forms.Select(attrs={'class': 'form-control','id':'session'}))
+    
+    smsbody = forms.CharField(
+              label='SMS Body',
+              required=True,
+              widget=forms.Textarea(attrs={'class': 'form-control','id':'smsbody'}))
+
     
     # filter form migrate
 class ScoresProcessForm(forms.Form):
