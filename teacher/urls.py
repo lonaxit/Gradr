@@ -31,7 +31,7 @@ urlpatterns = [
   path('result-processing', views.processResult, name='result-processing'),
   path('process-traits', views.processTraits, name='process-traits'),
   path('auto-comments', views.myAutoComments, name='auto-comments'),
-
+  path('remove-result/<int:id>', views.removeResult, name='remove-result'),
 
   path('result-summary', views.resultSummary, name='result-summary'),
   path('annual-result', views.annualResultSummary, name='annual-result'),
