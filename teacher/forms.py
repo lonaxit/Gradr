@@ -139,7 +139,10 @@ class ClassSMSForm(forms.Form):
     smsbody = forms.CharField(
               label='SMS Body',
               required=True,
-              widget=forms.Textarea(attrs={'class': 'form-control','id':'smsbody'}))
+              max_length=150,
+              min_length=1,
+              widget=forms.Textarea(
+                  attrs={'class': 'form-control','id':'smsbody'}))
     
 # bulk sms form
 class BulkSMSForm(forms.Form):
