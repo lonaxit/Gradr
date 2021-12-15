@@ -1,7 +1,7 @@
 {% extends 'layout/Dashboard/Teachers/Teacher_Layout.html' %}
 
 {% load static %}
-{% block title %} | Filter Scores {% endblock %}
+{% block title %}Filter Scores {% endblock %}
 
 {% block content %}
 <div class="row no-gutters" id="block-content">
@@ -72,8 +72,11 @@
           <div class="card-header">
             <div class="row align-items-center justify-content-between">
               <div class="col-6 col-sm-auto d-flex align-items-center pr-0">
-                <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Filtered Scores </h5>
+                <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Scores </h5>
+
+                <a  class="btn btn-danger ml-2 mb-1" href="{% url 'bulk-delete-assessment' classroom term session subject%}">Bulk Remove</a>
               </div>
+
           </div>
 
           <!-- datatable -->
