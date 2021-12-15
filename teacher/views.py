@@ -381,6 +381,60 @@ def deleteScores(request,id):
         return redirect('filter-scores')
 
 
+# remove result
+
+@allowed_users(allowed_roles=['teacher'])
+def removeResult(request,id):
+
+    loggedin = request.user.tutor
+    
+    resultObj = Result.objects.get(pk=id)
+    
+
+
+    try:
+
+        if request.method == 'POST':
+            with transaction.atomic():
+                
+                formMaster = ClassTeacher.objects.get(teacher=loggedin.pk,term=resultObj.term.pk,session=resultObj.session.pk,classroom=resultObj.studentclass.pk)
+            
+
+                # check if teacher created the score
+                if formMaster:
+                    # delete result
+                    result = Result.objects.select_for_update().filter(pk=id).delete()
+
+                    # delete scores for the student in that class
+                    scores_filter = Scores.objects.filter(student=resultObj.student.pk,studentclass=resultObj.studentclass.pk,term=resultObj.term.pk,session=resultObj.session.pk)
+                    
+                    for score in scores_filter:
+                        
+                        subject = score.subject
+                        
+                        Scores.objects.filter(student=resultObj.student.pk,studentclass=resultObj.studentclass.pk,term=resultObj.term.pk,session=resultObj.session.pk,subject=subject).delete()
+                        
+
+                        # process Scores
+                        processScores(subject,resultObj.studentclass,resultObj.term,resultObj.session)
+                        
+
+                        # update terminal position
+                        terminalPosition(resultObj.studentclass,resultObj.term,resultObj.session)
+
+                        messages.success(request, 'Result deleted successfully')
+                        return redirect('result-summary')
+                else:
+                    # refuse delete
+                    messages.success(request, 'Oops! permission denied!')
+                    return redirect('result-summary')
+
+        return render(request,'teacher/confirm_delete_result.html')
+
+    except Exception as e:
+        messages.success(request, e)
+        return redirect('result-summary')
+
 
 
 
