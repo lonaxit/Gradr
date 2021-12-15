@@ -24,6 +24,9 @@ urlpatterns = [
   path('assessment-sheet', views.assessmentSheet, name='assessment-sheet'),
   path('export-sheet/<str:classroom>/<str:subject>', views.exportSheet, name='export-sheet'),
   path('import-assessment-sheet', views.importAssessmentSheet, name='import-assessment-sheet'),
+  
+  path('bulk-delete-assessment/<str:myclassroom>/<str:term>/<str:session>/<str:subject>', views.removeBulkAssSheet, name='bulk-delete-assessment'),
+  
 
   path('result-processing', views.processResult, name='result-processing'),
   path('process-traits', views.processTraits, name='process-traits'),
