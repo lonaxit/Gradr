@@ -309,7 +309,7 @@
                     <div class="dropdown-menu dropdown-menu-right border py-0" aria-labelledby="dropdown0">
                       <div class="bg-white py-2">
                       {% comment %} <a class="dropdown-item" href="{% url 'delete-scores' result.id %}">Delete</a> {% endcomment %}
-                      <a class="dropdown-item" href="{% url 'delete-scores' result.id %}">View</a>
+                      <a class="dropdown-item" href="{% url 'remove-result' result.id %}">Remove Result</a>
                       <a class="dropdown-item" href="{% url 'print-result' result.pk %}" target="_blank">Print</a>
                       {% comment %} <a class="dropdown-item" href="{% url 'delete-scores' result.id %}">Delete</a>
                       
