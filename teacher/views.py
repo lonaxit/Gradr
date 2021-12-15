@@ -424,7 +424,12 @@ def scoresFilter(request):
             messages.error(request, 'No record exist')
             return redirect('filter-scores')
         else:
-            context ={ 'form':form,'scores':scores}
+            context ={ 'form':form,
+                      'scores':scores,
+                      'classroom':classroom,
+                      'term':term,
+                      'session':session,
+                      'subject':subject}
             return render(request,'teacher/filterScores.html',context)
     context = {'form':form}
     return render(request,'teacher/filterScores.html',context)
@@ -821,95 +826,123 @@ def importAssessmentSheet(request):
     }
 
     if request.method=='POST' and request.POST.get('subject'):
+        
+        # 
+        try:
+            
+            activeTerm = Term.objects.get(status='True')
+            activeSession = Session.objects.get(status='True')
+            # classteacher
+            teacherObj = SubjectTeacher.objects.get(pk=loggedin)
+            classroom = request.POST['studentclass']
 
-        activeTerm = Term.objects.get(status='True')
-        activeSession = Session.objects.get(status='True')
-        # classteacher
-        teacherObj = SubjectTeacher.objects.get(pk=loggedin)
-        classroom = request.POST['studentclass']
-
-        # classroom object
-        classroomObj = StudentClass.objects.get(pk=classroom)
-        subject_id = request.POST['subject']
-        # subject object
-        subjectObj = Subject.objects.get(pk=subject_id)
+            # classroom object
+            classroomObj = StudentClass.objects.get(pk=classroom)
+            subject_id = request.POST['subject']
+            # subject object
+            subjectObj = Subject.objects.get(pk=subject_id)
 
 
-        myfile = request.FILES['csvFile']
-        fs = FileSystemStorage()
-        filename = fs.save(myfile.name, myfile)
-        uploaded_file_url = fs.url(filename)
-        excel_file = uploaded_file_url
-        # print(excel_file)
-        empexceldata = pd.read_csv("media/"+filename,encoding='utf-8')
-        # print(type(empexceldata))
-        dbframe = empexceldata
+            myfile = request.FILES['csvFile']
+            fs = FileSystemStorage()
+            filename = fs.save(myfile.name, myfile)
+            uploaded_file_url = fs.url(filename)
+            excel_file = uploaded_file_url
+            # print(excel_file)
+            empexceldata = pd.read_csv("media/"+filename,encoding='utf-8')
+            # print(type(empexceldata))
+            dbframe = empexceldata
 
-        with transaction.atomic():
+            with transaction.atomic():
 
-            for dbframe in dbframe.itertuples():
-                studentObj=Student.objects.get(pk=dbframe.StudentID)
-                # Check if student is enrolled in that class or not
-                
-                inClass = Classroom.objects.filter(session=activeSession,term=activeTerm,class_room = classroomObj,student=studentObj.pk).exists
-                
-                if inClass:
+                for dbframe in dbframe.itertuples():
+                    studentObj=Student.objects.get(pk=dbframe.StudentID)
+                    # Check if student is enrolled in that class or not
                     
-                    # check if records of a student exist in that subject,class,term,session
-                    scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk).exists()
-                    if scoresExist:
-                        pass
-                    else:
-
-                        # fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
-                        obj = Scores.objects.create(
-                            firstscore=dbframe.FirstCA,
-                            secondscore=dbframe.SecondCA,
-                            thirdscore=dbframe.ThirdCA,
-                            totalca=dbframe.FirstCA + dbframe.SecondCA + dbframe.ThirdCA,
-                            # totalca=dbframe.CATotal,
-                            examscore=dbframe.Exam,
-                            subjecttotal=dbframe.Exam + dbframe.FirstCA + dbframe.SecondCA + dbframe.ThirdCA,
-                            # subjecttotal=dbframe.Total,
-                            session=activeSession,
-                            term=activeTerm,
-                            student=studentObj,
-                            studentclass=classroomObj,
-                            subjectteacher= teacherObj,
-                            client= myclient.client,
-                            subject=subjectObj,
-                        )
+                    inClass = Classroom.objects.filter(session=activeSession,term=activeTerm,class_room = classroomObj,student=studentObj.pk).exists
+                    
+                    if inClass:
                         
-                        obj.save()
-                
-                else:
-                    pass
-            # process Scores after creating the scores in the for loop
-            processScores(subjectObj,classroomObj,activeTerm,activeSession)
-            # process terminal result
-            # processTerminalResult(obj)
+                        # check if records of a student exist in that subject,class,term,session
+                        scoresExist = Scores.objects.filter(session=activeSession,term=activeTerm,subject=subjectObj,studentclass=classroomObj,student=studentObj.pk).exists()
+                        if scoresExist:
+                            pass
+                        else:
 
-            # process terminal result
-            # processAnnualResult(obj)
+                            # fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
+                            obj = Scores.objects.create(
+                                firstscore=dbframe.FirstCA,
+                                secondscore=dbframe.SecondCA,
+                                thirdscore=dbframe.ThirdCA,
+                                totalca=dbframe.FirstCA + dbframe.SecondCA + dbframe.ThirdCA,
+                                # totalca=dbframe.CATotal,
+                                examscore=dbframe.Exam,
+                                subjecttotal=dbframe.Exam + dbframe.FirstCA + dbframe.SecondCA + dbframe.ThirdCA,
+                                # subjecttotal=dbframe.Total,
+                                session=activeSession,
+                                term=activeTerm,
+                                student=studentObj,
+                                studentclass=classroomObj,
+                                subjectteacher= teacherObj,
+                                client= myclient.client,
+                                subject=subjectObj,
+                            )
+                            
+                            obj.save()
+                    
+                    else:
+                        pass
+                # process Scores after creating the scores in the for loop
+                processScores(subjectObj,classroomObj,activeTerm,activeSession)
+            
+                messages.success(request,  'Successful')
+                return render(request,'teacher/import_assessment_sheet.html',context)
+        except Exception as e:
+             messages.error(request,e)
+             return render(request,'teacher/import_assessment_sheet.html',context)
 
-            # proccess Affective domain
-            # processAffective(obj)
-
-            # process Psychomotor domain
-            # processPsycho(obj)
-
-            # Add auto comment
-            # autoAddComment(classroomObj,activeSession,activeTerm)
-            messages.success(request,  'Successful')
-            return render(request,'teacher/import_assessment_sheet.html',context)
-
-        # return render(request, 'teacher/import_assessment_sheet.html',context)
+        
 
     return render(request,'teacher/import_assessment_sheet.html',context)
 
     # except Exception as e:
             #  messages.error(request,  e)
             #  return render(request,'teacher/import_assessment_sheet.html')
+
+
+
+# remove bulk sms
+
+@allowed_users(allowed_roles=['teacher'])
+def removeBulkAssSheet(request,myclassroom,term,session,subject):
+    
+
+    loggedin = request.user.tutor.pk
+    
+    try:  
+        if request.method =='POST':
+            
+                # classroom = request.POST['classroom']
+                # subject = request.POST['subject']
+                # session = request.POST['session']
+                # term = request.POST['term']
+
+                scores = Scores.objects.filter(term=term,session=session,studentclass=myclassroom,subject=subject)
+             
+                subjectTeacher = SubjectTeacher.objects.filter(teacher=loggedin,classroom=myclassroom,session=session,subject=subject).exists()
+                if subjectTeacher:
+                    scores.delete()
+                    messages.success(request, 'Scores deleted')
+                    return redirect('filter-scores')
+
+                else:
+                    messages.error(request, 'You are not a subject teacher you can not perform this action!')
+                    return redirect('filter-scores')
+        return render(request,'teacher/confirm_delete_score.html')
+            
+    except Exception as e:
+        messages.error(request,  e)
+        return redirect('filter-scores')      
 
 
 # Process result
