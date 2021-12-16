@@ -1273,7 +1273,7 @@ def attendanceSettingsList(request):
 
 
 # Update attendance settings
-# update resumption dates
+
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def updateAttendanceSetting(request,pk):
@@ -1300,36 +1300,41 @@ def resumption_settings(request):
     client = Client.objects.get(user_id=request.user.id)
     form = ResumptionSettingForm()
     context={'form':form}
-    if request.method == 'POST':
-        form = ResumptionSettingForm(request.POST)
-        if form.is_valid():
-            # resumption = form.save(commit=False)
-            # resumption.client_id = client.id
-            # resumption.save()
+    try:
+        
+        if request.method == 'POST':
+            form = ResumptionSettingForm(request.POST)
+            if form.is_valid():
+                # resumption = form.save(commit=False)
+                # resumption.client_id = client.id
+                # resumption.save()
 
-            term_begins = request.POST['term_begins']
-            term_ends = request.POST['term_ends']
+                term_begins = request.POST['term_begins']
+                term_ends = request.POST['term_ends']
 
-            term = request.POST['term']
-            session = request.POST['session']
+                term = request.POST['term']
+                session = request.POST['session']
 
-            obj = ResumptionSetting.objects.create(
-                                 term_begins = term_begins,
-                                 term_ends =term_ends,
-                                 term_id=term,
-                                 session_id=session,
-                                 client = client,
-                                 createdby=User.objects.get(pk=request.pk)
-                                     )
-            obj.save()
-            messages.success(request, 'Record added')
-            return redirect('admin-profile')
-        else:
-            # print('shhhh')
-            messages.success(request, 'oops! something went wrong')
-            return redirect('resumption-setting')
+                obj = ResumptionSetting.objects.create(
+                                    term_begins = term_begins,
+                                    term_ends =term_ends,
+                                    term_id=term,
+                                    session_id=session,
+                                    client = client,
+                                    createdby=User.objects.get(pk=request.user.pk)
+                                        )
+                obj.save()
+                messages.success(request, 'Record added')
+                return redirect('resumption-dates')
+            else:
+            #     # print('shhhh')
+                messages.success(request, 'oops! something went wrong')
+                return redirect('resumption-setting')
 
-    return render(request, "admin/resumption_settings.html", context)
+        return render(request, "admin/resumption_settings.html", context)
+    except Exception as e:
+        messages.success(request, e)
+        return redirect('resumption-setting')
 
 
 # update resumption dates
