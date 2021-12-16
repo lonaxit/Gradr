@@ -2428,8 +2428,8 @@ def ClassSMS(request):
                 for student in studentsInClass:
                     
                     guardian = Guardian.objects.get(student=student.student.pk)
-                    # url = 'https://api.ebulksms.com:4433/sendsms?username='+username+'&apikey='+key+'&sender='+sender+'&messagetext='+sms_msg+'&flash=0'+'&recipients='+guardian.phone
-                    # response = requests.get(url)
+                    url = 'https://api.ebulksms.com:4433/sendsms?username='+username+'&apikey='+key+'&sender='+sender+'&messagetext='+sms_msg+'&flash=0'+'&recipients='+guardian.phone
+                    response = requests.get(url)
                     
                     # messages.success(request, 'Messages sent!')
                     # return redirect('classsms')
@@ -2438,14 +2438,14 @@ def ClassSMS(request):
             
                     # SMS BULK NIGERIA
             
-                    api = '9IGspBnLAjWENmr9nPogQRN9PuVwAHsSPtGi5szTdBfVmC2leqAe8vsZh6dg'
-                    # to = '08091768295'
-                    from_ = 'SKYGIFTEDMK'
-                    # message = 'Testing sms for skygifted academy'
-                    url = 'https://www.bulksmsnigeria.com/api/v1/sms/create?api_token='+api+'&from='+from_+'&to='+guardian.phone+'&body='+sms_msg+'&dnd=6'
-                    response = requests.get(url)
-                messages.success(request, 'Messages sent!')
-                return redirect('classsms')
+                #     api = '9IGspBnLAjWENmr9nPogQRN9PuVwAHsSPtGi5szTdBfVmC2leqAe8vsZh6dg'
+                #     # to = '08091768295'
+                #     from_ = 'SKYGIFTEDMK'
+                #     # message = 'Testing sms for skygifted academy'
+                #     url = 'https://www.bulksmsnigeria.com/api/v1/sms/create?api_token='+api+'&from='+from_+'&to='+guardian.phone+'&body='+sms_msg+'&dnd=6'
+                #     response = requests.get(url)
+                # messages.success(request, 'Messages sent!')
+                # return redirect('classsms')
             else:
                 messages.success(request, 'No students enrolled in that class!')
                 return redirect('classsms')
