@@ -911,6 +911,7 @@ def importAssessmentSheet(request):
 
                 for dbframe in dbframe.itertuples():
                     studentObj=Student.objects.get(pk=dbframe.StudentID)
+                    
                     # Check if student is enrolled in that class or not
                     
                     inClass = Classroom.objects.filter(session=activeSession,term=activeTerm,class_room = classroomObj,student=studentObj.pk).exists
@@ -922,8 +923,6 @@ def importAssessmentSheet(request):
                         if scoresExist:
                             pass
                         else:
-
-                            # fromdate_time_obj = dt.datetime.strptime(dbframe.DOB, '%d-%m-%Y')
                             obj = Scores.objects.create(
                                 firstscore=dbframe.FirstCA,
                                 secondscore=dbframe.SecondCA,
