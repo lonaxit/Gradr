@@ -18,6 +18,10 @@ urlpatterns = [
   path('update-subject/<str:pk>', views.updateSubject, name='update-subject'),
   path('all-subjects', views.allSubjects, name='all-subjects'),
   path('attendance-setting', views.attendance_settings, name='attendance-setting'),
+  path('attendance-setting-list', views.attendanceSettingsList, name='attendance-setting-list'),
+  
+  path('update-attendance-settings/<str:pk>', views.updateAttendanceSetting, name='update-attendance-setting'),
+  
   path('resumption-setting', views.resumption_settings, name='resumption-setting'),
   path('resumption-dates', views.resumptionDates, name='resumption-dates'),
   path('update-resumption/<str:pk>', views.updateResumption, name='update-resumption'),
