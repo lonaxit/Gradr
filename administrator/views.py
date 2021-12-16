@@ -1264,6 +1264,35 @@ def attendance_settings(request):
     return render(request, "admin/add_attendance_setting.html", context)
 
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def attendanceSettingsList(request):
+    attendance = AttendanceSetting.objects.all()
+    context = {'attendance':attendance}
+    return render(request, "admin/listAttendanceSettings.html", context)
+
+
+# Update attendance settings
+# update resumption dates
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def updateAttendanceSetting(request,pk):
+    attendance = AttendanceSetting.objects.get(id=pk)
+    form = AttendanceSettingForm(instance=attendance)
+    context = {'form':form}
+    if request.method == 'POST':
+        form = AttendanceSettingForm(request.POST,instance=attendance)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Attendance setting updated')
+            return redirect('attendance-setting-list')
+        else:
+            messages.success(request, 'oops! something went wrong')
+            return redirect('update-attendance-setting',pk=pk)
+    context={'form':form}
+    return render(request, "admin/add_attendance_setting.html", context)
+
+
 # resumption date setting
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -1315,10 +1344,10 @@ def updateResumption(request,pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Resumption date updated')
-            return redirect('admin-profile')
+            return redirect('resumption-dates')
         else:
             messages.success(request, 'oops! something went wrong')
-            return redirect('update-resumption')
+            return redirect('update-resumption',pk=pk)
     context={'form':form}
     return render(request, "admin/updateResumption.html", context)
 
@@ -2399,8 +2428,8 @@ def ClassSMS(request):
                 for student in studentsInClass:
                     
                     guardian = Guardian.objects.get(student=student.student.pk)
-                    url = 'https://api.ebulksms.com:4433/sendsms?username='+username+'&apikey='+key+'&sender='+sender+'&messagetext='+sms_msg+'&flash=0'+'&recipients='+guardian.phone
-                    response = requests.get(url)
+                    # url = 'https://api.ebulksms.com:4433/sendsms?username='+username+'&apikey='+key+'&sender='+sender+'&messagetext='+sms_msg+'&flash=0'+'&recipients='+guardian.phone
+                    # response = requests.get(url)
                     
                     # messages.success(request, 'Messages sent!')
                     # return redirect('classsms')
@@ -2409,12 +2438,12 @@ def ClassSMS(request):
             
                     # SMS BULK NIGERIA
             
-                    # api = '9IGspBnLAjWENmr9nPogQRN9PuVwAHsSPtGi5szTdBfVmC2leqAe8vsZh6dg'
-                    # # to = '08091768295'
-                    # from_ = 'SKYGIFTEDMK'
-                    # # message = 'Testing sms for skygifted academy'
-                    # url = 'https://www.bulksmsnigeria.com/api/v1/sms/create?api_token='+api+'&from='+from_+'&to='+guardian.phone+'&body='+sms_msg+'&dnd=6'
-                    # response = requests.get(url)
+                    api = '9IGspBnLAjWENmr9nPogQRN9PuVwAHsSPtGi5szTdBfVmC2leqAe8vsZh6dg'
+                    # to = '08091768295'
+                    from_ = 'SKYGIFTEDMK'
+                    # message = 'Testing sms for skygifted academy'
+                    url = 'https://www.bulksmsnigeria.com/api/v1/sms/create?api_token='+api+'&from='+from_+'&to='+guardian.phone+'&body='+sms_msg+'&dnd=6'
+                    response = requests.get(url)
                 messages.success(request, 'Messages sent!')
                 return redirect('classsms')
             else:
