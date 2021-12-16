@@ -2,7 +2,7 @@
 {% load my_tags %}
 {% load static %}
 {% load humanize %}
-{% block title %} | Filter Result {% endblock %}
+{% block title %} Filter Result {% endblock %}
 
 {% block content %}
 <div class="row no-gutters" id="block-content">
@@ -88,7 +88,7 @@
                 <th class="sort">Psycho</th>
                 <th class="sort">Affective</th>
                 
-                <th>Action</th>
+                {% comment %} <th>Action</th> {% endcomment %}
               </tr>
             </thead>
             <tbody class="bg-white">
@@ -128,13 +128,16 @@
                   </td>
                 {% endif %}
                
-
+{% comment %} 
                 <td class="align-middle white-space-nowrap">
                   <div class="dropdown text-sans-serif">
                     <button class="btn btn-link text-600 btn-sm dropdown-toggle btn-reveal mr-3" type="button" id="dropdown0" data-toggle="dropdown" data-boundary="html" aria-haspopup="true" aria-expanded="false"><span class="fas fa-ellipsis-h fs--1"></span></button>
                     <div class="dropdown-menu dropdown-menu-right border py-0" aria-labelledby="dropdown0">
                       <div class="bg-white py-2">
-                      <a class="dropdown-item" href="{% url 'delete-scores' result.id %}">Delete</a>
+                      <a class="dropdown-item" href="{% url 'delete-scores' result.id %}">Delete</a> {% endcomment %}
+
+                      {% comment %} part of action {% endcomment %}
+
                       {% comment %} <a class="dropdown-item" href="{% url 'add-student-affective' result.id %}">Affective</a>
                       <a class="dropdown-item" href="{% url 'add-student-psycho' result.id %}">Psychomotor</a> {% endcomment %}
 
@@ -142,10 +145,14 @@
                        {% comment %} <a class="dropdown-item" id="trait-id" data-toggle="modal" data-id="{{ result.id }}" data-target="#exampleModal2" href="#">Add Traits</a> {% endcomment %}
                       {% comment %} <a class="dropdown-item" href="{% url 'update-scores' result.id %}">Print</a> {% endcomment %}
                         <!-- <div class="dropdown-divider"></div><a class="dropdown-item text-warning" href="#!">Archive</a><a class="dropdown-item text-danger" href="#!">Delete</a> -->
-                      </div>
+
+
+{% comment %} below is end part of action {% endcomment %}
+                      {% comment %} </div>
                     </div>
                   </div>
-                </td>
+                </td> {% endcomment %}
+
               </tr>
               {% endfor %}
             </tbody>
@@ -160,7 +167,7 @@
                 <th class="sort">Att</th>
                 <th class="sort">Psycho</th>
                 <th class="sort">Affective</th>
-                <th>Action</th>
+                {% comment %} <th>Action</th> {% endcomment %}
               </tr>
             </tfoot>
           </table>
