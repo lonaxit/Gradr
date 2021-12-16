@@ -555,8 +555,6 @@ def addAttendance(request):
     form = ResultFilterForm()
     # entry = ClassTeacher.objects.filter(teacher=loggedin)
 
-
-
     if request.method =='POST':
 
         if request.POST.get('result-id'):
