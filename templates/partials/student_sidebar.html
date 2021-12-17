@@ -6,7 +6,7 @@
 
       <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle" data-toggle="tooltip" data-placement="left" title="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
 
-    </div><a class="navbar-brand" href="../index.html">
+    </div><a class="navbar-brand" href="{% url 'student' %}">
       <div class="d-flex align-items-center py-3"><img class="mr-2" src="../assets/img/illustrations/falcon.png" alt="" width="40" /><span class="text-sans-serif">Gradr</span>
       </div>
     </a>
@@ -26,10 +26,10 @@
 
             <li class="nav-item"><a class="nav-link dropdown-indicator" href="#profile" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="profile">Profile</a>
               <ul class="nav collapse" id="profile" data-parent="#user">
-                <li class="nav-item"><a class="nav-link" href="../pages/errors/404.html">View</a>
+                <li class="nav-item"><a class="nav-link" href="{% url 'student-profile' %}">View</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="../pages/errors/500.html">Change Password</a>
-                </li>
+                {% comment %} <li class="nav-item"><a class="nav-link" href="../pages/errors/500.html">Change Password</a>
+                </li> {% endcomment %}
               </ul>
             </li>
 
@@ -50,9 +50,9 @@
             </div>
           </a>
           <ul class="nav collapse" id="pages" data-parent="#navbarVerticalCollapse">
-            <li class="nav-item"><a class="nav-link" href="">Assessment</a>
+            <li class="nav-item"><a class="nav-link" href="{% url 'ass-list' %}">Assessment</a>
             </li>
-            <li class="nav-item"><a class="nav-link" href="">Result</a>
+            <li class="nav-item"><a class="nav-link" href="{% url 'result-list' %}">Result</a>
             </li>
 
             <!-- <li class="nav-item"><a class="nav-link dropdown-indicator" href="#pages-errors" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="pages-errors">Errors</a>
