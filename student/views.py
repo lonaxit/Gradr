@@ -34,77 +34,6 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 
 
-
-@login_required(login_url='login')
-# @admin_only
-@allowed_users(allowed_roles=['student'])
-def printResultHtml(request,pk):
-    teacher_loggedin = request.user.tutor
-    result = Result.objects.get(pk=pk)
-    academic_scores = Scores.objects.filter(student=result.student,studentclass=result.studentclass,term=result.term,session=result.session)
-    student_count = Scores.objects.filter(studentclass=result.studentclass,term=result.term,session=result.session).distinct('student').count()
-    affective = Studentaffective.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
-
-    psychomotor = Studentpsychomotor.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
-
-
-
-    # academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
-    context={
-        'scores':academic_scores,
-        'result':result,
-        'student_count':student_count,
-        'affective':affective,
-        'psychomotor':psychomotor
-    }
-    return render(request,'teacher/print.html',context)
-
-
-def render_pdf_view(request):
-    teacher_loggedin = request.user.teacher
-    result = Result.objects.get(pk=3)
-    academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
-    student_count = Scores.objects.filter(studentclass=result.studentclass,term=result.term,session=result.session).distinct('student').count()
-    affective = Studentaffective.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
-
-    psychomotor = Studentpsychomotor.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
-
-    template_path = 'teacher/print.html'
-    # academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
-    context={
-        'scores':academic_scores,
-        'result':result,
-        'student_count':student_count,
-        'affective':affective,
-        'psychomotor':psychomotor
-    }
-    # context = {'myvar': 'this is your template context'}
-    # Create a Django response object, and specify content_type as pdf
-    response = HttpResponse(content_type='application/pdf')
-    # if download: run this line of code below
-    response['Content-Disposition'] = 'attachment; filename="report.pdf"'
-
-    # if display: run this line of code
-    # response['Content-Disposition'] = 'filename="report.pdf"'
-    # find the template and render it.
-    template = get_template(template_path)
-    html = template.render(context)
-
-    # create a pdf
-    # removed link call back
-    pisa_status = pisa.CreatePDF(
-       html, dest=response)
-    #    html, dest=response, link_callback=link_callback)
-    # if error then show some funy view
-    if pisa_status.err:
-       return HttpResponse('We had some errors <pre>' + html + '</pre>')
-    return response
-
-
-
-
-
-
 @login_required(login_url='login')
 # @admin_only
 @allowed_users(allowed_roles=['student'])
@@ -117,34 +46,96 @@ def studentHome(request):
     return render(request,'student/student_home.html',context)
 
 
+# result list page
+@login_required(login_url='login')
+# @admin_only
+@allowed_users(allowed_roles=['student'])
+def resultList(request):
+    student = request.user.learner
+    
+    result = Result.objects.filter(student=student)
+    
+    context = {'results':result}
+    return render(request,'student/resultList.html',context)
+
 
 # student profile
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['student'])
 def studentProfile(request):
+    # student_loggedin = request.user.learner.pk
+    
 
     return render(request, 'student/student_profile.html')
 
-# change avatar
+
+
+# Print result
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['teacher'])
-def teacherAvatar(request):
-    teacher = request.user.tutor
-    # teacher  = Teacher.objects.get(pk=pk)
+def printResult(request,pk):
+    result = Result.objects.get(pk=pk)
+    academic_scores = Scores.objects.filter(student=result.student,studentclass=result.studentclass,term=result.term,session=result.session)
+    student_count = Scores.objects.filter(studentclass=result.studentclass,term=result.term,session=result.session).distinct('student').count()
+    affective = Studentaffective.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
 
-    form = TeacherImageUpdateForm(instance=teacher)
+    psychomotor = Studentpsychomotor.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
 
-    context = {'form':form}
-    if request.method == 'POST':
-        form = TeacherImageUpdateForm(request.POST,request.FILES,instance=teacher)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Photo changed')
-            return redirect('teacher-profile')
-        else:
-             messages.success(request, 'Photo update failed')
-             return redirect('teacher-avatar')
-
-    return render(request, 'teacher/changeTeacherAvatar.html',context)
+    # academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
+    context={
+        'scores':academic_scores,
+        'result':result,
+        'student_count':student_count,
+        'affective':affective,
+        'psychomotor':psychomotor
+    }
+    return render(request,'teacher/print.html',context)
 
 
+# view All asessements
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['student'])
+def allAssessment(request):
+    studentId = request.user.learner.pk
+    allAssessment = Scores.objects.filter(student=studentId).distinct('term')
+
+    context ={
+    'assessment':allAssessment,
+    }
+
+    return render(request, 'student/assessmentList.html',context)
+
+# Detail Assessment
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['student'])
+def detailAssessment(request,classroom,term,session):
+    studentId = request.user.learner.pk
+    allAssessment = Scores.objects.filter(student=studentId,studentclass=classroom,term=term,session=session)
+
+    context ={
+    'assessment':allAssessment,
+    }
+
+    return render(request, 'student/detailAssessment.html',context)
+
+
+
+# Detail Result
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['student'])
+def detailResult(request,classroom,term,session):
+    studentId = request.user.learner.pk
+    
+    allAssessment = Scores.objects.filter(student=studentId,studentclass=classroom,term=term,session=session)
+
+    result = Result.objects.get(student=studentId,studentclass=classroom,term=term,session=session)
+    
+    student_count = Scores.objects.filter(studentclass=result.studentclass,term=result.term,session=result.session).distinct('student').count()
+    
+    context ={
+    'assessment':allAssessment,
+    'result':result,
+    'count':student_count
+    }
+
+    return render(request, 'student/detailResult.html',context)
