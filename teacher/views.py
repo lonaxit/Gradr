@@ -46,6 +46,7 @@ import os
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 
+@login_required(login_url='login')
 def printResultHtml(request,pk):
     # teacher_loggedin = request.user.tutor
     result = Result.objects.get(pk=pk)
