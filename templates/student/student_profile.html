@@ -43,12 +43,17 @@
         <div class="card-header">
           <div class="row">
             <div class="col">
-              <h5 class="mb-2">{{request.user.learner.sur_name}}, {{request.user.learner.first_name}} {{request.user.learner.other_name}}</h5>
+              <h5 class="mb-2">{{request.user.learner.sur_name}}, {{request.user.learner.first_name}} 
+              {% if request.user.learner.other_name %}
+              {{request.user.learner.other_name}}
+              {% else %}
+              {% endif %}</h5>
               <!-- <a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-plus fs--2 mr-1"></span>Add note</a> -->
               <button class="btn btn-falcon-default btn-sm dropdown-toggle ml-2 dropdown-caret-none" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-ellipsis-h"></span></button>
               <div class="dropdown-menu">
-              <a class="dropdown-item" href="">Edit</a>
-              <a class="dropdown-item" href="{% url 'teacher-avatar'%}">Change Photo</a>
+              {% comment %} <a class="dropdown-item" href="">Edit</a>
+              <a class="dropdown-item" href="">Change Photo</a> {% endcomment %}
+
                 <!-- <a class="dropdown-item" href="#">Report</a><a class="dropdown-item" href="#">Archive</a> -->
                 <!-- <div class="dropdown-divider"></div><a class="dropdown-item text-danger" href="#">Delete user</a> -->
               </div>
@@ -141,7 +146,7 @@
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">Phone</p>
                   </div>
-                  <div class="col">{{request.user.tutor.phone}}</div>
+                  <div class="col">{{request.user.learner.phone}}</div>
                 </div>
                 <!-- <div class="row">
                   <div class="col-5 col-sm-4">
@@ -160,14 +165,14 @@
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">Country</p>
                   </div>
-                  <div class="col">{{request.user.tutor.country}}</div>
+                  <div class="col">{{request.user.learner.country}}</div>
                 </div>
 
                 <div class="row">
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">State</p>
                   </div>
-                  <div class="col">{{request.user.tutor.state}}</div>
+                  <div class="col">{{request.user.learner.state}}</div>
                 </div>
               </div>
 
@@ -177,20 +182,20 @@
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">Lga</p>
                   </div>
-                  <div class="col">{{request.user.tutor.lga}}</div>
+                  <div class="col">{{request.user.learner.lga}}</div>
                 </div>
                 <div class="row">
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">City</p>
                   </div>
-                  <div class="col">{{request.user.tutor.city}}</div>
+                  <div class="col">{{request.user.learner.city}}</div>
                 </div>
                 <div class="row">
                   <div class="col-5 col-sm-4">
                     <p class="font-weight-semi-bold mb-1">Address</p>
                   </div>
                   <div class="col">
-                    <p class="mb-1">{{request.user.tutor.address}}</p>
+                    <p class="mb-1">{{request.user.learner.address}}</p>
                   </div>
                 </div>
 
@@ -203,16 +208,17 @@
           <!-- <div class="card-footer border-top text-right"><a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-dollar-sign fs--2 mr-1"></span>Refund</a><a class="btn btn-falcon-default btn-sm ml-2" href="#!"><span class="fas fa-check fs--2 mr-1"></span>Save changes</a></div> -->
         </div>
 
-        <div class="card mb-3">
+        {% comment %} <div class="card mb-3">
             <div class="card-header">
               <div class="row align-items-center">
                 <div class="col">
                   <h5 class="mb-0">Academics</h5>
                 </div>
-                <!-- <div class="col-auto"><a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-pencil-alt fs--2 mr-1"></span>Update details</a></div> -->
+                <div class="col-auto"><a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-pencil-alt fs--2 mr-1"></span>Update details</a></div> 
               </div>
-            </div>
-            <div class="card-body bg-light border-top">
+            </div> {% endcomment %}
+
+            {% comment %} <div class="card-body bg-light border-top">
               <div class="row">
                 <div class="col-lg col-xxl-5">
                   <!-- <h6 class="font-weight-semi-bold ls mb-3 text-uppercase">Account Information</h6> -->
@@ -234,7 +240,10 @@
               </div>
 
 
-            </div>
+            </div> {% endcomment %}
+
+
+
             <!-- <div class="card-footer border-top text-right"><a class="btn btn-falcon-default btn-sm" href="#!"><span class="fas fa-dollar-sign fs--2 mr-1"></span>Refund</a><a class="btn btn-falcon-default btn-sm ml-2" href="#!"><span class="fas fa-check fs--2 mr-1"></span>Save changes</a></div> -->
           </div>
         <!-- logs -->
