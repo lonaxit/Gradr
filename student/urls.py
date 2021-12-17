@@ -38,6 +38,13 @@ urlpatterns = [
 #   path('print-result/<str:pk>/', views.printResultHtml, name='print-result'),
 
 path('student-profile', views.studentProfile, name='student-profile'),
+path('result-list', views.resultList, name='result-list'),
+path('detail-result/<str:classroom>/<str:term>/<str:session>', views.detailResult, name='detail-result'),
+
+path('ass-list', views.allAssessment, name='ass-list'),
+path('detail-ass/<str:classroom>/<str:term>/<str:session>', views.detailAssessment, name='detail-ass'),
+
+path('print-result/<str:pk>', views.printResult, name='print-result'),
 #   path('teacher-avatar', views.teacherAvatar, name='teacher-avatar'),
 
 ]
