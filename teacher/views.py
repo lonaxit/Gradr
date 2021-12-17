@@ -47,7 +47,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 
 def printResultHtml(request,pk):
-    teacher_loggedin = request.user.tutor
+    # teacher_loggedin = request.user.tutor
     result = Result.objects.get(pk=pk)
     academic_scores = Scores.objects.filter(student=result.student,studentclass=result.studentclass,term=result.term,session=result.session)
     student_count = Scores.objects.filter(studentclass=result.studentclass,term=result.term,session=result.session).distinct('student').count()
