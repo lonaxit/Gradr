@@ -50,3 +50,9 @@ def inActiveStudents():
 def totalStaff():
     students = Teacher.objects.all().count()
     return students
+
+
+@register.simple_tag
+def staff_sign(teacherid):
+    teacherObj = Teacher.objects.get(pk=teacherid)
+    return teacherObj.surname

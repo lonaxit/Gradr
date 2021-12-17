@@ -173,8 +173,10 @@
             <td>{{ score.subjectposition}}</td>
             <td>{{ score.subjectgrade}}</td>
             <td>{{ score.subjectrating}}</td>
-            <td>{{ score.subjectteacher.teacher}}</td>
+            <td> {% staff_sign score.subjectteacher.pk %}
+            </td>
           </tr>
+         
             {% endfor %}
           </table>
             </div>
