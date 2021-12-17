@@ -1,3 +1,4 @@
+{% load my_tags %}
 {% load static %}
 {% load humanize %}
 <!DOCTYPE html>
@@ -94,7 +95,10 @@
               <div class="row">
                 <div class="col-lg-12">
                   <div>
-                    <h4 class="mb-1 mr-4"> {{ result.student.sur_name}} {{ result.student.first_name}} </h4>
+                    <h4 class="mb-1 mr-4"> {{ result.student.sur_name|upper}}, {{ result.student.first_name|capfirst}} {% if result.student.other_name %}
+              {{result.student.other_name|capfirst}}
+              {% else %}
+              {% endif %}</h4>
                   </div>
                   <h5 class="text-500 fs--2">{{ result.student.full_reg_no}}</h5>
                   <h5 class="fs--1 font-weight-normal">{{result.termposition |ordinal}} Position</h5>
@@ -169,7 +173,7 @@
             <td>{{ score.subjectposition}}</td>
             <td>{{ score.subjectgrade}}</td>
             <td>{{ score.subjectrating}}</td>
-            <td>{{ score.subjectteacher.teacher.surname}}</td>
+            <td>{{ score.subjectteacher.teacher}}</td>
           </tr>
             {% endfor %}
           </table>
