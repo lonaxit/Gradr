@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!-- ===============================================-->
+    <!--    Document Title-->
+    <!-- ===============================================-->
+  <title>{% block title %}{% endblock title %}</title>
+
+    <!-- inclde header links here -->
+
+    {% include 'partials/landing_layout_header.html' %}
+
+  </head>
+
+
+  <body>
+
+    <!-- ===============================================-->
+    <!--    Main Content-->
+    <!-- ===============================================-->
+<main class="main" id="top">
+
+<!-- Menu -->
+{% include 'partials/landing_layout_menu.html'%}
+
+<!-- banner  -->
+{% include 'partials/landing_layout_banner.html'%}
+
+
+
+
+  <!-- content area -->
+  <!-- ============================================-->
+  <!-- <section> begin ============================-->
+  <section>
+
+    {% block content %}
+
+    {% endblock content %}
+
+  </section>
+  <!-- <section> close ============================-->
+  <!-- ============================================-->
+
+
+
+<!-- feature section  -->
+{% include 'partials/landing_layout_features.html'%}
+
+
+
+<!-- testimonials section -->
+{% comment %} {% include 'partials/landing_layout_testimonials.html'%} {% endcomment %}
+
+
+
+
+<!-- call to action section  -->
+{% include 'partials/landing_layout_call_action.html'%}
+
+
+
+
+<!-- footer menu -->
+{% include 'partials/landing_layout_footer_menu.html' %}
+
+
+
+<!-- credit section here below -->
+{% include 'partials/landing_layout_credit.html' %}
+
+
+</main>
+    <!-- ===============================================-->
+    <!--    End of Main Content-->
+    <!-- ===============================================-->
+
+
+
+
+  <!-- footer here  -->
+  {% include 'partials/landing_layout_footer.html' %}
+
+  </body>
+
+</html>
