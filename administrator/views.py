@@ -2436,7 +2436,7 @@ def ClassSMS(request):
                     guardianExist = Guardian.objects.filter(student=student.student.pk).exists()
                     if guardianExist:
                     
-                        guardian = Guardian.objects.get(student=student.student.pk)
+                        guardian = Guardian.objects.filter(student=student.student.pk).first()
                         # url = 'https://api.ebulksms.com:4433/sendsms?username='+username+'&apikey='+key+'&sender='+sender+'&messagetext='+sms_msg+'&flash=0'+'&recipients='+guardian.phone
                         # response = requests.get(url)
                         
