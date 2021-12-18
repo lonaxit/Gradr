@@ -1,4 +1,5 @@
 {% extends 'layout/Dashboard/Student/Student_Layout.html' %}
+{% load my_tags %}
 
 {% load static %}
 {% load humanize %}
@@ -132,7 +133,7 @@
                     <td class="align-middle"><code>{{ca.lowest_inclass}}</code></td>
                      <td class="align-middle"><code>{{ca.subjectgrade}}</code></td>
                       <td class="align-middle"><code>{{ca.subjectrating}}</code></td>
-                    <td class="align-middle"><code>{{ca.subjectteacher.teacher.surname}}</code></td>
+                    <td class="align-middle"><code><code>{% staff_sign ca.subjectteacher.pk %}</code></td>
                      
               
                   </tr>
