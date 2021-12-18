@@ -1,5 +1,5 @@
 {% extends 'layout/Dashboard/Student/Student_Layout.html' %}
-
+{% load my_tags %}
 {% load static %}
 {% load humanize %}
 {% block title %} Student Home {% endblock %}
@@ -13,8 +13,8 @@
 
 
               <div class="card-body position-relative">
-                <h6>Position</h6>
-                {% comment %} <h6>Students<span class="badge badge-soft-warning rounded-capsule ml-2">-90%</span></h6>  {% endcomment %}
+                {% comment %} <h6>Position</h6> {% endcomment %}
+                <h6>Position<span class="badge badge-soft-warning rounded-capsule ml-2">{{ result.studentclass.class_name}}</span></h6>
                 <div class="display-4 fs-4 mb-2 font-weight-normal text-sans-serif text-warning">{{ result.termposition|ordinal}}</div>
                 {% comment %} <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">See all<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a> {% endcomment %}
               </div>
@@ -26,9 +26,11 @@
 
 
               <div class="card-body position-relative">
-              {% comment %} <h6>Teachers<span class="badge badge-soft-info rounded-capsule ml-2">0.0%</span></h6> {% endcomment %}
-                <h6>Total Students</h6>
-                <div class="display-4 fs-4 mb-2 font-weight-normal text-sans-serif text-info">{{count}}</div>
+              <h6>Statistics <span class="badge badge-soft-info rounded-capsule ml-2">{{result.session.session}}</span>  <span class="badge badge-soft-info rounded-capsule ml-2">{{result.term.term}}</span></h6>
+                {% comment %} <h6>Total Students</h6> {% endcomment %}
+                <span class="fas fa-user-graduate"></span>
+                <div class="display-4 fs-4 mb-2 font-weight-normal text-sans-serif text-info">  {{count}}</div>
+                
                 {% comment %} <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">All orders<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a> {% endcomment %}
               </div>
             </div>
@@ -95,9 +97,9 @@
                     </th> -->
                    
                     <th class="sort pr-1 align-middle"><code>SUBJ</code></th>
-                    <th class="sort pr-1 align-middle"><code>CLASS</code></th>
+                    {% comment %} <th class="sort pr-1 align-middle"><code>CLASS</code></th>
                     <th class="sort pr-1 align-middle"><code>TERM</code></th>
-                    <th class="sort pr-1 align-middle"><code>SESS</code></th>
+                    <th class="sort pr-1 align-middle"><code>SESS</code></th> {% endcomment %}
                     {% comment %} <th class="sort pr-1 align-middle"><code>CA1</code></th>
                     <th class="sort pr-1 align-middle"><code>CA2</code></th>
                     <th class="sort pr-1 align-middle"><code>CA3</code></th> {% endcomment %}
@@ -117,10 +119,10 @@
                   {% for ca in assessment %}
                   <tr class="btn-reveal-trigger">
               
-                    <th class="align-middle text-black"><code>{{ ca.subject.subject|truncatechars:5}}</code></th>
-                    <th class="align-middle"><code>{{ ca.studentclass.class_name}}</code></th>
+                    <th class="align-middle text-black"><code>{{ ca.subject.subject}}</code></th>
+                    {% comment %} <th class="align-middle"><code>{{ ca.studentclass.class_name}}</code></th>
                     <td class="align-middle"><code>{{ca.term.term|truncatechars:5}}</code></td>
-                    <td class="align-middle"><code>{{ca.session.session}}</code></td>
+                    <td class="align-middle"><code>{{ca.session.session}}</code></td> {% endcomment %}
                     
                     {% comment %} <td class="align-middle">{{ca.firstscore}}</td>
                     <td class="align-middle">{{ca.secondscore}}</td>
@@ -132,7 +134,7 @@
                     <td class="align-middle"><code>{{ca.lowest_inclass}}</code></td>
                      <td class="align-middle"><code>{{ca.subjectgrade}}</code></td>
                       <td class="align-middle"><code>{{ca.subjectrating}}</code></td>
-                    <td class="align-middle"><code>{{ca.subjectteacher.teacher.surname}}</code></td>
+                    <td class="align-middle"><code>{% staff_sign ca.subjectteacher.pk %}</code></td>
                      
               
                   </tr>
