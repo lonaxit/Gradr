@@ -74,8 +74,8 @@ def studentProfile(request):
 @login_required(login_url='login')
 def printResult(request,pk):
     result = Result.objects.get(pk=pk)
-    academic_scores = Scores.objects.filter(student=result.student,studentclass=result.studentclass,term=result.term,session=result.session)
-    student_count = Scores.objects.filter(studentclass=result.studentclass,term=result.term,session=result.session).distinct('student').count()
+    academic_scores = Scores.objects.filter(student=result.student.pk,studentclass=result.studentclass.pk,term=result.term.pk,session=result.session.pk)
+    student_count = Scores.objects.filter(studentclass=result.studentclass.pk,term=result.term.pk,session=result.session.pk).distinct('student').count()
     affective = Studentaffective.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
 
     psychomotor = Studentpsychomotor.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
