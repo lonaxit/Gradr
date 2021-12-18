@@ -2432,24 +2432,29 @@ def ClassSMS(request):
                 # sender='SKYGIFTEDMK'
                 
                 for student in studentsInClass:
+                    # check if parent exist
+                    guardianExist = Guardian.objects.filter(student=student.student.pk).exists()
+                    if guardianExist:
                     
-                    guardian = Guardian.objects.get(student=student.student.pk)
-                    # url = 'https://api.ebulksms.com:4433/sendsms?username='+username+'&apikey='+key+'&sender='+sender+'&messagetext='+sms_msg+'&flash=0'+'&recipients='+guardian.phone
-                    # response = requests.get(url)
-                    
-                    # messages.success(request, 'Messages sent!')
-                    # return redirect('classsms')
-                    
-                    # response = requests.get('https://api.ebulksms.com:4433/sendsms?username=lupertivkaa@gmail.com&apikey=b0808a0610a0a9c6e11f105fb40e284e73269712&sender=SKYGIFTEDMK&messagetext=&flash=0&recipients=0703610112')
-            
-                    # SMS BULK NIGERIA
-            
-                    api = '9IGspBnLAjWENmr9nPogQRN9PuVwAHsSPtGi5szTdBfVmC2leqAe8vsZh6dg'
-                    # to = '08091768295'
-                    from_ = 'SKYGIFTEDMK'
-                    # message = 'Testing sms for skygifted academy'
-                    url = 'https://www.bulksmsnigeria.com/api/v1/sms/create?api_token='+api+'&from='+from_+'&to='+guardian.phone+'&body='+sms_msg+'&dnd=1'
-                    response = requests.get(url)
+                        guardian = Guardian.objects.get(student=student.student.pk)
+                        # url = 'https://api.ebulksms.com:4433/sendsms?username='+username+'&apikey='+key+'&sender='+sender+'&messagetext='+sms_msg+'&flash=0'+'&recipients='+guardian.phone
+                        # response = requests.get(url)
+                        
+                        # messages.success(request, 'Messages sent!')
+                        # return redirect('classsms')
+                        
+                        # response = requests.get('https://api.ebulksms.com:4433/sendsms?username=lupertivkaa@gmail.com&apikey=b0808a0610a0a9c6e11f105fb40e284e73269712&sender=SKYGIFTEDMK&messagetext=&flash=0&recipients=0703610112')
+                
+                        # SMS BULK NIGERIA
+                
+                        api = '9IGspBnLAjWENmr9nPogQRN9PuVwAHsSPtGi5szTdBfVmC2leqAe8vsZh6dg'
+                        # to = '08091768295'
+                        from_ = 'SKYGIFTEDMK'
+                        # message = 'Testing sms for skygifted academy'
+                        url = 'https://www.bulksmsnigeria.com/api/v1/sms/create?api_token='+api+'&from='+from_+'&to='+guardian.phone+'&body='+sms_msg+'&dnd=1'
+                        response = requests.get(url)
+                    else:
+                        pass
                 messages.success(request, 'Messages sent!')
                 return redirect('classsms')
             else:
