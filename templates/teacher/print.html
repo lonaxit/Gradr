@@ -108,6 +108,7 @@
                   <button class="btn btn-outline-dark btn-sm px-3" type="button"><span class="fs--2"> {{result.term}}  </span></button>
                   <button class="btn btn-outline-dark btn-sm px-3 ml-2" type="button"><span class="fs--2"> {{result.session}} </span></button>
                   <button class="btn btn-outline-dark btn-sm px-3 ml-2" type="button"><span class="fs--2"> {{student_count}} Student(s) </span></button>
+                  <button class="btn btn-outline-dark btn-sm px-3 ml-2" type="button"><span class="fs--2">Att: {{result.attendance}} </span></button>
 
                   <!-- <div class="d-flex  mt-1">
                    <div class="p-2 flex-fill"><span class="text-black mr-2">Class</span> <span> JSS1A </span></div>
@@ -173,7 +174,7 @@
             <td>{{ score.subjectposition}}</td>
             <td>{{ score.subjectgrade}}</td>
             <td>{{ score.subjectrating}}</td>
-            <td> {% staff_sign score.subjectteacher.pk %}
+            <td> {% staff_sign score.subjectteacher.pk|capfirst %}
             </td>
           </tr>
          
@@ -348,7 +349,10 @@
                 <div class="grading-items"><h6>C-Good</h6><span class="fs--1">55-64</span></div>
                 <div class="grading-items"><h6>D-Fair</h6><span class="fs--1">40-54</span></div>
                 <div class="grading-items"><h6>E-Poor</h6><span class="fs--1">39 Below</span></div>
-            </div>
+              </div>
+
+                <div class="grading-items"><h6 >Next Term Begins</h6><span class="fs--1">{{termbegins.term_begins}}</span></div>
+              </div>
             </div>
 
           </div>
