@@ -58,6 +58,7 @@ def printResultHtml(request,pk):
 
     termBegins = ResumptionSetting.objects.get(term=result.term.pk)
 
+    attendanceSettings = AttendanceSetting.objects.get(term=result.term.pk,session=result.session.pk)
 
     # academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
     context={
@@ -66,7 +67,8 @@ def printResultHtml(request,pk):
         'student_count':student_count,
         'affective':affective,
         'psychomotor':psychomotor,
-        'termbegins':termBegins
+        'termbegins':termBegins,
+        'attendanceSetting':attendanceSettings
     }
     return render(request,'teacher/print.html',context)
 
