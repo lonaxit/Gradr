@@ -84,7 +84,7 @@
               <!--/.bg-holder-->
               {% comment %} {% if result.student.profile_image %} {% endcomment %}
 
-              <div class="avatar avatar-3xl avatar-profile"><img class="rounded-circle img-thumbnail shadow-sm" src="{{ result.student.profile_image.url }}" width="200" alt="" /></div>
+              <div class="avatar avatar-3xl"><img class="rounded-circle" src="{{ result.student.profile_image.url }}" width="200" alt="" /></div>
               </div>
               {% comment %} {% else %}
                 <div class="avatar avatar-3xl avatar-profile"><img class="rounded-circle img-thumbnail shadow-sm" src="{% static '/img/logos/skybadge.jpg' %}" width="200" alt="" /></div>
