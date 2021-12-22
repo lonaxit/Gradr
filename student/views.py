@@ -79,7 +79,9 @@ def printResult(request,pk):
     affective = Studentaffective.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
 
     psychomotor = Studentpsychomotor.objects.filter(student=result.student,studentclass=result.studentclass,session=result.session,term=result.term)
-    termBegins = ResumptionSetting.objects.get(term=result.term.pk)
+    termBegins = ResumptionSetting.objects.get(term=result.term.pk,session=result.session.pk)
+    
+    attendanceSettings = AttendanceSetting.objects.get(term=result.term.pk,session=result.session.pk)
 
     # academic_scores = Scores.objects.filter(student=1,studentclass=1,term=1,session=1)
     context={
@@ -88,7 +90,8 @@ def printResult(request,pk):
         'student_count':student_count,
         'affective':affective,
         'psychomotor':psychomotor,
-        'termbegins':termBegins
+        'termbegins':termBegins,
+        'attendanceSetting':attendanceSettings
     }
     return render(request,'teacher/print.html',context)
 
