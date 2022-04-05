@@ -798,8 +798,7 @@ def updateSubjectTeacher(request,pk):
             teacherObj = Teacher.objects.get(id=teacher)
             subjectObj = Subject.objects.get(id=subject)
             classroomObj = StudentClass.objects.get(id=classroom)
-            result = SubjectTeacher.objects.filter(Q(teacher=teacherObj) & Q(subject=subjectObj)
-            | Q(classroom=classroomObj) & Q(subject=subjectObj))
+            result = SubjectTeacher.objects.filter(Q(teacher=teacherObj) & Q(subject=subjectObj) & Q(classroom=classroomObj))
 
             # result = SubjectTeacher.objects.filter(Q(teacher=teacherObj) & Q(classroom=classroomObj)
             # | Q(classroom=classroomObj) & Q(subject=subjectObj))
