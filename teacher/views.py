@@ -853,8 +853,12 @@ def exportSheet(request,classroom,subject):
         # activeTerm = Term.objects.get(status='True')
         # activeSession = Session.objects.get(status='True')
 
-
-        students = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q(class_room=classroom)).order_by('student__sur_name')
+        # old
+        # students = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q(class_room=classroom)).order_by('student__sur_name')
+        # subject = Subject.objects.get(pk=subject)
+        
+        # new
+        students = Classroom.objects.filter(Q(session=activeSession) & Q(class_room=classroom)).order_by('student__sur_name')
         subject = Subject.objects.get(pk=subject)
 
             # ordering using a different table, student field is on classroom table which is related to the student table and sur_name is on the student table
