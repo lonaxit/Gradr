@@ -723,8 +723,11 @@ def myClassroom(request,classroom,term,session):
         sessObj = Session.objects.get(pk=session)
         
         # classTeacher = ClassTeacher.objects.get(teacher=loggedin,term=termObj,session=sessObj)
-       
-        stds = Classroom.objects.filter(Q(term=termObj.pk) & Q(session=sessObj.pk) & Q(class_room=stdClass.pk)).order_by('student__sur_name')
+    #    new code
+        stds = Classroom.objects.filter(Q(session=sessObj.pk) & Q(class_room=stdClass.pk)).order_by('student__sur_name')
+        
+        # old
+        # stds = Classroom.objects.filter(Q(term=termObj.pk) & Q(session=sessObj.pk) & Q(class_room=stdClass.pk)).order_by('student__sur_name')
         
         classObj = stds.first()
         context = {'students':stds,
