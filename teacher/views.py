@@ -1022,7 +1022,7 @@ def processResult(request):
     try:
 
         # TODO Check if logged in user is not class teacher, then redirect with a message
-        # if ClassTeacher.objects.filter(teacher=).exists():
+        # if ClassTeacher.objects.filter(teacher=my_teacher.pk).exists():
             
             
 
@@ -1052,29 +1052,34 @@ def processResult(request):
 
                 # session object
                 sessObj = Session.objects.get(pk=session)
+                
+                # checck for class teacher 
+                if ClassTeacher.objects.filter(teacher=my_teacher.pk,classroom=classroomObj.pk).exists():
 
-                with transaction.atomic():
+                    with transaction.atomic():
 
-                    # students = Scores.objects.filter(session=session,term=term,studentclass=classroom).distinct('student')
-                    
-                    # process terminal result
-                    processTerminalResult(classroomObj,termObj,sessObj)
+                        # students = Scores.objects.filter(session=session,term=term,studentclass=classroom).distinct('student')
+                        
+                        # process terminal result
+                        processTerminalResult(classroomObj,termObj,sessObj)
 
-                    # process terminal result
-                    # processAnnualResult(score)
+                        # process terminal result
+                        # processAnnualResult(score)
 
-                    # Add auto comment
-                    # autoAddComment(score.studentclass,score.session,score.term)
+                        # Add auto comment
+                        # autoAddComment(score.studentclass,score.session,score.term)
 
-                    # proccess Affective domain
-                    # processAffective(score)
+                        # proccess Affective domain
+                        # processAffective(score)
 
-                    # process Psychomotor domain
-                    # processPsycho(score)
-
-            # else:
-                # pass
+                        # process Psychomotor domain
+                        # processPsycho(score)
                     messages.success(request,  'Successful')
+                    return render(request,'teacher/processClassResult.html',context)
+
+                else:
+                
+                    messages.success(request,  'oops! Are you a class teacher?')
                     return render(request,'teacher/processClassResult.html',context)
 
             return render(request,'teacher/processClassResult.html',context)
@@ -1228,6 +1233,8 @@ def resultComments(request,classroom,term,session):
 def resultSummary(request):
 
     loggedin = request.user.tutor.pk
+    myuser_id = request.user
+    my_teacher = Teacher.object.get(user=myuser_id.pk)
 
     form = ResultFilterForm()
     # entry = ClassTeacher.objects.filter(teacher=loggedin)
@@ -1241,43 +1248,45 @@ def resultSummary(request):
             session = request.POST['session']
             term = request.POST['term']
 
-            # if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
+            if ClassTeacher.objects.filter(teacher=my_teacher.pk,classroom=classroom).exists():
 
-            # select reesult
-            result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
-                & Q(session=session)).order_by('termposition')
-            resultObj = result.first()
-
-
-            nocommentsCount = result.filter(classteachercomment__isnull=True).count()
-            yescommentsCount = result.filter(classteachercomment__isnull=False).count()
-
-            affective = Studentaffective.objects.filter(Q(term=term) & Q(studentclass=classroom)
-                & Q(session=session)).values('student').distinct('student')
+                # select reesult
+                result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                    & Q(session=session)).order_by('termposition')
+                resultObj = result.first()
 
 
-            yesaffective = result.filter(student__in=affective).count()
-            noaffective = result.exclude(student__in=affective).count()
+                nocommentsCount = result.filter(classteachercomment__isnull=True).count()
+                yescommentsCount = result.filter(classteachercomment__isnull=False).count()
+
+                affective = Studentaffective.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                    & Q(session=session)).values('student').distinct('student')
 
 
-            psychomotor = Studentpsychomotor.objects.filter(Q(term=term) & Q(studentclass=classroom)
-                & Q(session=session)).values('student').distinct('student')
+                yesaffective = result.filter(student__in=affective).count()
+                noaffective = result.exclude(student__in=affective).count()
 
 
-            yespsycho = result.filter(student__in=psychomotor).count()
-            nopsycho = result.exclude(student__in=psychomotor).count()
-
-            noattendance = result.filter(attendance__isnull=True).count()
-            yesattendance = result.filter(attendance__isnull=False).count()
+                psychomotor = Studentpsychomotor.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                    & Q(session=session)).values('student').distinct('student')
 
 
-            # find pass rate
-            totalStudents = result.count()
+                yespsycho = result.filter(student__in=psychomotor).count()
+                nopsycho = result.exclude(student__in=psychomotor).count()
 
-            passedStudents = result.filter(termaverage__gte=40).count()
+                noattendance = result.filter(attendance__isnull=True).count()
+                yesattendance = result.filter(attendance__isnull=False).count()
 
-            passRate = passedStudents/totalStudents*100
 
+                # find pass rate
+                totalStudents = result.count()
+
+                passedStudents = result.filter(termaverage__gte=40).count()
+
+                passRate = passedStudents/totalStudents*100
+            else:
+                messages.error(request, 'oops! Are you a class teaccher')
+                return redirect('result-summary')
 
 
             #check for availability of result
