@@ -586,19 +586,19 @@ def addAttendance(request):
             session = request.POST['session']
             term = request.POST['term']
 
-            if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
+            # if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom).exists():
 
-                # select reesult
-                result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
-                & Q(session=session)).order_by('termposition')
+            # select reesult
+            result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+            & Q(session=session)).order_by('termposition')
 
-                #check for availability of result
-                if not result:
-                    messages.error(request, 'No record exist')
-                    return redirect('filter-result')
-                else:
-                    context ={ 'form':form,'result':result}
-                    return render(request,'teacher/addAttendance.html',context)
+            #check for availability of result
+            if not result:
+                messages.error(request, 'No record exist')
+                return redirect('filter-result')
+            else:
+                context ={ 'form':form,'result':result}
+                return render(request,'teacher/addAttendance.html',context)
 
     context = {'form':form}
     return render(request,'teacher/addAttendance.html',context)
@@ -1013,8 +1013,9 @@ def removeBulkAssSheet(request,myclassroom,term,session,subject):
 def processResult(request):
 
     loggedin = request.user.tutor.pk
-    myuser_id = request.user
-    my_teacher = Teacher.object.get(user=myuser_id.pk)
+    
+    # myuser_id = request.user
+    # my_teacher = Teacher.object.get(user=myuser_id.pk)
     
     
     
@@ -1054,33 +1055,35 @@ def processResult(request):
                 sessObj = Session.objects.get(pk=session)
                 
                 # checck for class teacher 
-                if ClassTeacher.objects.filter(teacher=my_teacher.pk,classroom=classroomObj.pk).exists():
+                # if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroomObj.pk).exists():
 
-                    with transaction.atomic():
-
-                        # students = Scores.objects.filter(session=session,term=term,studentclass=classroom).distinct('student')
+                with transaction.atomic():
+                    
                         
-                        # process terminal result
-                        processTerminalResult(classroomObj,termObj,sessObj)
 
-                        # process terminal result
-                        # processAnnualResult(score)
+                    # students = Scores.objects.filter(session=session,term=term,studentclass=classroom).distinct('student')
+                    
+                    # process terminal result
+                    processTerminalResult(classroomObj,termObj,sessObj)
 
-                        # Add auto comment
-                        # autoAddComment(score.studentclass,score.session,score.term)
+                    # process terminal result
+                    # processAnnualResult(score)
 
-                        # proccess Affective domain
-                        # processAffective(score)
+                    # Add auto comment
+                    # autoAddComment(score.studentclass,score.session,score.term)
 
-                        # process Psychomotor domain
-                        # processPsycho(score)
+                    # proccess Affective domain
+                    # processAffective(score)
+
+                    # process Psychomotor domain
+                    # processPsycho(score)
                     messages.success(request,  'Successful')
                     return render(request,'teacher/processClassResult.html',context)
 
-                else:
+                # else:
                 
-                    messages.success(request,  'oops! Are you a class teacher?')
-                    return render(request,'teacher/processClassResult.html',context)
+                #     messages.success(request,  'oops! Are you a class teacher?')
+                #     return render(request,'teacher/processClassResult.html',context)
 
             return render(request,'teacher/processClassResult.html',context)
         # else:
