@@ -1014,66 +1014,72 @@ def processResult(request):
 
     loggedin = request.user.tutor.pk
     myclient = request.user.tutor
+    
+    # test
+    try:
 
-    # TODO Check if logged in user is not class teacher, then redirect with a message
-    if ClassTeacher.objects.filter(teacher=loggedin).exists():
-        
-        
+        # TODO Check if logged in user is not class teacher, then redirect with a message
+        if ClassTeacher.objects.filter(teacher=loggedin).exists():
+            
+            
 
-        # logged_inuser = request.user
-        # clientProfile  = Client.objects.get(user_id=logged_inuser.id)
+            # logged_inuser = request.user
+            # clientProfile  = Client.objects.get(user_id=logged_inuser.id)
 
-        # form
-        form = ResultFilterForm()
-        # try:
+            # form
+            form = ResultFilterForm()
+            # try:
 
-        context={
-        'form':form
-            }
+            context={
+            'form':form
+                }
 
-        if request.method=='POST':
+            if request.method=='POST':
 
-            classroom = request.POST['classroom']
-            term = request.POST['term']
-            session = request.POST['session']
+                classroom = request.POST['classroom']
+                term = request.POST['term']
+                session = request.POST['session']
 
 
-            # classroom object
-            classroomObj = StudentClass.objects.get(pk=classroom)
+                # classroom object
+                classroomObj = StudentClass.objects.get(pk=classroom)
 
-            # term object
-            termObj = Term.objects.get(pk=term)
+                # term object
+                termObj = Term.objects.get(pk=term)
 
-            # session object
-            sessObj = Session.objects.get(pk=session)
+                # session object
+                sessObj = Session.objects.get(pk=session)
 
-            with transaction.atomic():
+                with transaction.atomic():
 
-                # students = Scores.objects.filter(session=session,term=term,studentclass=classroom).distinct('student')
-                 
-                # process terminal result
-                processTerminalResult(classroomObj,termObj,sessObj)
+                    # students = Scores.objects.filter(session=session,term=term,studentclass=classroom).distinct('student')
+                    
+                    # process terminal result
+                    processTerminalResult(classroomObj,termObj,sessObj)
 
-                # process terminal result
-                # processAnnualResult(score)
+                    # process terminal result
+                    # processAnnualResult(score)
 
-                # Add auto comment
-                # autoAddComment(score.studentclass,score.session,score.term)
+                    # Add auto comment
+                    # autoAddComment(score.studentclass,score.session,score.term)
 
-                # proccess Affective domain
-                # processAffective(score)
+                    # proccess Affective domain
+                    # processAffective(score)
 
-                # process Psychomotor domain
-                # processPsycho(score)
+                    # process Psychomotor domain
+                    # processPsycho(score)
 
-        # else:
-            # pass
-                messages.success(request,  'Successful')
-                return render(request,'teacher/processClassResult.html',context)
+            # else:
+                # pass
+                    messages.success(request,  'Successful')
+                    return render(request,'teacher/processClassResult.html',context)
 
-        return render(request,'teacher/processClassResult.html',context)
-    else:
-        return redirect(request, 'teacher')
+            return render(request,'teacher/processClassResult.html',context)
+        else:
+            return redirect(request, 'teacher')
+    except Exception as e:
+        messages.success(request, e)
+        return redirect('teacher')
 
 
 # process traits and comments
