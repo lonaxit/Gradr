@@ -6,6 +6,15 @@
 {% block content %}
 <!-- card section  -->
           <div class="card-deck">
+           <div class="mb-4">
+                      {% if messages %}
+                      <small class="alert alert-success">
+                        {% for message in messages %}
+                        {{message}}
+                        {% endfor %}
+                      </small>
+                      {% endif %}
+                    </div>
             <!-- <div class="card mb-3 overflow-hidden" style="min-width: 12rem">
               <div class="bg-holder bg-card" style="background-image:url(assets/img/illustrations/corner-1.png);">
               </div>
