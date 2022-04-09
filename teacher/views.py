@@ -1014,12 +1014,13 @@ def processResult(request):
 
     loggedin = request.user.tutor.pk
     myclient = request.user.tutor
+    # my_teacher = Teacher.object.get(pk=loggedin)
     
     # test
     try:
 
         # TODO Check if logged in user is not class teacher, then redirect with a message
-        if ClassTeacher.objects.filter(teacher=loggedin).exists():
+        # if ClassTeacher.objects.filter(teacher=loggedin).exists():
             
             
 
@@ -1039,7 +1040,7 @@ def processResult(request):
                 classroom = request.POST['classroom']
                 term = request.POST['term']
                 session = request.POST['session']
-
+                
 
                 # classroom object
                 classroomObj = StudentClass.objects.get(pk=classroom)
@@ -1075,8 +1076,8 @@ def processResult(request):
                     return render(request,'teacher/processClassResult.html',context)
 
             return render(request,'teacher/processClassResult.html',context)
-        else:
-            return redirect(request, 'teacher')
+        # else:
+        #     return redirect(request, 'teacher')
     except Exception as e:
         messages.success(request, e)
         return redirect('teacher')
