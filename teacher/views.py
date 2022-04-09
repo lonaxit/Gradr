@@ -1013,14 +1013,16 @@ def removeBulkAssSheet(request,myclassroom,term,session,subject):
 def processResult(request):
 
     loggedin = request.user.tutor.pk
-    myclient = request.user.tutor
-    # my_teacher = Teacher.object.get(pk=loggedin)
+    myuser_id = request.user
+    my_teacher = Teacher.object.get(user=myuser_id.pk)
+    
+    
     
     # test
     try:
 
         # TODO Check if logged in user is not class teacher, then redirect with a message
-        # if ClassTeacher.objects.filter(teacher=loggedin).exists():
+        # if ClassTeacher.objects.filter(teacher=).exists():
             
             
 
@@ -1239,65 +1241,65 @@ def resultSummary(request):
             session = request.POST['session']
             term = request.POST['term']
 
-            if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
+            # if ClassTeacher.objects.filter(teacher=loggedin,classroom=classroom,session=session,term=term).exists():
 
-                # select reesult
-                result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
-                    & Q(session=session)).order_by('termposition')
-                resultObj = result.first()
-
-
-                nocommentsCount = result.filter(classteachercomment__isnull=True).count()
-                yescommentsCount = result.filter(classteachercomment__isnull=False).count()
-
-                affective = Studentaffective.objects.filter(Q(term=term) & Q(studentclass=classroom)
-                    & Q(session=session)).values('student').distinct('student')
+            # select reesult
+            result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).order_by('termposition')
+            resultObj = result.first()
 
 
-                yesaffective = result.filter(student__in=affective).count()
-                noaffective = result.exclude(student__in=affective).count()
+            nocommentsCount = result.filter(classteachercomment__isnull=True).count()
+            yescommentsCount = result.filter(classteachercomment__isnull=False).count()
+
+            affective = Studentaffective.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).values('student').distinct('student')
 
 
-                psychomotor = Studentpsychomotor.objects.filter(Q(term=term) & Q(studentclass=classroom)
-                    & Q(session=session)).values('student').distinct('student')
+            yesaffective = result.filter(student__in=affective).count()
+            noaffective = result.exclude(student__in=affective).count()
 
 
-                yespsycho = result.filter(student__in=psychomotor).count()
-                nopsycho = result.exclude(student__in=psychomotor).count()
-
-                noattendance = result.filter(attendance__isnull=True).count()
-                yesattendance = result.filter(attendance__isnull=False).count()
+            psychomotor = Studentpsychomotor.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).values('student').distinct('student')
 
 
-                # find pass rate
-                totalStudents = result.count()
+            yespsycho = result.filter(student__in=psychomotor).count()
+            nopsycho = result.exclude(student__in=psychomotor).count()
 
-                passedStudents = result.filter(termaverage__gte=40).count()
-
-                passRate = passedStudents/totalStudents*100
-
+            noattendance = result.filter(attendance__isnull=True).count()
+            yesattendance = result.filter(attendance__isnull=False).count()
 
 
-                #check for availability of result
-                if not result:
-                    messages.error(request, 'No record exist')
-                    return redirect('result-summary')
-                else:
-                    context ={ 'form':form,
-                            'result':result,
-                            'yescomment':yescommentsCount,
-                            'nocomment':nocommentsCount,
-                            'yesaffective':yesaffective,
-                            'noaffective':noaffective,
-                            'yespsycho':yespsycho,
-                            'nopsycho':nopsycho,
-                            'yesattendance':yesattendance,
-                            'noattendance':noattendance,
-                            'resultObj':resultObj,
-                            'passRate':passRate,
-                            'totalStudents':totalStudents
-                            }
-                    return render(request,'teacher/resultSummary.html',context)
+            # find pass rate
+            totalStudents = result.count()
+
+            passedStudents = result.filter(termaverage__gte=40).count()
+
+            passRate = passedStudents/totalStudents*100
+
+
+
+            #check for availability of result
+            if not result:
+                messages.error(request, 'No record exist')
+                return redirect('result-summary')
+            else:
+                context ={ 'form':form,
+                        'result':result,
+                        'yescomment':yescommentsCount,
+                        'nocomment':nocommentsCount,
+                        'yesaffective':yesaffective,
+                        'noaffective':noaffective,
+                        'yespsycho':yespsycho,
+                        'nopsycho':nopsycho,
+                        'yesattendance':yesattendance,
+                        'noattendance':noattendance,
+                        'resultObj':resultObj,
+                        'passRate':passRate,
+                        'totalStudents':totalStudents
+                        }
+                return render(request,'teacher/resultSummary.html',context)
         context = {'form':form}
         return render(request,'teacher/resultSummary.html',context)
 
