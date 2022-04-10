@@ -1937,7 +1937,7 @@ def processTerminalResult(classObj,termObj,sessionObj):
         else:
            
             # get class teacher
-            class_teacher = ClassTeacher.objects.get(classroom=classObj,term=termObj,session=sessionObj)
+            class_teacher = ClassTeacher.objects.get(classroom=classObj,session=sessionObj)
 
             # FIND CLASS TEACHER FOR MIGRATION PURPOSES ONLY, DELETE AFTERWARDS
 
