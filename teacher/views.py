@@ -2072,7 +2072,7 @@ def processPsycho(classroom,session,term):
         studentsResultList = Result.objects.filter(studentclass=classroom.pk,session=session.pk,term=term.pk).distinct('student')
 
         # Get class teacher
-        class_teacher = ClassTeacher.objects.get(classroom=classroom,term=term,session=session)
+        class_teacher = ClassTeacher.objects.get(classroom=classroom,session=session)
   
         for student in studentsResultList:
             
@@ -2116,7 +2116,7 @@ def processAffective(classroom,session,term):
         # affective = Studentaffective.objects.filter(studentclass=classroom,term=term,session=session)
         
         # Get class teacher
-        class_teacher = ClassTeacher.objects.get(classroom=classroom,term=term,session=session)
+        class_teacher = ClassTeacher.objects.get(classroom=classroom,session=session)
         
         for student in studentsResultList:
         
