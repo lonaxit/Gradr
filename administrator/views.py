@@ -2422,7 +2422,7 @@ def ClassSMS(request):
         
         try:
 
-            studentsInClass= Classroom.objects.filter(class_room=classroom,term=term,session=session)
+            studentsInClass= Classroom.objects.filter(class_room=classroom,session=session)
             
             if studentsInClass.exists():
             
