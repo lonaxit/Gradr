@@ -2507,9 +2507,9 @@ def BulkSMS(request):
                         # to = '08091768295'
                         from_ = 'SKYGIFTEDMK'
                         # message = 'Testing sms for skygifted academy'
-                        url = 'https://www.bulksmsnigeria.com/api/v1/sms/create?api_token='+api+'&from='+from_+'&to='+guardian.phone+'&body='+sms_msg
+                        # url = 'https://www.bulksmsnigeria.com/api/v1/sms/create?api_token='+api+'&from='+from_+'&to='+guardian.phone+'&body='+sms_msg
                         
-                        # url = 'https://www.bulksmsnigeria.com/api/v1/sms/create?api_token='+api+'&from='+from_+'&to='+guardian.phone+'&body='+sms_msg+'&dnd=1'
+                        url = 'https://www.bulksmsnigeria.com/api/v1/sms/create?api_token='+api+'&from='+from_+'&to='+guardian.phone+'&body='+sms_msg+'&dnd=1'
                         response = requests.get(url)
                     else:
                         pass
