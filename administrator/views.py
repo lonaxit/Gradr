@@ -36,7 +36,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from teacher.views import *
 import requests
-
+from teacher.models import *
 # academics routine
 # Filter Scores
 @allowed_users(allowed_roles=['admin'])
@@ -2524,3 +2524,37 @@ def BulkSMS(request):
             return render(request,'admin/bulkSMS.html',context)
 
     return render(request,'admin/bulkSMS.html',context)
+
+
+# Terminal Result Summary
+# @login_required(login_url='login')
+def TermResultSummary(request):
+    
+    form = ResultFilterForm()
+    context={
+        'form':form
+    }
+    
+    if request.method =='POST':
+        
+        classroom = request.POST['classroom']
+        session = request.POST['session']
+        term = request.POST['term']
+
+        scores = Scores.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).order_by('subject')
+        
+        students = Scores.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).order_by('student')
+        
+        students = students.distinct('student')
+        
+        subjects = scores.distinct('subject')
+        
+        context={
+        'scores':scores,
+        'subjects':subjects,
+        'form':form,
+        'students':students
+        }
+    return render(request,'admin/terminalResultSummary.html',context)
