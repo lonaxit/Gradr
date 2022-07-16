@@ -56,3 +56,10 @@ def totalStaff():
 def staff_sign(teacherid):
     teacherObj = Teacher.objects.get(pk=teacherid)
     return teacherObj.surname
+
+
+@register.simple_tag
+def getSubjTotal(scoresList,subjid,studentid):
+    filteredObj = scoresList.filter(student=studentid,subject=subjid).first()
+    return filteredObj.subjecttotal
+    
