@@ -1,4 +1,4 @@
-{% extends 'layout/Dashboard/Teachers/Teacher_Layout.html' %}
+{% extends 'layout/base_layout.html' %}
 {% load my_tags %}
 {% load static %}
 {% load humanize %}
@@ -79,8 +79,8 @@
                 <th class="sort">#</th>
                 {% for subj in subjects %}
                   <th class="sort">{{subj.subject.subject_code}}</th>
-                </tr>
                 {% endfor %}
+              </tr>
             </thead>
             <tbody class="bg-white">
 
