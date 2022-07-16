@@ -80,6 +80,8 @@
                 {% for subj in subjects %}
                   <th class="sort">{{subj.subject.subject_code}}</th>
                 {% endfor %}
+                <th class="sort">Total</th>
+                <th class="sort">Pos</th>
               </tr>
             </thead>
             <tbody class="bg-white">
@@ -95,6 +97,13 @@
                 <td> <code>{% getSubjTotal scores i.subject_id student.student_id%} </code>
                 </td>
                 {% endfor %}
+                
+                <td> <code>{% getTermTotal result student.student_id%} </code>
+                </td>
+                
+
+                <td> <code>{% getTermPosition result student.student_id%} </code>
+                </td>
                 </tr>
                 {% endfor %}
             </tbody>
