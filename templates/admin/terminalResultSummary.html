@@ -62,6 +62,52 @@
               </div>
             </div>
           </div>
+
+          <!--  -->
+          <div class="card-deck">
+            <div class="card mb-3 overflow-hidden" style="min-width: 12rem">
+              <div class="bg-holder bg-card" style="background-image:url(  {% static 'img/illustrations/corner-1.png' %});">
+              </div>
+
+
+              <div class="card-body position-relative">
+                {% comment %} <h6>Position</h6> {% endcomment %}
+                <h6>Position<span class="badge badge-soft-warning rounded-capsule ml-2">{{ result.studentclass.class_name}}</span></h6>
+                <div class="display-4 fs-4 mb-2 font-weight-normal text-sans-serif text-warning">{{ result.termposition|ordinal}}</div>
+                {% comment %} <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">See all<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a> {% endcomment %}
+              </div>
+            </div>
+
+            <div class="card mb-3 overflow-hidden" style="min-width: 12rem">
+              <div class="bg-holder bg-card" style="background-image:url( {% static 'img/illustrations/corner-2.png' %});">
+              </div>
+
+
+              <div class="card-body position-relative">
+              <h6>Statistics <span class="badge badge-soft-info rounded-capsule ml-2">{{result.session.session}}</span>  <span class="badge badge-soft-info rounded-capsule ml-2">{{result.term.term}}</span></h6>
+                {% comment %} <h6>Total Students</h6> {% endcomment %}
+                <span class="fas fa-user-graduate"></span>
+                <div class="display-4 fs-4 mb-2 font-weight-normal text-sans-serif text-info">  {{count}}</div>
+                
+                {% comment %} <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">All orders<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a> {% endcomment %}
+              </div>
+            </div>
+
+            <div class="card mb-3 overflow-hidden" style="min-width: 12rem">
+              <div class="bg-holder bg-card" style="background-image:url({% static 'img/illustrations/corner-3.png' %});">
+              </div>
+
+
+              <div class="card-body position-relative">
+                {% comment %} <h6>Current Term</h6> {% endcomment %}
+                <h6>Average<span class="badge badge-soft-success rounded-capsule ml-2">{{result.termaverage}}</span></h6>
+                <div class="display-4 fs-4 mb-2 font-weight-normal text-sans-serif" data-countup='{"count":{{result.termtotal}},"format":"comma","prefix":""}'>0</div>
+                <a class="font-weight-semi-bold fs--1 text-nowrap" href=""><span class="far fa-comment-alt" data-fa-transform="down-1"></span>  {{result.classteachercomment}}</a> 
+              </div>
+            </div> 
+          </div>
+
+          <!--  -->
           
           <div class="card mb-3">
           <div class="card-header">
@@ -89,7 +135,7 @@
               {% for student in students %}
               <tr>
                 <td><code>
-                  {{student.sur_name |capfirst}} {{student.student.first_name |capfirst}}
+                  {{student.sur_name |capfirst}} {{student.first_name |capfirst}}
                   </code>
                 </td>
 
