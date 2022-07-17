@@ -2544,8 +2544,8 @@ def TermResultSummary(request):
         scores = Scores.objects.filter(Q(term=term) & Q(studentclass=classroom)
                 & Q(session=session)).order_by('subject')
         
-        result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
-                & Q(session=session))
+        # result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                # & Q(session=session))
         
         students = Scores.objects.filter(Q(term=term) & Q(studentclass=classroom)
                 & Q(session=session)).order_by('student')
@@ -2561,6 +2561,6 @@ def TermResultSummary(request):
         'subjects':subjects,
         'form':form,
         'students':students,
-        'result':result,
+        # 'result':result,
         }
     return render(request,'admin/terminalResultSummary.html',context)
