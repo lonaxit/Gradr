@@ -83,6 +83,8 @@ urlpatterns = [
   path('result-analysis', views.resultAnalysis, name='result-analysis'),
   path('approve-result/<str:classroom>/<str:term>/<str:session>', views.approveResult, name='approve-result'),
   path('terminalresult-summary', views.TermResultSummary, name='terminalresult-summary'),
+  
+  path('print-terminal-summary/<str:classroom>/<str:term>/<str:session>', views.printTerminalResultSummary, name='print-terminal-summary'),
 
   # institution
    path('logo/<str:pk>', views.logo, name='logo'),
