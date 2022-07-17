@@ -2536,31 +2536,34 @@ def TermResultSummary(request):
     }
     
     if request.method =='POST':
-        
-        classroom = request.POST['classroom']
-        session = request.POST['session']
-        term = request.POST['term']
+        try:
+            
+            classroom = request.POST['classroom']
+            session = request.POST['session']
+            term = request.POST['term']
 
-        scores = Scores.objects.filter(Q(term=term) & Q(studentclass=classroom)
+            scores = Scores.objects.filter(Q(term=term) & Q(studentclass=classroom)
                 & Q(session=session)).order_by('subject')
         
-        # result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
-                # & Q(session=session))
+            result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session))
         
-        students = Scores.objects.filter(Q(term=term) & Q(studentclass=classroom)
+            students = Scores.objects.filter(Q(term=term) & Q(studentclass=classroom)
                 & Q(session=session)).order_by('student')
         
-        students = students.distinct('student')
+            students = students.distinct('student')
         
-        subjects = scores.distinct('subject')
-        
-        
-        
-        context={
-        'scores':scores,
-        'subjects':subjects,
-        'form':form,
-        'students':students,
-        # 'result':result,
-        }
+            subjects = scores.distinct('subject')
+            print(students)
+            context={
+            'scores':scores,
+            'subjects':subjects,
+            'form':form,
+            'students':students,
+            'result':result,
+            }
+        except Exception as e:
+            messages.error(request,e)
+            return render(request,'admin/terminalResultSummary.html',context)
+            
     return render(request,'admin/terminalResultSummary.html',context)
