@@ -1,0 +1,1262 @@
+{% load my_tags %}
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Gradr | Terminal Result Sheet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href='../css/scoresheet.css' type="text/css"> -->
+    <!-- <link rel="stylesheet" href="../fonts/css/font-awesome.min.css">
+    <link rel="stylesheet" href='../css/jquery-ui.css' type="text/css">
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Fjalla+One|Open+Sans|Raleway|Jura|Hind|Quicksand|Barlow+Condensed|Open+Sans+Condensed">
+    <!-- <script type="text/javascript" src="../layout/layout.js"></script> -->
+</head>
+<style>
+    * {
+        margin: 0 auto;
+        box-sizing: border-box; }
+      
+      .main-nav {
+        width: 90%;
+        margin: 0 auto; }
+      
+      .secondary-nav {
+        background-color: #f06292;
+        height: 50px;
+        padding: 1em 0; }
+        .secondary-nav .secondary-nav-content {
+          padding: 1.5px 1.5px 1.5px 1.5px;
+          width: 90%;
+          margin: 0 auto; }
+          .secondary-nav .secondary-nav-content h4 {
+            font-family: "Fjalla One";
+            font-size: 1em;
+            margin-top: 3px; }
+      
+      .prim-profile {
+        margin-right: 7px; }
+      
+      .primary-nav {
+        background-color: black;
+        color: #d7dbdd;
+        padding: 1px 1px 1px 1px; }
+        .primary-nav .primary-nav-content {
+          padding: 1.5px 1.5px 1.5px 1.5px;
+          width: 90%;
+          margin: 0 auto; }
+          .primary-nav .primary-nav-content ul {
+            margin-bottom: 0; }
+            .primary-nav .primary-nav-content ul li {
+              font-family: "Open Sans";
+              font-size: .75em;
+              font-weight: bold; }
+          .primary-nav .primary-nav-content h2 {
+            font-family: "Fjalla One";
+            font-size: 1.7em; }
+      
+      .menu-nav {
+        padding: .5em 0;
+        margin-bottom: 2px;
+        background-color: #f06292; }
+        .menu-nav .menu-nav-content {
+          background-color: #f06292;
+          width: 90%;
+          margin: 0 auto; }
+      
+      .menu-nav-list {
+        padding-left: 0; }
+        .menu-nav-list li {
+          display: inline-block;
+          font-family: "Open Sans";
+          list-style-type: none;
+          padding: 3px 3px 3px 3px; }
+          .menu-nav-list li a {
+            text-decoration: none !important;
+            color: #616a6b;
+            font-size: .85em; }
+      
+      .wrapper {
+        width: 90%;
+        margin: 0 auto; }
+      
+      .primary-nav-content {
+        display: flex;
+        justify-content: space-between; }
+      
+      .primary-link {
+        display: flex;
+        margin-right: 0; }
+        .primary-link li {
+          margin: 0 0.65em;
+          list-style-type: none;
+          padding: 3px 0 3px 0; }
+          .primary-link li a {
+            text-decoration: none; }
+      
+      .aux-menu {
+        width: 100%;
+        margin: 0 auto;
+        padding-left: 0;
+        background-color: #d4e6f1;
+        border-radius: 1px;
+        margin-bottom: 2px; }
+        .aux-menu h6 {
+          font-family: "Raleway";
+          color: #17202a;
+          font-size: .75em;
+          margin: 2px 0 0 2px;
+          padding: 2px 2px 2px 2px;
+          display: inline-block;
+          border-bottom: 1.5px solid #d2b4de; }
+        .aux-menu ul {
+          padding-left: 0;
+          margin-bottom: 0; }
+          .aux-menu ul li {
+            display: inline-block;
+            font-family: "Open Sans";
+            list-style-type: none;
+            padding: 1.5px 1.5px 1.5px 1.5px; }
+            .aux-menu ul li a {
+              text-decoration: none !important;
+              color: #616a6b;
+              font-size: .65em; }
+      
+      .site-name {
+        margin-left: 0; }
+      
+      .wrap {
+        min-height: calc(100vh - 40px); }
+      
+      .footer {
+        text-align: center;
+        margin-bottom: 0;
+        height: 40px;
+        display: none; }
+        .footer p {
+          margin-bottom: 0;
+          padding: 2px; }
+      
+      .edit-link a {
+        text-decoration: none !important;
+        font-family: "Fjalla One";
+        font-size: .87em; }
+      
+      .display-list {
+        display: inline-block;
+        margin: 0;
+        width: 100%;
+        padding: 7px 0;
+        border-top: 1px solid #D5DDE4;
+        font-size: .9em;
+        font-family: "Fjalla One";
+        color: #566573; }
+      
+      .class-stats {
+        width: 95%;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: .9px .9px .9px .9px;
+        margin-bottom: 7px;
+        margin-top: 7px;
+        height: 80px; }
+      
+      .best-wishes {
+        width: 95%;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: .9px .9px .9px .9px;
+        margin-bottom: 7px;
+        margin-top: 7px;
+        height: 170px;
+        overflow: auto; }
+      
+      .current-settings {
+        width: 95%;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: .9px .9px .9px .9px;
+        margin-bottom: 7px;
+        margin-top: 7px;
+        height: 80px; }
+        .current-settings h5 {
+          display: inline-block;
+          font-family: "Barlow Condensed";
+          font-size: 1em;
+          color: #A93226;
+          margin-bottom: 2px; }
+      
+      .stud-details-item {
+        line-height: 0.5;
+        font-family: "Barlow Condensed";
+        color: #000;
+        font-size: .8em;
+        margin-bottom: 0px;
+        padding-left: 1px; }
+      
+      .stud-details-sub-item {
+        font-family: "Barlow Condensed";
+        font-size: .7em;
+        color: #000;
+        margin-bottom: 0px;
+        padding-left: 1px; }
+      
+      .class-stats {
+        width: 95%;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: .9px .9px .9px .9px;
+        margin-bottom: 7px;
+        margin-top: 7px; }
+        .class-stats h5 {
+          display: inline-block;
+          font-family: "Barlow Condensed";
+          font-size: 1em;
+          color: #A93226;
+          margin-bottom: 2px; }
+      
+      .item-detail-span {
+        font-family: "Barlow Condensed";
+        font-size: .77em;
+        color: #566573; }
+      
+      .studlist-on-class {
+        width: 95%;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: .9px .9px .9px .9px;
+        margin-bottom: 7px;
+        margin-top: 7px;
+        height: 150px;
+        overflow: auto; }
+        .studlist-on-class h5 {
+          display: inline-block;
+          font-family: "Barlow Condensed";
+          font-size: 1em;
+          color: #A93226;
+          margin-bottom: 2px; }
+      
+      .stud-list-highlight {
+        width: 100%;
+        padding-left: 0px;
+        margin-bottom: 0px; }
+        .stud-list-highlight li {
+          padding: 1px 1px;
+          list-style-type: none;
+          margin-bottom: 3px; }
+      
+      .small-stud-avatar {
+        width: 20%;
+        display: inline-block;
+        margin-right: -5px;
+        text-align: center; }
+      
+      .small-stud-detail {
+        width: 80%;
+        display: inline-block;
+        padding-top: 6px; }
+      
+      .list-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 2px 2px 2px 2px;
+        border: 1px solid #278da4; }
+      
+      .class-student-list {
+        width: 95%;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: .9px .9px .9px .9px;
+        margin-bottom: 7px;
+        margin-top: 7px;
+        overflow: auto; }
+      
+      .my-staff-list {
+        width: 95%;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: .9px .9px .9px .9px;
+        margin-bottom: 7px;
+        margin-top: 7px;
+        height: 170px;
+        overflow: auto; }
+      
+      .headings {
+        font-family: "Quicksand";
+        /*text-decoration: underline solid #ccd1d1;*/
+        color: #ccd1d1;
+        font-size: .8em;
+        margin-top: .9em;
+        font-weight: bolder; }
+      
+      .top-header {
+        font-family: "Fjalla One";
+        color: #ccd1d1;
+        margin-top: 3px; }
+      
+      h1 {
+        font-size: 1.5em;
+        display: inline-block; }
+        .intro h1 {
+          margin: 90px 0px 70px 0px;
+          padding: 0px 0px 4px 0px;
+          font-size: .90em; }
+      
+      p {
+        font-size: 1em;
+        color: #000; }
+        .intro p {
+          font-size: .75em; }
+      
+      .user-profile-image {
+        width: 18px;
+        height: 20px;
+        border-radius: 2px; }
+      
+      /* Dropdown Button */
+      .dropbtn {
+        padding: 3px 3px 3px 0;
+        border: none; }
+      
+      /* Dropdown button on hover & focus */
+      /* The container <div> - needed to position the dropdown content */
+      .dropdown {
+        position: relative;
+        display: inline-block; }
+      
+      /* Dropdown Content (Hidden by Default) */
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1; }
+      
+      /* Links inside the dropdown */
+      .dropdown-content a {
+        color: #000;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block; }
+      
+      /* Change color of dropdown links on hover */
+      .dropdown-content a:hover {
+        background-color: #f1f1f1; }
+      
+      /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+      .show {
+        display: block; }
+      
+      .card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        max-width: 300px;
+        margin: 0 auto;
+        text-align: center; }
+        .card a {
+          text-decoration: none;
+          font-size: 22px;
+          color: #000; }
+      
+      .bg-image {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 1px solid #278da4;
+        bottom: -30px;
+        left: 100px;
+        top: 17px; }
+      
+      .img-div {
+        position: relative;
+        width: 100%;
+        height: 40%;
+        background-color: black; }
+      
+      .card-container {
+        padding: 0 16px; }
+        .card-container h6 {
+          font-family: "Fjalla One";
+          color: #613c69;
+          margin-top: 10px;
+          font-size: .95em; }
+      
+      .staff-profile-header {
+        font-family: "Fjalla One";
+        color: #613c69;
+        margin-top: 10px;
+        font-size: .92em; }
+      
+      .title {
+        color: grey;
+        font-size: 18px; }
+      
+      button {
+        border: none;
+        border-radius: 2px 2px 2px 2px;
+        outline: 0;
+        display: inline-block;
+        padding: 8px;
+        color: white;
+        background-color: #000;
+        text-align: center;
+        cursor: pointer;
+        width: 100%;
+        font-size: 18px; }
+      
+      button:hover,
+      a:hover {
+        opacity: 0.7; }
+      
+      .staff-menu {
+        padding-left: 0;
+        margin-bottom: 0; }
+        .staff-menu li {
+          display: inline-block;
+          font-family: "Open Sans";
+          list-style-type: none;
+          padding: 3px 3px 3px 3px; }
+          .staff-menu li a {
+            text-decoration: none !important;
+            color: #616a6b;
+            font-size: .65em; }
+      
+      .image-upload {
+        display: block;
+        font-size: 12px;
+        margin-top: 15px; }
+        .image-upload input {
+          display: none; }
+      
+      .error {
+        color: #ec7063; }
+      
+      .alert {
+        margin: auto;
+        display: block;
+        width: 60%; }
+      
+      .info {
+        color: #5499c7; }
+      
+      .datatable {
+        border: 0.5px solid #e5e7e9;
+        border-collapse: collapse;
+        font-family: "Open Sans"; }
+        .datatable td {
+          border: 1px solid #e5e7e9;
+          text-align: left;
+          font-size: .49em;
+          white-space: nowrap; }
+        .datatable th {
+          border: 0.5px solid #e5e7e9;
+          text-align: left;
+          font-size: .50em; }
+      
+      .table-print {
+        border: 0.5px solid #e5e7e9;
+        border-collapse: collapse;
+        width: 100%;
+        font-family: "Open Sans";
+        margin-left: 3px; }
+        .table-print td {
+          border: 1px solid #e5e7e9;
+          text-align: left;
+          font-size: .6em;
+          white-space: nowrap; }
+        .table-print th {
+          border: 0.5px solid #e5e7e9;
+          text-align: left;
+          font-size: .6em; }
+      
+      .asstable-print {
+        border: 0.7px solid #000;
+        border-collapse: collapse;
+        width: 100%;
+        font-family: "Open Sans"; }
+        .asstable-print td {
+          border: 1px solid #000;
+          text-align: left;
+          font-size: 11px;
+          white-space: nowrap; }
+        .asstable-print th {
+          border: 0.5px solid #000;
+          text-align: left;
+          font-size: .49em; }
+      
+      .examtable-print {
+        border: 0.7px solid #000;
+        border-collapse: collapse;
+        width: 100%;
+        font-family: "Open Sans"; }
+        .examtable-print td {
+          border: 1px solid #000;
+          text-align: left;
+          font-size: .54em;
+          white-space: nowrap; }
+        .examtable-print th {
+          border: 0.5px solid #000;
+          text-align: left;
+          font-size: .6em; }
+      
+      .rating-table {
+        border: 0.5px solid #000;
+        border-collapse: collapse;
+        font-family: "Open Sans"; }
+        .rating-table td {
+          border: 1px solid #000;
+          text-align: left;
+          font-size: .4em;
+          white-space: nowrap; }
+        .rating-table th {
+          border: 0.5px solid #000;
+          text-align: left;
+          font-size: .4em; }
+      
+      .transparent-table {
+        border-collapse: collapse;
+        font-family: "Jura";
+        margin-left: 0px; }
+        .transparent-table td {
+          text-align: left;
+          font-size: .6em;
+          white-space: nowrap; }
+        .transparent-table th {
+          text-align: left;
+          font-size: .7em; }
+      
+      .result-content-wrapper {
+        width: 98%;
+        margin: 0 auto; }
+      
+      .ass-school-profile {
+        width: 95%;
+        margin: 0 auto;
+        text-align: center;
+        margin-top: 10px;
+        vertical-align: top; }
+        .ass-school-profile p {
+          font-family: "Hind";
+          font-size: .6em;
+          line-height: 0.3;
+          margin-bottom: 0px; }
+        .ass-school-profile h5 {
+          font-family: "Fjalla One";
+          color: #000;
+          font-size: 1.2em; }
+        .ass-school-profile span {
+          margin-right: 7px;
+          font-family: "Hind";
+          font-size: .6em;
+          margin-bottom: 0px; }
+      
+      .school-profile {
+        display: inline-block;
+        width: 80%;
+        text-align: center;
+        margin-top: 10px;
+        margin-right: -7px;
+        vertical-align: top; }
+        .school-profile p {
+          font-family: "Hind";
+          font-size: .6em;
+          line-height: 0.3;
+          margin-bottom: 0px; }
+        .school-profile h5 {
+          font-family: "Fjalla One";
+          color: #000;
+          font-size: 1.2em; }
+        .school-profile span {
+          margin-right: 7px;
+          font-family: "Hind";
+          font-size: .6em;
+          margin-bottom: 0px; }
+      
+      .preview-list-container {
+        padding-top: 2px;
+        padding-left: 0px; }
+        .preview-list-container li {
+          margin: 0;
+          padding: 0;
+          font-size: 1em;
+          font-family: "Open Sans";
+          color: #17202a;
+          border-bottom: 0.9px solid #616a6b;
+          line-height: 3;
+          list-style-type: none; }
+          .preview-list-container li span {
+            font-family: "Fjalla One";
+            color: #616a6b;
+            font-size: 1.3em; }
+      
+      .main-result-container {
+        width: 80%;
+        display: inline-block;
+        margin-right: -5px;
+        vertical-align: top; }
+        .main-result-container h6 {
+          font-family: "Open Sans";
+          font-size: .7em;
+          color: #000;
+          font-weight: bold; }
+      
+      .main-rating-container {
+        width: 20%;
+        display: inline-block;
+        vertical-align: top;
+        padding-left: 0px; }
+      
+      .student-performance-container {
+        margin-bottom: 10px; }
+      
+      .student-profile h6 {
+        font-family: "Open Sans";
+        font-size: .7em;
+        color: #000;
+        font-weight: bold; }
+      
+      .result-details-container {
+        border-left: 3px solid deepskyblue;
+        margin-bottom: 10px; }
+      
+      .school-profile-container {
+        border-left: 3px solid deepskyblue;
+        margin-bottom: 10px; }
+      
+      .national-emblem {
+        border-left: 3px solid deepskyblue;
+        margin-bottom: 10px;
+        text-align: center;
+        margin-top: 10px;
+        vertical-align: top; }
+        .national-emblem p {
+          font-size: .5em;
+          line-height: 1.3;
+          margin-bottom: 0px; }
+      
+      .school-avatar-container {
+        display: inline-block;
+        width: 10%;
+        margin-right: -2px;
+        margin-top: 10px;
+        vertical-align: top; }
+      
+      .item-container h6 {
+        font-family: "Fjalla One";
+        font-size: .6em;
+        color: #000; }
+      
+      .item-container span {
+        font-family: "Quicksand";
+        color: #000;
+        font-size: .7em;
+        font-weight: 400; }
+      
+      .item-container .grading-header {
+        font-family: "Fjalla One";
+        font-size: .5em;
+        color: #000; }
+      
+      .profile-details {
+        display: inline-block;
+        width: 90%;
+        padding-left: 1em;
+        vertical-align: top;
+        padding-left: 0px; }
+        .profile-details h5 {
+          margin-top: 5px;
+          font-family: "Fjalla One";
+          color: #000;
+          font-size: 1em;
+          margin-top: 0px;
+          display: inline-block;
+          line-height: .4; }
+        .profile-details h6 {
+          margin-bottom: 0px; }
+        .profile-details h4 {
+          margin-top: 0px;
+          margin-bottom: 5px; }
+      
+      .student-avatar {
+        display: inline-block;
+        width: 10%;
+        padding-right: 1em;
+        vertical-align: top; }
+      
+      .colm {
+        display: inline-block;
+        width: 11%;
+        padding-left: 3px;
+        margin-right: -5px; }
+        .colm span {
+          margin-top: .2px; }
+      
+      .grading-items {
+        display: inline-block;
+        width: 20%;
+        padding-left: 3px;
+        margin-right: -5px; }
+        .grading-items span {
+          margin-top: .6px;
+          color: #000; }
+      
+      .logo-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 2px 2px 2px 2px;
+        border: 1px solid #fff;
+        margin-bottom: 4px; }
+      
+      .avatar-img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 1px solid #fff; }
+      
+      .avatar-h5 {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 1px solid #fff;
+        text-align: center;
+        background-color: chocolate;
+        color: #fff;
+        text-align: center;
+        padding: 3px; }
+      
+      .assessment-details {
+        width: 95%;
+        margin: 0 auto;
+        border-left: 3px solid deepskyblue;
+        margin-bottom: 10px; }
+      
+      .result-details {
+        display: inline-block;
+        width: 80%;
+        margin-right: -7px;
+        padding-left: 0px;
+        vertical-align: top; }
+      
+      .domain-ratings {
+        display: inline-block;
+        width: 20%;
+        padding-right: 3px;
+        vertical-align: top;
+        margin-top: 7px; }
+      
+      .traits-items {
+        padding-left: 4px; }
+      
+      .staff-comments-header {
+        display: block;
+        font-family: "Fjalla One";
+        font-size: .6em;
+        color: #000; }
+      
+      .staff-comments-item {
+        display: block;
+        font-family: "Open Sans";
+        font-size: 10px;
+        color: #96a1ac; }
+      
+      .domain-ratings-header {
+        font-family: "Open Sans";
+        font-size: 8px;
+        font-weight: bolder;
+        text-align: center; }
+      
+      .category-header {
+        font-family: "Open Sans";
+        font-size: 14px;
+        font-weight: bolder; }
+      
+      .comments-section {
+        border-left: 3px solid deepskyblue; }
+      
+      .teacher-comments-container {
+        margin-bottom: 10px; }
+      
+      .principal-comments-container {
+        margin-bottom: 10px; }
+      
+      .principal-name {
+        display: inline-block;
+        width: 30%;
+        padding: 2px 2px 2px 2px;
+        margin-right: -5px; }
+      
+      .principal-comments {
+        display: inline-block;
+        width: 40%;
+        padding: 2px 2px 2px 2px;
+        margin-right: -5px; }
+      
+      .principal-sign {
+        display: inline-block;
+        width: 30%;
+        padding: 2px 2px 2px 2px; }
+      
+      .class-teacher-name {
+        display: inline-block;
+        width: 30%;
+        padding: 2px 2px 2px 2px;
+        margin-right: -5px; }
+      
+      .class-teacher-comments {
+        display: inline-block;
+        width: 40%;
+        padding: 2px 2px 2px 2px;
+        margin-right: -5px; }
+      
+      .class-teacher-sign {
+        display: inline-block;
+        width: 30%;
+        padding: 2px 2px 2px 2px; }
+      
+      .school-header {
+        margin-bottom: 5px;
+        padding-left: 0px; }
+        .school-header li {
+          display: inline-block;
+          margin-right: 5px; }
+          .school-header li h4 {
+            font-family: "Fjalla One";
+            font-size: 1em;
+            margin-left: 0px; }
+      
+      .list_box {
+        width: 600px;
+        margin: 0 auto;
+        margin-top: 40px; }
+      
+      .list_box table {
+        width: 100%;
+        margin: 0px;
+        padding: 0px;
+        font-size: 14px;
+        border: 1px solid #e7e7e7; }
+      
+      .list_box table thead tr {
+        background-color: #305891; }
+      
+      .list_box table thead tr th {
+        padding: 7px 5px;
+        color: #fff;
+        font-weight: normal;
+        text-align: left; }
+      
+      .list_box table tbody tr td {
+        padding: 5px;
+        color: #000;
+        font-weight: normal; }
+      
+      .list_box table tbody tr:nth-child(even) {
+        background-color: #F5F5F5; }
+      
+      .icon_div {
+        width: 100%;
+        clear: both;
+        height: 40px; }
+      
+      .user_icon {
+        border-radius: 50%;
+        text-align: center;
+        color: #fff;
+        padding: 15px;
+        text-transform: uppercase;
+        position: absolute; }
+      
+      .img_icon {
+        border-radius: 50%;
+        height: 40px;
+        width: 40px;
+        padding: 1px 1px 1px 1px; }
+      
+      .school-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 2px 2px 2px 2px;
+        border: 1px solid #278da4; }
+      
+      .small-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 2px 2px 2px 2px;
+        border: 1px solid #278da4; }
+      
+      .school-logo {
+        width: 50%;
+        border-radius: 2px 2px 2px 2px;
+        text-align: center;
+        border: 1px solid #fff; }
+      
+      .scoresheet-header {
+        padding-left: 0px; }
+        .scoresheet-header li {
+          display: inline-block;
+          margin-right: 6px;
+          padding: 3px; }
+      
+      .scoresheet-header-title {
+        display: inline-block;
+        font-family: "Fjalla One";
+        font-size: .7em;
+        color: #000;
+        margin-right: 7px; }
+      
+      .scoresheet-header-sub {
+        display: inline-block;
+        font-family: "Quicksand";
+        color: #000;
+        font-size: .6em;
+        font-weight: 400; }
+      
+      .printAssessment {
+        display: inline-block; }
+      
+      .psychomotor-domain-div {
+        display: none; }
+      
+      .comments-div {
+        display: none; }
+      
+      .attendance-div {
+        display: none; }
+      
+      .active-trait {
+        background-color: #fff;
+        color: #000;
+        padding: 7px;
+        text-align: left;
+        text-decoration: none;
+        font-size: 12px;
+        border: 2px solid #48c9b0;
+        border-radius: 4px;
+        width: 85px;
+        margin-right: -5px; }
+        .active-trait button {
+          display: inline-block; }
+      
+      .custom-btn {
+        background-color: #fff;
+        /* white*/
+        color: #000;
+        padding: 7px;
+        text-align: left;
+        text-decoration: none;
+        font-size: 12px;
+        border: 2px solid #e5e7e9;
+        border-radius: 4px;
+        width: 85px;
+        margin-right: -5px; }
+        .custom-btn button {
+          display: inline-block; }
+      
+      .not-approvedBtn {
+        background-color: #cd6155;
+        color: #fff;
+        padding: 7px;
+        text-align: left;
+        text-decoration: none;
+        font-size: 12px;
+        border-radius: 5px; }
+      
+      .approvedBtn {
+        background-color: #76d7c4;
+        color: #fff;
+        padding: 7px;
+        text-align: left;
+        text-decoration: none;
+        font-size: 12px;
+        border-radius: 5px; }
+      
+      .display {
+        display: inline-block; }
+      
+      .highlight {
+        border-bottom: 3px solid #48c9b0;
+        margin-bottom: 2px;
+        display: inline-block; }
+      
+      .traits-display {
+        padding-left: 2px;
+        margin-bottom: 12px; }
+        .traits-display li {
+          display: block;
+          padding: 0px; }
+          .traits-display li span {
+            font-size: .4em;
+            color: #000;
+            margin-right: 3px; }
+      
+      .hide-me {
+        display: none; }
+      
+      @media (max-width: 767px) {
+        .secondary-col {
+          width: 0%;
+          display: none !important; }
+          .secondary-col #right-bar-content {
+            display: none !important; }
+        .primary-col {
+          width: 100% !important;
+          display: block; }
+        .primary-nav-content {
+          width: 95%;
+          margin: 0 auto; }
+          .primary-nav-content h2 {
+            font-size: 1em; }
+            
+        .result-details {
+          margin-right: 1px; }
+        .secondary-nav-content {
+          width: 95%;
+          margin: 0 auto; }
+        .menu-nav-content {
+          width: 95%;
+          margin: 0 auto; }
+          .menu-nav-content li {
+            font-size: .9em; }
+        .wrapper {
+          width: 95%;
+          margin: 0 auto; }
+        .primary-nav-content {
+          display: flex;
+          justify-content: space-between;
+          flex-direction: column; }
+        .aux-menu {
+          width: 100%;
+          margin: 0 auto;
+          padding-left: 0;
+          background-color: #d4e6f1; }
+          .aux-menu h6 {
+            font-family: "Raleway";
+            color: #17202a;
+            font-size: .75em;
+            margin: 2px 0 0 2px;
+            padding: 2px 2px 2px 2px;
+            display: inline-block;
+            border-bottom: 1.5px solid #d2b4de; }
+          .aux-menu ul {
+            padding-left: 0;
+            margin-bottom: 2px; }
+            .aux-menu ul li {
+              display: block;
+              font-family: "Open Sans";
+              list-style-type: none;
+              padding: 1.5px 1.5px 1.5px 1.5px; }
+              .aux-menu ul li a {
+                text-decoration: none !important;
+                color: #616a6b;
+                font-size: .65em; } }
+      
+      @media (max-width: 991px) {
+        .secondary-col {
+          display: inline-block !important;
+          width: 15%;
+          vertical-align: top;
+          padding-left: 2px;
+          padding-top: 1em 0; }
+        .primary-col {
+          display: inline-block !important;
+          width: 85%;
+          vertical-align: top;
+          margin-right: -6px;
+          padding-right: 2px; }
+        .primary-nav-content {
+          width: 95%;
+          margin: 0 auto; }
+          .primary-nav-content h2 {
+            font-size: 1.9em; }
+        .primary-link {
+          display: flex;
+          margin-right: 0;
+          padding-left: 0px; }
+          .primary-link li {
+            margin: 0 0.65em;
+            list-style-type: none;
+            padding: 3px 0 3px 0; }
+            .primary-link li a {
+              text-decoration: none; }
+        .secondary-nav-content {
+          width: 90%;
+          margin: 0 auto; }
+          .secondary-nav-content h2 {
+            font-size: 1.2em; }
+        .menu-nav-content {
+          width: 90%;
+          margin: 0 auto; }
+          .menu-nav-content li {
+            font-size: .97em; }
+        .wrapper {
+          width: 90%;
+          margin: 0 auto; }
+        .menu-nav-list {
+          padding-left: 0; }
+          .menu-nav-list li {
+            display: inline-block;
+            font-family: "Open Sans";
+            list-style-type: none;
+            padding: 3px 3px 3px 3px; }
+            .menu-nav-list li a {
+              text-decoration: none !important;
+              color: #616a6b;
+              font-size: .85em; }
+        .aux-menu {
+          width: 100%;
+          margin: 0 auto;
+          padding-left: 0;
+          background-color: #d4e6f1;
+          border-radius: 2px; }
+          .aux-menu h6 {
+            font-family: "Raleway";
+            color: #17202a;
+            font-size: .75em;
+            margin: 2px 0 0 2px;
+            padding: 2px 2px 2px 2px;
+            display: inline-block;
+            border-bottom: 1.5px solid #d2b4de; }
+          .aux-menu ul {
+            padding-left: 0;
+            margin-bottom: 0; }
+            .aux-menu ul li {
+              display: inline-block;
+              font-family: "Open Sans";
+              list-style-type: none;
+              padding: 1.5px 1.5px 1.5px 1.5px; }
+              .aux-menu ul li a {
+                text-decoration: none !important;
+                color: #616a6b;
+                font-size: .65em; } }
+      
+      /* Desktops and laptops ----------- */
+      .primary-col {
+        background-color: #fbfcfc;
+        display: inline-block;
+        width: 80%;
+        vertical-align: top;
+        margin-right: -5px;
+        padding-right: 2px;
+        padding-left: 0px; }
+      
+      .secondary-col {
+        background-color: #fbfcfc;
+        display: inline-block;
+        width: 20%;
+        vertical-align: top;
+        padding-left: 1px; }
+      
+      /* The Modal (background) */
+      .modal-div {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: black;
+        /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Black w/ opacity */ }
+      
+      /* Modal Content/Box */
+      .modal-content-div {
+        background-color: #fefefe;
+        margin: 2% auto;
+        /* 15% from the top and centered */
+        padding: 4px;
+        border: 1px solid #888;
+        width: 80%;
+        /* Could be more or less, depending on screen size */
+        border-radius: 6px; }
+      
+      /* The Close Button */
+      .closex {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold; }
+      
+      .closex:hover,
+      .closex:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer; }
+      
+</style>
+
+<body>
+
+<div class="result-content-wrapper">
+
+    <div class="ass-school-profile">
+        
+        <div class="logo-img">
+          <h5>
+            <img class="logo-img" src="{% static 'img/logos/skybadge.jpg' %}" />
+        </h5>
+        </div>
+        <h5>SKY GIFTED ACADEMY MKAR, GBOKO</h5>
+    </div>
+    <!--end school profile div  -->
+    <div class="student-profile">
+        <h5>Annual Result Summary</h5>
+        <ul class="scoresheet-header">
+        <li><span class="scoresheet-header-title">Class</span><span class="scoresheet-header-sub">{{objRef.studentclass.class_name}}</span></li>
+        <li><span class="scoresheet-header-title">Term</span><span class="scoresheet-header-sub">{{objRef.term.term}}</span></li>
+        <li><span class="scoresheet-header-title">Session</span><span class="scoresheet-header-sub">{{objRef.session.session}}</span></li></ul>
+    </div>
+    
+    <div class="assessment-details background-cover">
+        <table class="asstable-print">
+            <tr>
+                <th class="sort">Name</th>
+                {% for subj in subjects %}
+                  <th class="sort">{{subj.subject.subject_code}}</th>
+                {% endfor %}
+                <th>TOTAL</th>
+                <th>POS</th>
+              </tr>
+
+              {% for student in students %}
+              <tr>
+                <td><code>
+                  {{student.student.sur_name |lower|capfirst}} {{student.student.first_name |lower|capfirst}}
+                  </code>
+                </td>
+
+                {% for i in subjects %}
+                <td> <code>{% getSubjTotal scores i.subject_id student.student_id%} </code>
+                </td>
+                {% endfor %}
+                <td> <code>{% getTermTotal result student.student_id%}</code>
+                </td>
+                <td> <code>{% getTermPosition result student.student_id%}</code>
+                </td>
+                </tr>
+                {% endfor %}
+        </table>
+     
+    </div>
+</div>
+
+</body>
+
+</html>
