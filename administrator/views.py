@@ -2554,16 +2554,48 @@ def TermResultSummary(request):
             students = students.distinct('student')
         
             subjects = scores.distinct('subject')
-            print(students)
+            objRef = scores.first()
             context={
             'scores':scores,
             'subjects':subjects,
             'form':form,
             'students':students,
             'result':result,
+            'objRef':objRef,
             }
         except Exception as e:
             messages.error(request,e)
             return render(request,'admin/terminalResultSummary.html',context)
             
     return render(request,'admin/terminalResultSummary.html',context)
+
+
+def printTerminalResultSummary(request,term,session,classroom):
+    
+    
+    try:
+        
+        scores = Scores.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).order_by('subject')
+        
+        result = Result.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session))
+        
+        students = Scores.objects.filter(Q(term=term) & Q(studentclass=classroom)
+                & Q(session=session)).order_by('student')
+        
+        students = students.distinct('student')
+        
+        subjects = scores.distinct('subject')
+        objRef = scores.first()
+        context={
+            'scores':scores,
+            'subjects':subjects,
+            'students':students,
+            'result':result,
+            'objRef':objRef,
+            }
+    except Exception as e:
+        messages.error(request,e)
+        return redirect('terminalresult-summary')
+    return render(request,'admin/printTerminalSummary.html',context)
