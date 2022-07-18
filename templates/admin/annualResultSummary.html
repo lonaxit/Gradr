@@ -85,9 +85,9 @@
               <div class="col-6 col-sm-auto d-flex align-items-center pr-0">
                 <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Filtered Result </h5> 
 
-                
+                | 
                 <span>
-                  <a href="{% url 'print-annual-summary' objRef.session.pk objRef.studentclass.pk %}" target="_blank">Print</a>
+                  <a href="{% url 'print-annual-summary' objRef.session.pk objRef.studentclass.pk %}" target="_blank"> Print</a>
                 </span>
                 
               </div>
@@ -99,29 +99,31 @@
             <!-- <thead class="bg-200"> -->
 
             <tr>
-            <th colspan="2"></th>
+            <th>#</th>
+            <th>Name</th>
             {% for subj in subjects %}
-            <th colspan="3">{{subj.subject.subject_code}}</th>
+            <th>{{subj.subject.subject_code}}</th>
             {% endfor %}
-            <th colspan="2">Summary</th>
+            <th>Summary</th>
             </tr>
 
-             <tr>
+             <!-- <tr>
                 <th>SN</th>
                 <th>Name</th>
                 {% for subject in subjects %}
                 <th>Cum Total</th>
-                <!-- <th>T2</th>
+                <th>T2</th>
                 <th>T3</th> -->
-                {% endfor %}
-                <th>Total</th>
-             </tr>
+                <!-- {% endfor %}
+                <th>Total</th> -->
+             </tr> 
             <!-- </thead> -->
             <tbody class="bg-white">
 
          {% for name in students %}
          <tr>
-         <td>#</td>
+         <!-- <td>#</td> -->
+         <td>{{forloop.counter}}</td>
          <td>
             {{name.student.sur_name|lower|capfirst}}  {{name.student.first_name|lower|capfirst}}
         </td>
