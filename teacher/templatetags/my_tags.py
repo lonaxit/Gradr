@@ -4,6 +4,7 @@ register = template.Library()
 from accounts.models import *
 from administrator.models import *
 from teacher.models import *
+from django.db.models import Q, Sum, Avg, Max, Min
 
 @register.simple_tag
 def affective_domain(term,session,student):
@@ -77,3 +78,43 @@ def getTermPosition(resultList,studentid):
     if resultObj:
         return resultObj.termposition
     return "Null" 
+
+@register.simple_tag
+def firstTermTotal(annualResult,studentid,subjid):
+    resultObj = annualResult.filter(student=studentid,term=1,subject=subjid).first()
+    if resultObj:
+        return resultObj.subjecttotal
+    return "Null" 
+
+@register.simple_tag
+def secondTermTotal(scores,studentid,subjid):
+    resultObj = scores.filter(student=studentid,term=2,subject=subjid).first()
+    if resultObj:
+        return resultObj.subjecttotal
+    return "Null" 
+
+@register.simple_tag
+def thirdTermTotal(scores,studentid,subjid):
+    resultObj = scores.filter(student=studentid,term=3,subject=subjid).first()
+    if resultObj:
+        return resultObj.subjecttotal
+    return "Null" 
+
+
+@register.simple_tag
+def annualTotal(scores,studentid):
+    resultObj = scores.filter(student=studentid).aggregate(annual_sum=Sum('subjecttotal'))
+    return resultObj['annual_sum']
+
+
+@register.simple_tag
+def annualSubjectTotal(scores,studentid,subjid):
+    resultObj = scores.filter(student=studentid,subject=subjid).aggregate(annualsubject_sum=Sum('subjecttotal'))
+    return resultObj['annualsubject_sum']
+    
+    # if resultObj:
+    #     return resultObj.subjecttotal
+    # return "Null"
+
+
+    
