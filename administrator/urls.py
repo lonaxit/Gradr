@@ -82,9 +82,14 @@ urlpatterns = [
   path('comment-result', views.resultFilter, name='comment-result'),
   path('result-analysis', views.resultAnalysis, name='result-analysis'),
   path('approve-result/<str:classroom>/<str:term>/<str:session>', views.approveResult, name='approve-result'),
+  
   path('terminalresult-summary', views.TermResultSummary, name='terminalresult-summary'),
   
-  path('print-terminal-summary/<str:classroom>/<str:term>/<str:session>', views.printTerminalResultSummary, name='print-terminal-summary'),
+  path('print-terminal-summary/<str:term>/<str:session>/<str:classroom>', views.printTerminalResultSummary, name='print-terminal-summary'),
+  
+  path('annualresult-summary', views.AnnualResultSummary, name='annualresult-summary'),
+  
+  path('print-annual-summary/<str:session>/<str:classroom>', views.PrintAnnualResultSummary, name='print-annual-summary'),
 
   # institution
    path('logo/<str:pk>', views.logo, name='logo'),
