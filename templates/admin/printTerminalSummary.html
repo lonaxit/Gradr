@@ -1214,19 +1214,16 @@
         </h5>
         </div>
         <h5>SKY GIFTED ACADEMY MKAR, GBOKO</h5>
+        <p>Terminal Result Summary</p>
+        <span>{{objRef.studentclass.class_name}}</span> | <span>{{objRef.session.session}}</span> | <span>{{objRef.term.term}}</span>
     </div>
     <!--end school profile div  -->
-    <div class="student-profile">
-        <h5>Annual Result Summary</h5>
-        <ul class="scoresheet-header">
-        <li><span class="scoresheet-header-title">Class</span><span class="scoresheet-header-sub">{{objRef.studentclass.class_name}}</span></li>
-        <li><span class="scoresheet-header-title">Term</span><span class="scoresheet-header-sub">{{objRef.term.term}}</span></li>
-        <li><span class="scoresheet-header-title">Session</span><span class="scoresheet-header-sub">{{objRef.session.session}}</span></li></ul>
-    </div>
+  
     
     <div class="assessment-details background-cover">
         <table class="asstable-print">
             <tr>
+                <th class="sort">#</th>
                 <th class="sort">Name</th>
                 {% for subj in subjects %}
                   <th class="sort">{{subj.subject.subject_code}}</th>
@@ -1237,6 +1234,7 @@
 
               {% for student in students %}
               <tr>
+                <td>{{forloop.counter}}</td>
                 <td><code>
                   {{student.student.sur_name |lower|capfirst}} {{student.student.first_name |lower|capfirst}}
                   </code>
