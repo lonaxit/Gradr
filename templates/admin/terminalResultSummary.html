@@ -112,10 +112,13 @@
           <div class="card-header">
             <div class="row align-items-center justify-content-between">
               <div class="col-6 col-sm-auto d-flex align-items-center pr-0">
-                <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Filtered Result </h5> | 
+                <h5 class="fs-0 mb-0 text-nowrap py-2 py-xl-0">Filtered Result </h5>
+                {% if objRef %} 
+                | 
                 <span>
-                  <a href="{% url 'print-terminal-summary' objRef.studentclass.pk objRef.term.pk objRef.session.pk %}" target="_blank">Print</a>
+                  <a href="{% url 'print-terminal-summary' objRef.term.pk objRef.session.pk studentclass.pk %}" target="_blank">Print</a>
                 </span>
+                {% endif %}
 
               </div>
           </div>
