@@ -2599,3 +2599,77 @@ def printTerminalResultSummary(request,term,session,classroom):
         messages.error(request,e)
         return redirect('terminalresult-summary')
     return render(request,'admin/printTerminalSummary.html',context)
+
+
+# Annual result summary
+def AnnualResultSummary(request):
+    
+    form = AnnualResultFilterForm()
+    context={
+        'form':form
+         }
+    
+    if request.method =='POST':
+        try:
+            
+            classroom = request.POST['classroom']
+            session = request.POST['session']
+
+            scores = Scores.objects.filter(Q(studentclass=classroom)
+                & Q(session=session)).order_by('subject')
+        
+            result = Result.objects.filter(Q(studentclass=classroom)
+                & Q(session=session))
+        
+            students = Scores.objects.filter(Q(studentclass=classroom)
+                & Q(session=session)).order_by('student')
+        
+            students = students.distinct('student')
+        
+            subjects = scores.distinct('subject')
+            objRef = scores.first()
+            context={
+            'scores':scores,
+            'subjects':subjects,
+            'form':form,
+            'students':students,
+            'result':result,
+            'objRef':objRef,
+            }
+        except Exception as e:
+            messages.error(request,e)
+            return redirect(request,'admin/annualResultSummary.html',context)
+            
+    return render(request,'admin/annualResultSummary.html',context)
+
+
+# print annual result
+def PrintAnnualResultSummary(request,session,classroom):
+
+        try:
+            
+            scores = Scores.objects.filter(Q(studentclass=classroom)
+                & Q(session=session)).order_by('subject')
+        
+            result = Result.objects.filter(Q(studentclass=classroom)
+                & Q(session=session))
+        
+            students = Scores.objects.filter(Q(studentclass=classroom)
+                & Q(session=session)).order_by('student')
+        
+            students = students.distinct('student')
+        
+            subjects = scores.distinct('subject')
+            objRef = scores.first()
+            context={
+            'scores':scores,
+            'subjects':subjects,
+            'students':students,
+            'result':result,
+            'objRef':objRef,
+            }
+        except Exception as e:
+            messages.error(request,e)
+            return redirect('print-annual-summary')
+            
+        return render(request,'admin/printAnnualSummary.html',context)
