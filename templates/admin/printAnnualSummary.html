@@ -486,12 +486,12 @@
         .asstable-print td {
           border: 1px solid #000;
           text-align: left;
-          font-size: .49em;
+          font-size: 10px;
           white-space: nowrap; }
         .asstable-print th {
           border: 0.5px solid #000;
           text-align: left;
-          font-size: .49em; }
+          font-size: 11px; }
       
       .examtable-print {
         border: 0.7px solid #000;
@@ -545,18 +545,22 @@
         margin-top: 10px;
         vertical-align: top; }
         .ass-school-profile p {
-          font-family: "Hind";
-          font-size: .6em;
+          font-family: "Fjalla One";
+          font-size: 10px;
+          color: #000;
           line-height: 0.3;
-          margin-bottom: 0px; }
+          margin-bottom: 5px;
+          margin-top: 5px;
+         }
         .ass-school-profile h5 {
           font-family: "Fjalla One";
           color: #000;
           font-size: 1.2em; }
         .ass-school-profile span {
           margin-right: 7px;
-          font-family: "Hind";
-          font-size: .6em;
+          font-family: "Fjalla One";
+          font-size: 10px;
+          color: #000;
           margin-bottom: 0px; }
       
       .school-profile {
@@ -1211,48 +1215,51 @@
         <div class="logo-img">
           <h5><img src="" alt="" class="logo-img"></h5>
         </div>
-        <h5>SKY GIFTED ACADEMY MKAR</h5>
+        <h5>SKY GIFTED ACADEMY MKAR, GBOKO</h5>
+        <p>Annual Result Summary</p>
+        <span>{{objRef.studentclass.class_name}}</span> | <span>{{objRef.session.session}}</span>
     </div>
     <!--end school profile div  -->
     
     <div class="assessment-details background-cover">
         <table class="asstable-print">
-         <tr>
-            <th colspan="2"></th>
-            {% for subject in subjects %}
-            <th colspan="3">subjname</th>
-            {% endfor %}
-            <th colspan="4">Summary</th>
-         </tr>
-
-         <!-- for second row -->
-         <tr>
-            <th>SN</th>
-            <th>Student Name</th>
-
-            {% for eachsubject in subjects %}
-            <th>T1</th>
-            <th>T2</th>
-            <th>T3</th>
-            {% endfor %}
-            <th>Total</th>
-         </tr>
-
-         <!-- for each name print name and corresponding total for the terms -->
-         {% for eachname in names %}
             <tr>
-            <td>sn</td>
-            <td>names</td>
-            {% for eachtermtotal as totalpersubject %}
-            <td>100</td>
-            <td>200</td>
-            <td>300</td>
-            {% endfor %}
+                <th colspan="2"></th>
+                {% for subj in subjects %}
+                <th colspan="3">{{subj.subject.subject_code}}</th>
+                {% endfor %}
+                <th colspan="4">Summary</th>
+                </tr>
+    
+                 <tr>
+                    <th>SN</th>
+                    <th>Name</th>
+                    {% for subject in subjects %}
+                    <th>T1</th>
+                    <th>T2</th>
+                    <th>T3</th>
+                    {% endfor %}
+                    <th>Total</th>
+                 </tr>
+         <!-- for each name print name and corresponding total for the terms -->
+       
+         {% for name in students %}
+         <tr>
+         <td>{{forloop.counter}}</td>
+         <td>
+            {{name.student.sur_name|lower|capfirst}}  {{name.student.first_name|lower|capfirst}}
+        </td>
 
-            <td>annualTotal</td>
-            <!-- <td>annualAvg</td> -->
-            </tr>
-          {% endfor %}
+         {% for i in subjects %}
+         <td>{% firstTermTotal scores name.student_id i.subject_id%}</td>
+         <td>{% secondTermTotal scores name.student_id i.subject_id%}</td>
+         <td>{% thirdTermTotal scores name.student_id i.subject_id%}</td>
+         {% endfor %}
+
+         <td>{% annualTotal scores name.student_id%}</td>
+         <!-- <td>annualAvg</td> -->
+         </tr>
+       {% endfor %}
 
         </table>
     </div>
