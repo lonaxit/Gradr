@@ -2150,17 +2150,23 @@ def bulkStudent(request):
 def updatePassword(request):
 
     if request.method == 'POST':
+        
+        try:
 
-        with transaction.atomic():
-            username = request.POST['username']
-            password = request.POST['password']
+            with transaction.atomic():
+                username = request.POST['username']
+                password = request.POST['password']
 
-            user = User.objects.get(username=username)
-            # print(user)
-            user.password = make_password(password)
-            user.save()
+                user = User.objects.get(username=username)
+                # print(user)
+                user.password = make_password(password)
+                user.save()
 
-            messages.success(request, 'Update successful')
+                messages.success(request, 'Update successful')
+                return redirect('update-password')
+            
+        except Exception as e:
+            messages.error(request, e)
             return redirect('update-password')
 
     return render (request,'admin/updatePassword.html')
@@ -2533,7 +2539,7 @@ def TermResultSummary(request):
     form = ResultFilterForm()
     context={
         'form':form
-    }
+            }
     if request.method =='POST':
         try:
             
