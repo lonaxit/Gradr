@@ -62,7 +62,9 @@ def staff_sign(teacherid):
 @register.simple_tag
 def getSubjTotal(scoresList,subjid,studentid):
     filteredObj = scoresList.filter(student=studentid,subject=subjid).first()
-    return filteredObj.subjecttotal
+    if filteredObj:
+        return filteredObj.subjecttotal
+    return "Null"
 
 @register.simple_tag
 def getTermTotal(resultList,studentid):
