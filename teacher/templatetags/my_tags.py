@@ -112,7 +112,7 @@ def annualTotal(scores,studentid):
 def annualAv(resultList,studentid):
     resultObj = resultList.filter(student=studentid).first()
     if resultObj:
-        return resultObj.termavaerage
+        return resultObj.termaverage
     return "Null" 
 
 @register.simple_tag
