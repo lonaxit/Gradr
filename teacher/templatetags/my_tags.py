@@ -108,6 +108,12 @@ def annualTotal(scores,studentid):
     resultObj = scores.filter(student=studentid).aggregate(annual_sum=Sum('subjecttotal'))
     return resultObj['annual_sum']
 
+@register.simple_tag
+def annualAv(resultList,studentid):
+    resultObj = resultList.filter(student=studentid).first()
+    if resultObj:
+        return resultObj.termavaerage
+    return "Null" 
 
 @register.simple_tag
 def annualSubjectTotal(scores,studentid,subjid):
