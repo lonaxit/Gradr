@@ -37,13 +37,13 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','django-insecure-&ikxv*q$)0=5-lg
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 # 1 means in DEBUG MODE
-DEBUG = str(os.environ.get('DEBUG')) == "0" 
+DEBUG = str(os.environ.get('DEBUG')) == "1" 
 
 
 # FOR APP PLATFORM DEPLOYMENT
-ALLOWED_HOSTS = []
-if not DEBUG:
-    ALLOWED_HOSTS +=[os.environ.get('DJANGO_ALLOWED_HOST')]
+ALLOWED_HOSTS = ['skygiftedacademymkar.net']
+# if not DEBUG:
+#     ALLOWED_HOSTS +=[os.environ.get('DJANGO_ALLOWED_HOST')]
 
 # AUTH_USER_MODEL = 'accounts.User'
 # AUTH_USER_MODEL = 'auth.User'
