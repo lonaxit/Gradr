@@ -2534,9 +2534,9 @@ def TermResultSummary(request):
     context={
         'form':form
     }
-    
     if request.method =='POST':
         try:
+            
             
             classroom = request.POST['classroom']
             session = request.POST['session']
@@ -2564,14 +2564,16 @@ def TermResultSummary(request):
             'objRef':objRef,
             }
         except Exception as e:
-            messages.error(request,e)
-            return render(request,'admin/terminalResultSummary.html',context)
+            messages.error(request, e)
+            # return render (request,'admin/terminalResultSummary.html',{'form':form})
+            # messages.error(request,e)
+            return redirect('terminalresult-summary')
             
     return render(request,'admin/terminalResultSummary.html',context)
 
 
+
 def printTerminalResultSummary(request,term,session,classroom):
-    
     
     try:
         
@@ -2596,8 +2598,9 @@ def printTerminalResultSummary(request,term,session,classroom):
             'objRef':objRef,
             }
     except Exception as e:
-        messages.error(request,e)
+        messages.error(request, e)
         return redirect('terminalresult-summary')
+    
     return render(request,'admin/printTerminalSummary.html',context)
 
 
