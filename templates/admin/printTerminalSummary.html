@@ -1233,6 +1233,7 @@
                   <th class="sort">{{subj.subject.subject_code}}</th>
                 {% endfor %}
                 <th>TOTAL</th>
+                <th>AVG</th>
                 <th>POS</th>
               </tr>
 
@@ -1249,6 +1250,8 @@
                 </td>
                 {% endfor %}
                 <td> <code>{% getTermTotal result student.student_id%}</code>
+                </td>
+                <td> <code>{% annualAv result student.student_id%}</code>
                 </td>
                 <td> <code>{% getTermPosition result student.student_id%}</code>
                 </td>
