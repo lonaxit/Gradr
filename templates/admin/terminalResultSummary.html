@@ -64,7 +64,7 @@
           </div>
 
           <!--  -->
-          <!-- {% if objRef %}
+          {% if objRef %}
           <div class="card-deck">
             <div class="card mb-3 overflow-hidden" style="min-width: 12rem">
               <div class="bg-holder bg-card" style="background-image:url( {% static 'img/illustrations/corner-2.png' %});">
@@ -80,7 +80,7 @@
                 {% comment %} <a class="font-weight-semi-bold fs--1 text-nowrap" href="#!">All orders<span class="fas fa-angle-right ml-1" data-fa-transform="down-1"></span></a> {% endcomment %}
               </div>
             </div>
-          </div> -->
+          </div>
 
           
 
@@ -109,7 +109,8 @@
                 {% for subj in subjects %}
                   <th class="sort">{{subj.subject.subject_code}}</th>
                 {% endfor %}
-                <th class="sort">Total</th>
+                <th class="sort">Tot</th>
+                <th class="sort">Av</th>
                 <th class="sort">Pos</th>
               </tr>
             </thead>
@@ -127,6 +128,8 @@
                 </td>
                 {% endfor %}
                 <td> <code>{% getTermTotal result student.student_id%}</code>
+                </td>
+                <td> <code>{% annualAv result student.student_id%}</code>
                 </td>
                 <td> <code>{% getTermPosition result student.student_id%}</code>
                 </td>
