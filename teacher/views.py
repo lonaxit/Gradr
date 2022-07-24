@@ -1563,11 +1563,8 @@ def get_subjects(request,pk):
     # old
     # result = list(Subject.objects.filter(subjectteacher__classroom_id=pk).filter(subjectteacher__teacher_id=loggedin).values())
     
-    #lg_data = list(Lga.objects.filter(state_id=pk).values())
-    
     result = list(Subject.objects.filter(subjectteacher__classroom_id=pk,subjectteacher__teacher_id=loggedin).values())
     
-
     return JsonResponse({'data':result})
 
 # find subject and class average
