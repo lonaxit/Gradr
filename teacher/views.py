@@ -863,6 +863,8 @@ def exportSheet(request,classroom,subject):
         # new
         students = Classroom.objects.filter(Q(session=activeSession) & Q(class_room=classroom)).order_by('student__sur_name')
         subject = Subject.objects.get(pk=subject)
+        
+        
 
             # ordering using a different table, student field is on classroom table which is related to the student table and sur_name is on the student table
         for student in students:
@@ -875,6 +877,9 @@ def exportSheet(request,classroom,subject):
              return render(request,'teacher/assessment_sheet_find.html')
 
 
+
+
+         
 
 # import assessment sheet
 @allowed_users(allowed_roles=['teacher'])
@@ -1555,9 +1560,14 @@ def addStudentPsycho(request,pk):
 def get_subjects(request,pk):
     loggedin = request.user.tutor.pk
 
-    result = list(Subject.objects.filter(subjectteacher__classroom_id=pk).filter(subjectteacher__teacher_id=loggedin).values())
+    # old
+    # result = list(Subject.objects.filter(subjectteacher__classroom_id=pk).filter(subjectteacher__teacher_id=loggedin).values())
+    
     #lg_data = list(Lga.objects.filter(state_id=pk).values())
-
+    
+    
+    result = list(Subject.objects.filter(subjectteacher__classroom_id=pk,subjectteacher__teacher_id=loggedin)).values()
+    
 
     return JsonResponse({'data':result})
 
