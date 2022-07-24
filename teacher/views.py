@@ -1565,7 +1565,6 @@ def get_subjects(request,pk):
     
     #lg_data = list(Lga.objects.filter(state_id=pk).values())
     
-    
     result = list(Subject.objects.filter(subjectteacher__classroom_id=pk,subjectteacher__teacher_id=loggedin)).values()
     
 
