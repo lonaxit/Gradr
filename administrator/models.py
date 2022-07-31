@@ -53,6 +53,7 @@ class StudentClass(models.Model):
     class_name = models.CharField(max_length=100,null=True,blank=True)
     date_created = models.DateTimeField(auto_now_add=True,null=True)
     date_modified = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.class_name
 
