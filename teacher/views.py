@@ -276,10 +276,13 @@ def editScores(request,id):
         activeTerm = Term.objects.get(status='True')
         activeSession = Session.objects.get(status='True')
 
-        teacherObj = SubjectTeacher.objects.get(pk=loggedin.pk)
+        # teacherObj = SubjectTeacher.objects.get(teacher_id=loggedin.pk)
+        
         subjectObj = Subject.objects.get(pk=subj)
         classroomObj = StudentClass.objects.get(pk=studclass)
         studObj = Student.objects.get(pk=studid)
+        
+        teacherObj = SubjectTeacher.objects.filter(classroom_id=classroomObj,subject_id=subjectObj,teacher_id=loggedin.pk).first()
 
         # use transaction
         with transaction.atomic():
@@ -301,10 +304,12 @@ def editScores(request,id):
             scores_Obj.save()
 
             # process Scores
-            processScores(subjectObj,classroomObj)
+            # processScores(subjectObj,classroomObj) old
+            processScores(subjectObj,classroomObj,activeTerm,activeSession)
 
             # process terminal result
-            processTerminalResult(scores_Obj)
+            # processTerminalResult(scores_Obj) old
+            processTerminalResult(classroomObj,activeTerm,activeSession)
 
             # process Annual result
             processAnnualResult(scores_Obj)
@@ -812,7 +817,7 @@ def assessmentSheet(request):
             subject_id = request.POST['subject']
             if subject_id:
 
-                students = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q      (class_room=classroom)).order_by('student__sur_name')
+                students = Classroom.objects.filter(Q(term=activeTerm) & Q(session=activeSession) & Q  (class_room=classroom)).order_by('student__sur_name')
                 subject = Subject.objects.get(pk=subject_id)
 
                 # ordering using a different table, student field is on classroom table which is related to        the student table and sur_name is on the student table
@@ -1554,8 +1559,6 @@ def addStudentPsycho(request,pk):
     context = {'form':form,'student':student,'resultObj':resultObj,'list_traits':list_traits}
     return render(request,'teacher/addStudentPsychomotorDomain.html',context)
 
-
-
 # get subjects on class change
 def get_subjects(request,pk):
     loggedin = request.user.tutor.pk
@@ -1563,9 +1566,12 @@ def get_subjects(request,pk):
     # old
     # result = list(Subject.objects.filter(subjectteacher__classroom_id=pk).filter(subjectteacher__teacher_id=loggedin).values())
     
+    # filterStaffSubjs = 
+    
     result = list(Subject.objects.filter(subjectteacher__classroom_id=pk,subjectteacher__teacher_id=loggedin).values())
     
     return JsonResponse({'data':result})
+
 
 # find subject and class average
 def subjectAverage(subj,classroom,termObj,sessionObj):
@@ -2027,24 +2033,24 @@ def autoAddComment(classroom,session,term):
 
     for resultObj in resultFilter:
 
-        if resultObj.termaverage <= 39.9:
+        if resultObj.termaverage <= 39.99:
             resultObj.classteachercomment = 'Failed'
             resultObj.headteachercomment = 'Failed'
 
             resultObj.save()
-        elif resultObj.termaverage >= 40 and resultObj.termaverage <= 44.9:
+        elif resultObj.termaverage >= 40 and resultObj.termaverage <= 44.99:
             resultObj.classteachercomment = 'A Fair Result'
             resultObj.headteachercomment = 'A Fair Result'
             resultObj.save()
-        elif resultObj.termaverage >= 45 and resultObj.termaverage <= 54.9:
+        elif resultObj.termaverage >= 45 and resultObj.termaverage <= 54.99:
             resultObj.classteachercomment = 'A Passed Result'
             resultObj.headteachercomment = 'A Passed Result'
             resultObj.save()
-        elif resultObj.termaverage >= 55 and resultObj.termaverage <= 64.9:
+        elif resultObj.termaverage >= 55 and resultObj.termaverage <= 64.99:
             resultObj.classteachercomment = 'A Good Result'
             resultObj.headteachercomment = 'A Good Result'
             resultObj.save()
-        elif resultObj.termaverage >= 65 and resultObj.termaverage <= 74.9:
+        elif resultObj.termaverage >= 65 and resultObj.termaverage <= 74.99:
             resultObj.classteachercomment = 'A Very Good Result'
             resultObj.headteachercomment = 'A Very Good Result'
             resultObj.save()
