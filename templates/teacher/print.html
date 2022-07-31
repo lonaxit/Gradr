@@ -174,7 +174,7 @@
             <td class="align-right" >{{ score.subjaverage }}</td>
             <td class="align-right" >{{ score.highest_inclass}}</td>
             <td class="align-right" >{{ score.lowest_inclass}}</td>
-            <td>{{ score.subjectposition}}</td>
+            <td>{{ score.subjectposition | ordinal}}</td>
             <td>{{ score.subjectgrade}}</td>
             <td>{{ score.subjectrating}}</td>
             <td> {% staff_sign score.subjectteacher.pk|capfirst %}
