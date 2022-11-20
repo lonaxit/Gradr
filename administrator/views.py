@@ -501,7 +501,7 @@ def updateStudentProfile(request,pk):
             p_form.save()
 
             messages.success(request, 'Student profile  modification/creation was  successful')
-            return redirect('view-student',pk=student.pk)
+            return redirect('admin-home')
         else:
             messages.success(request, 'Something went wrong')
             return redirect('update-student',pk=pk)
