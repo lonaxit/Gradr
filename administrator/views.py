@@ -1466,8 +1466,6 @@ def studentsByClass(request):
             term = Term.objects.get(pk=request.POST['term'])
             session = Session.objects.get(pk=request.POST['session'])
             classroom = StudentClass.objects.get(pk=request.POST['classroom'])
-
-
             # select students based on search parameter
             students = Classroom.objects.filter(Q(session=session.pk)  & Q(class_room=classroom.pk) & Q(term=term.pk)).order_by('student__sur_name')
             if not students:
@@ -1487,6 +1485,124 @@ def studentsByClass(request):
 
     context ={'form':form}
     return render(request, 'admin/student_by_class.html',context)
+
+# promotion view
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def Promotion(request):
+    form = PromotionForm()
+    # context ={'form':form}
+    if request.method == 'POST':
+        form = PromotionForm(request.POST)
+        if form.is_valid():
+            prev_term = Term.objects.get(pk=request.POST['term'])
+            prev_session = Session.objects.get(pk=request.POST['session'])
+            prev_classroom = StudentClass.objects.get(pk=request.POST['classroom'])
+            c_term = Term.objects.get(pk=request.POST['currentterm'])
+            c_session = Session.objects.get(pk=request.POST['currentsession'])
+            c_classroom = StudentClass.objects.get(pk=request.POST['currentclassroom'])
+            
+            print(prev_term)
+            print(prev_session)
+            print(prev_classroom)
+            
+            # select third 
+            result = Result.objects.filter(studentclass=prev_classroom.pk, term=prev_term.pk,session=prev_session.pk)
+            
+            # select classroom
+            myClassroom = Classroom.objects.filter(class_room=c_classroom, term=c_term,session=c_session)
+            
+            if not result:
+                messages.error(request, 'No result available for the term')
+                return redirect('promotion')
+            
+            else:
+                for i in result:
+                 
+                    if not myClassroom:
+                        pass
+                        
+                    # check for existence of students in class
+                    if myClassroom.filter(student=i.student).exists():
+                            continue
+                        
+                        # continue to create records
+                    classroomObj = Classroom.objects.create(
+                                 class_room = c_classroom,
+                                 session = c_session,
+                                 student = i.student,
+                                 term = c_term,
+                                 client = i.student.client,
+                                     )
+                    classroomObj.save()
+                    
+                context = { 'form':form,}
+                messages.success(request, 'Success')
+                return render(request,'admin/promotion.html',context)
+        else:
+            messages.error(request, 'oops! something went wrong')
+            return redirect('promotion')
+
+    context ={'form':form}
+    return render(request, 'admin/promotion.html',context)
+
+
+# Enroll new students
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def NewPromotion(request):
+    form = PromotionForm()
+    # context ={'form':form}
+    if request.method == 'POST':
+        form = PromotionForm(request.POST)
+        if form.is_valid():
+            prev_term = Term.objects.get(pk=request.POST['term'])
+            prev_session = Session.objects.get(pk=request.POST['session'])
+            prev_classroom = StudentClass.objects.get(pk=request.POST['classroom'])
+            c_term = Term.objects.get(pk=request.POST['currentterm'])
+            c_session = Session.objects.get(pk=request.POST['currentsession'])
+            c_classroom = StudentClass.objects.get(pk=request.POST['currentclassroom'])
+            
+            # select third 
+            newStudents = Student.objects.filter(class_admitted=prev_classroom, term_admitted=prev_term,session_admitted=prev_session)
+            
+            # select classroom
+            myClassroom = Classroom.objects.filter(class_room=c_classroom, term=c_term,session=c_session)
+            
+            if not newStudents:
+                messages.error(request, 'No admission for that term/session')
+                return redirect('new-promotion')
+            
+            else:
+                for i in newStudents:
+                 
+                    if not myClassroom:
+                        pass
+                        
+                    # check for existence of students in class
+                    if myClassroom.filter(student=i.pk).exists():
+                            continue
+                        
+                        # continue to create records
+                    classroomObj = Classroom.objects.create(
+                                 class_room = c_classroom,
+                                 session = c_session,
+                                 student = i,
+                                 term = c_term,
+                                 client = i.client,
+                                     )
+                    classroomObj.save()
+                    
+                context = { 'form':form,}
+                messages.success(request, 'Success')
+                return render(request,'admin/promotion.html',context)
+        else:
+            messages.error(request, 'oops! something went wrong')
+            return redirect('new-promotion')
+
+    context ={'form':form}
+    return render(request, 'admin/promotion.html',context)
+
 
 # export admission List
 @allowed_users(allowed_roles=['admin'])
