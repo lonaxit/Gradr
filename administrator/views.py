@@ -1502,9 +1502,7 @@ def Promotion(request):
             c_session = Session.objects.get(pk=request.POST['currentsession'])
             c_classroom = StudentClass.objects.get(pk=request.POST['currentclassroom'])
             
-            print(prev_term)
-            print(prev_session)
-            print(prev_classroom)
+        
             
             # select third 
             result = Result.objects.filter(studentclass=prev_classroom.pk, term=prev_term.pk,session=prev_session.pk)
@@ -1595,13 +1593,13 @@ def NewPromotion(request):
                     
                 context = { 'form':form,}
                 messages.success(request, 'Success')
-                return render(request,'admin/promotion.html',context)
+                return render(request,'admin/new-promotion.html',context)
         else:
             messages.error(request, 'oops! something went wrong')
             return redirect('new-promotion')
 
     context ={'form':form}
-    return render(request, 'admin/promotion.html',context)
+    return render(request, 'admin/new-promotion.html',context)
 
 
 # export admission List
