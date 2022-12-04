@@ -6,6 +6,51 @@ from teacher.models import *
 from accounts.models import *
 from django import forms
 
+# promotion form
+class PromotionForm(forms.Form):
+    classroom = forms.ModelChoiceField(
+                  queryset=StudentClass.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Prev Class',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'classroom'}))
+    term = forms.ModelChoiceField(
+                  queryset=Term.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Prev Term',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'term'}))
+    session = forms.ModelChoiceField(
+                  queryset=Session.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Prev Session',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'session'}))
+    
+    currentclassroom = forms.ModelChoiceField(
+                  queryset=StudentClass.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='New Class',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'classroom'}))
+    currentterm = forms.ModelChoiceField(
+                  queryset=Term.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='New Term',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'term'}))
+    currentsession = forms.ModelChoiceField(
+                  queryset=Session.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='New Session',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'session'}))
 
 # student photo form
 class StudentImageUpdateForm(forms.ModelForm):
