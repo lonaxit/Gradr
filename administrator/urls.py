@@ -3,6 +3,8 @@ from . import views
 
 
 urlpatterns = [
+  path('promotion', views.Promotion, name='promotion'),
+    path('new-promotion', views.NewPromotion, name='new-promotion'),
   path('setting', views.createClient, name='admin-setting'),
   path('update-profile/<str:pk>', views.updateClient, name='update-profile'),
   path('add-term', views.addTerm, name='create-term'),
