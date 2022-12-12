@@ -228,18 +228,18 @@ def addScores(request):
                 obj.save()
 
                 # process Scores
-                processScores(subjectObj,classroomObj)
+                processScores(subjectObj,classroomObj,activeTerm,activeSession)
 
                 # process terminal result
-                processTerminalResult(obj)
+                # processTerminalResult(obj)
 
 
                 # process Annual result
-                processAnnualResult(obj)
+                # processAnnualResult(obj)
 
 
                 # Add auto comment
-                autoAddComment(classroomObj,activeSession,activeTerm)
+                # autoAddComment(classroomObj,activeSession,activeTerm)
 
                 messages.success(request, 'Scores created')
                 # return redirect('assign-subject')
