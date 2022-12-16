@@ -197,7 +197,7 @@ def addScores(request):
         teacherObj = SubjectTeacher.objects.get(pk=loggedin.pk)
         subjectObj = Subject.objects.get(pk=subj)
         classroomObj = StudentClass.objects.get(pk=studclass)
-        studObj = Student.objects.get(pk=studid)
+        studObj = Student.objects.get(reg_no=studid)
 
 
         # check if record for the subject exist
