@@ -6,6 +6,56 @@ from teacher.models import *
 from accounts.models import *
 from django import forms
 
+
+# terminal enrollment form
+class TerminalEnrollmentForm(forms.Form):
+    classroom = forms.ModelChoiceField(
+                  queryset=StudentClass.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Class',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'classroom'}))
+    last_term = forms.ModelChoiceField(
+                  queryset=Term.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Last Term',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'term'}))
+    session = forms.ModelChoiceField(
+                  queryset=Session.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Session',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'session'}))
+    current_term = forms.ModelChoiceField(
+                  queryset=Term.objects.all(),
+                  empty_label=None,
+                  required=True,
+                  to_field_name='id',
+                  label='Current Term',
+                  widget=forms.Select(attrs={'class': 'form-control','id':'term'}))
+    
+    # currentclassroom = forms.ModelChoiceField(
+    #               queryset=StudentClass.objects.all(),
+    #               empty_label=None,
+    #               required=True,
+    #               to_field_name='id',
+    #               label='New Class',
+    #               widget=forms.Select(attrs={'class': 'form-control','id':'classroom'}))
+    
+    
+    # currentsession = forms.ModelChoiceField(
+    #               queryset=Session.objects.all(),
+    #               empty_label=None,
+    #               required=True,
+    #               to_field_name='id',
+    #               label='New Session',
+    #               widget=forms.Select(attrs={'class': 'form-control','id':'session'}))
+    
+    
 # promotion form
 class PromotionForm(forms.Form):
     classroom = forms.ModelChoiceField(
