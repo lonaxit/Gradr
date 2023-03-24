@@ -1514,7 +1514,7 @@ def terminalEnrollment(request):
                 for i in myClassroom:
                         
                     # check for existence of students in class
-                    if myClassroom.filter(student=i.student).exists():
+                    if myClassroom.filter(student=i.student,term=current_term,class_room=_classroom,session=_session).exists():
                         continue
                     
                     # continue to create records
@@ -1536,8 +1536,7 @@ def terminalEnrollment(request):
 
     context ={'form':form}
     return render(request, 'admin/terminalenrollment.html',context)
-
-# 
+#
 
 
 
