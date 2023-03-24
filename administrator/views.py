@@ -1529,7 +1529,7 @@ def terminalEnrollment(request):
                     
                 context = { 'form':form,}
                 messages.success(request, 'Success')
-                return render(request,'admin/promotion.html',context)
+                return render(request,'admin/terminalenrollment.html',context)
         else:
             messages.error(request, 'oops! something went wrong')
             return redirect('terminalenrollment')
