@@ -1486,6 +1486,61 @@ def studentsByClass(request):
     context ={'form':form}
     return render(request, 'admin/student_by_class.html',context)
 
+# Terminal Enrollment
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def terminalEnrollment(request):
+    form = TerminalEnrollmentForm()
+    # context ={'form':form}
+    if request.method == 'POST':
+        form = TerminalEnrollmentForm(request.POST)
+        if form.is_valid():
+            last_term = Term.objects.get(pk=request.POST['last_term'])
+            _session = Session.objects.get(pk=request.POST['session'])
+            _classroom = StudentClass.objects.get(pk=request.POST['classroom'])
+            current_term = Term.objects.get(pk=request.POST['current_term'])
+           
+            # select third 
+            # result = Classroom.objects.filter(studentclass=_classroom.pk, term=last_term.pk,session=_session.pk)
+            
+            # select classroom
+            myClassroom = Classroom.objects.filter(class_room=_classroom.pk, term=last_term,session=_session)
+            
+            if not myClassroom:
+                messages.error(request, 'No students available for the term selected')
+                return redirect('terminalenrollment')
+            
+            else:
+                for i in myClassroom:
+                        
+                    # check for existence of students in class
+                    if myClassroom.filter(student=i.student).exists():
+                        continue
+                    
+                    # continue to create records
+                    classroomObj = Classroom.objects.create(
+                                 class_room = _classroom,
+                                 session = _session,
+                                 student = i.student,
+                                 term = current_term,
+                                 client = i.student.client,
+                                     )
+                    classroomObj.save()
+                    
+                context = { 'form':form,}
+                messages.success(request, 'Success')
+                return render(request,'admin/promotion.html',context)
+        else:
+            messages.error(request, 'oops! something went wrong')
+            return redirect('terminalenrollment')
+
+    context ={'form':form}
+    return render(request, 'admin/terminalenrollment.html',context)
+
+# 
+
+
+
 # promotion view
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
