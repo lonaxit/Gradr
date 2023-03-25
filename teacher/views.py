@@ -866,7 +866,7 @@ def exportSheet(request,classroom,subject):
         # subject = Subject.objects.get(pk=subject)
         
         # new
-        students = Classroom.objects.filter(Q(session=activeSession) & Q(class_room=classroom)).order_by('student__sur_name')
+        students = Classroom.objects.filter(Q(session=activeSession) & Q(class_room=classroom) & Q(term=activeTerm)).order_by('student__sur_name')
         subject = Subject.objects.get(pk=subject)
         
         
@@ -934,7 +934,7 @@ def importAssessmentSheet(request):
                     
                     # Check if student is enrolled in that class or not
                     
-                    inClass = Classroom.objects.filter(session=activeSession,term=activeTerm,class_room = classroomObj,student=studentObj.pk).exists
+                    inClass = Classroom.objects.filter(session=activeSession,term=activeTerm,class_room = classroomObj,student=studentObj.pk).exists()
                     
                     if inClass:
                         
