@@ -715,8 +715,7 @@ def allClassrooms(request):
         messages.error(request,e)
         return render(request,'teacher/allTeacherClassrooms.html')
     
-
-
+    
 # # my classroom enrollees
 @allowed_users(allowed_roles=['teacher'])
 def myClassroom(request,classroom,term,session):
